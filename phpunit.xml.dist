@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="true"
+         syntaxCheck="false"
+         bootstrap="bootstrap.php">
+
+    <php>
+        <const name="ROOT_PATH" value="./"/>
+    </php>
+
+    <testsuite name="Google Analytics Extractor Test Suite">
+        <directory>tests/Keboola</directory>
+    </testsuite>
+</phpunit>

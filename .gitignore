@@ -1,0 +1,5 @@
+vendor/
+/data/
+.idea/
+composer.phar
+runtests.sh
