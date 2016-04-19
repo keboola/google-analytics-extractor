@@ -87,8 +87,7 @@ class Extractor
 
 	private function extract($queries, $profileId)
 	{
-        $queries = $this->addViewIdToQueries($queries, $profileId);
-		$reports = $this->gaApi->getBatch($queries);
+        $reports = $this->getReports($queries, $profileId);
 
 		$this->logger->debug("Extracting ...", [
 			'queries' => $queries,
@@ -102,9 +101,9 @@ class Extractor
             $nextQueries = [];
             foreach ($reports['reports'] as $reportKey => $report) {
                 if ($createOutputFile) {
-                    $csvFiles[$report['queryName']] = $this->output->createCsvFile($report['queryName']);
+                    $csvFiles[$report['query']['id']] = $this->output->createCsvFile($queries[$reportKey]['outputTable']);
                 }
-                $this->output->writeReport($csvFiles[$report['queryName']], $report, $profileId);
+                $this->output->writeReport($csvFiles[$report['query']['id']], $report, $profileId);
 
                 // pagination
                 if (isset($report['nextPageToken'])) {
@@ -117,11 +116,16 @@ class Extractor
             $createOutputFile = false;
 
             if ($hasNextPages) {
-                $nextQueries = $this->addViewIdToQueries($nextQueries, $profileId);
-                $reports = $this->gaApi->getBatch($nextQueries);
+                $reports = $this->getReports($nextQueries, $profileId);
             }
+            $queries = $nextQueries;
         } while ($hasNextPages);
 	}
+
+    private function getReports($queries, $profileId)
+    {
+        return $this->gaApi->getBatch($this->addViewIdToQueries($queries, $profileId));
+    }
 
     private function addViewIdToQueries($queries, $profileId)
     {

@@ -90,11 +90,9 @@ class Client
      * @throws \Keboola\Google\ClientBundle\Exception\RestApiException
      */
 	public function getBatch($queries) {
-        $queryNames = [];
 		$body['reportRequests'] = [];
 		foreach ($queries as $query) {
 			$body['reportRequests'][] = $this->getReportRequest($query['query']);
-            $queryNames[] = $query['name'];
 		};
 
         $response = $this->api->request(
@@ -104,7 +102,7 @@ class Client
             ['json' => $body]
         );
 
-        return $this->processResponse(json_decode($response->getBody()->getContents(), true), $queryNames);
+        return $this->processResponse(json_decode($response->getBody()->getContents(), true), $queries);
 	}
 
     /**
@@ -113,7 +111,7 @@ class Client
      * @return array
      * @internal param array $result json decoded response
      */
-	private function processResponse($response, $queryNames)
+	private function processResponse($response, $queries)
 	{
         $processed = [];
         foreach ($response['reports'] as $reportKey => $report) {
@@ -139,7 +137,7 @@ class Client
 
             $processed['reports'][$reportKey] = [
                 'data' => $dataSet,
-                'queryName' => $queryNames[$reportKey],
+                'query' => $queries[$reportKey],
                 'totals' => $report['data']['totals'],
                 'rowCount' => $report['data']['rowCount']
             ];

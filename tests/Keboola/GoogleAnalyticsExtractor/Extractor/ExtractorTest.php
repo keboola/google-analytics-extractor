@@ -45,5 +45,9 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $profiles = $config['parameters']['profiles'];
 
         $this->extractor->run($queries, $profiles[0]);
+
+        $outputFile = ROOT_PATH . '/tests/data/out/tables/' . $queries[0]['outputTable'] . '.csv';
+        $this->assertFileExists($outputFile);
+        $this->assertNotEmpty(file_get_contents($outputFile));
     }
 }

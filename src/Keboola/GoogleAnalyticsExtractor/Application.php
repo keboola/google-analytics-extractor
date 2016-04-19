@@ -13,8 +13,8 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Keboola\Temp\Temp;
 use Monolog\Logger;
 use Pimple\Container;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -22,8 +22,6 @@ use Symfony\Component\Config\Definition\Processor;
 
 class Application
 {
-    private $configDefinition;
-
     private $container;
 
     public function __construct($config)
@@ -33,36 +31,35 @@ class Application
         $container['logger'] = function () {
             return new Logger(APP_NAME);
         };
-        $container['temp'] = function () {
-            return new Temp();
-        };
         $container['google_client'] = function ($c) {
-            new RestApi(
-                $c['config']['authorization']['client_id'],
-                $c['config']['authorization']['client_secret']
+            return new RestApi(
+                $c['config']['authorization']['oauth_api']['credentials']['appKey'],
+                $c['config']['authorization']['oauth_api']['credentials']['#appSecret'],
+                $c['config']['authorization']['oauth_api']['credentials']['#data']['access_token'],
+                $c['config']['authorization']['oauth_api']['credentials']['#data']['refresh_token']
             );
         };
         $container['google_analytics_client'] = function ($c) {
-            new Client($c['google_client']);
+            return new Client($c['google_client']);
+        };
+        $container['output'] = function ($c) {
+            return new Output($c['config']['data_dir']);
         };
         $container['extractor'] = function ($c) {
             return new Extractor(
-                $c['config'],
                 $c['google_analytics_client'],
+                $c['output'],
                 $c['logger']
             );
         };
 
         $this->container = $container;
-        $this->configDefinition = new ConfigDefinition();
     }
 
     public function run()
     {
         $extracted = [];
         $profiles = $this->container['config']['parameters']['profiles'];
-
-        //@todo: enabled
         $queries = array_filter($this->container['config']['parameters']['queries'], function ($query) {
             return $query['enabled'];
         });
@@ -84,7 +81,7 @@ class Application
         try {
             $processor = new Processor();
             return $processor->processConfiguration(
-                $this->configDefinition,
+                new ConfigDefinition(),
                 [$config]
             );
         } catch (InvalidConfigurationException $e) {

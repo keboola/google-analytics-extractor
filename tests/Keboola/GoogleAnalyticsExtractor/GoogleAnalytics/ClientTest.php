@@ -59,8 +59,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $reports = $this->client->getBatch($queries);
 
         $this->assertNotEmpty($reports['reports'][0]['data']);
-        $this->assertEquals('users', $reports['reports'][0]['queryName']);
+        $this->assertEquals('users', $reports['reports'][0]['query']['name']);
         $this->assertNotEmpty($reports['reports'][1]['data']);
-        $this->assertEquals('sessions', $reports['reports'][1]['queryName']);
+        $this->assertEquals('sessions', $reports['reports'][1]['query']['name']);
     }
 }
