@@ -66,7 +66,7 @@ class Client
             'pivots' => [],
 //            'cohortGroups' => [],
             'pageToken' => empty($query['pageToken'])?null:$query['pageToken'],
-            'pageSize' => 10000,
+            'pageSize' => 5000,
             'includeEmptyRows' => true,
             'hideTotals' => false,
             'hideValueRanges' => true,
@@ -93,7 +93,7 @@ class Client
         $queryNames = [];
 		$body['reportRequests'] = [];
 		foreach ($queries as $query) {
-			$body['reportRequests'][] = $this->getReportRequest($query);
+			$body['reportRequests'][] = $this->getReportRequest($query['query']);
             $queryNames[] = $query['name'];
 		};
 
@@ -133,14 +133,13 @@ class Client
                     foreach ($row['metrics'][0]['values'] as $k => $v) {
                         $metrics[$metricNames[$k]] = $v;
                     }
-
                     $dataSet[] = new Result($metrics, $dimensions);
                 }
 		    }
 
             $processed['reports'][$reportKey] = [
-                'queryName' => $queryNames[$reportKey],
                 'data' => $dataSet,
+                'queryName' => $queryNames[$reportKey],
                 'totals' => $report['data']['totals'],
                 'rowCount' => $report['data']['rowCount']
             ];

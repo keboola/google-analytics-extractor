@@ -32,23 +32,27 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $queries = [
             [
                 'name' => 'users',
-                'viewId' => getenv('VIEW_ID'),
-                'metrics' => ['ga:users','ga:pageviews'],
-                'dimensions' => ['ga:date','ga:source','ga:medium'],
-                'dateRanges' => [[
-                    'since' => date('Y-m-d', strtotime('-3 days')),
-                    'until' => date('Y-m-d', strtotime('now'))
-                ]],
+                'query' => [
+                    'viewId' => getenv('VIEW_ID'),
+                    'metrics' => ['ga:users','ga:pageviews'],
+                    'dimensions' => ['ga:date','ga:source','ga:medium'],
+                    'dateRanges' => [[
+                        'since' => date('Y-m-d', strtotime('-12 months')),
+                        'until' => date('Y-m-d', strtotime('now'))
+                    ]]
+                ]
             ],
             [
                 'name' => 'sessions',
-                'viewId' => getenv('VIEW_ID'),
-                'metrics' => ['ga:sessions','ga:bounces'],
-                'dimensions' => ['ga:date','ga:country'],
-                'dateRanges' => [[
-                    'since' => date('Y-m-d', strtotime('-3 days')),
-                    'until' => date('Y-m-d', strtotime('now'))
-                ]],
+                'query' => [
+                    'viewId' => getenv('VIEW_ID'),
+                    'metrics' => ['ga:sessions','ga:bounces'],
+                    'dimensions' => ['ga:date', 'ga:country', 'ga:source'],
+                    'dateRanges' => [[
+                        'since' => date('Y-m-d', strtotime('-12 months')),
+                        'until' => date('Y-m-d', strtotime('now'))
+                    ]]
+                ]
             ]
         ];
 

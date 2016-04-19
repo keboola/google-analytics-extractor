@@ -1,0 +1,26 @@
+parameters:
+  profiles:
+    -
+      id: 69127714 #was googleId
+      name: 'All Web Site Data'
+      webPropertyId: 'UA-38521826-1'
+      webPropertyName: 'Keboola Website'
+      accountId: 38521826
+      accountName: 'Keboola Website'
+
+  queries:
+    -
+      id: 0
+      name: 'users'
+      outputTable: 'in.c-main.ex-ga-users'
+      query:
+        metrics: [ga:users, ga:pageviews, ga:bounces]
+        dimensions: [ga:date, ga:source, ga:medium, ga:country]
+        filters: []
+        viewId: '69127714'
+        dateRanges:
+          -
+            since: '2015-01-01'
+            until: '2016-01-01'
+      enabled: true
+

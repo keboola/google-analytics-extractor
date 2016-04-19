@@ -17,8 +17,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class Extractor
 {
-	private $config;
-
 	/** @var Client */
 	private $gaApi;
 
@@ -28,46 +26,20 @@ class Extractor
 	/** @var Logger */
 	private $logger;
 
-	private $currAccountId;
-
-	public function __construct($config, Client $gaApi, Logger $logger)
+	public function __construct(Client $gaApi, Output $output, Logger $logger)
 	{
-		$this->config = $config;
 		$this->gaApi = $gaApi;
 		$this->logger = $logger;
-		$this->output = new Output($config['data_dir']);
+		$this->output = $output;
 
 		$this->gaApi->getApi()->setBackoffsCount(7);
 		$this->gaApi->getApi()->setBackoffCallback403($this->getBackoffCallback403());
-	}
-
-	public function getBackoffCallback403()
-	{
-		return function ($response) {
-            /** @var ResponseInterface $response */
-			$reason = $response->getReasonPhrase();
-
-            if (
-                $reason == 'insufficientPermissions'
-                || $reason == 'dailyLimitExceeded'
-                || $reason == 'usageLimits.userRateLimitExceededUnreg'
-            ) {
-                return false;
-            }
-
-			return true;
-		};
+        $this->gaApi->getApi()->setRefreshTokenCallback([$this, 'refreshTokenCallback']);
 	}
 
 	public function run(array $queries, array $profile)
 	{
 		$status = [];
-
-		$this->gaApi->getApi()->setCredentials(
-			$this->config['authorization']['oauth_api']['access_token'],
-			$this->config['authorization']['oauth_api']['refresh_token']
-		);
-		$this->gaApi->getApi()->setRefreshTokenCallback([$this, 'refreshTokenCallback']);
 
 		try {
 			$this->extract($queries, $profile['id']);
@@ -113,51 +85,77 @@ class Extractor
 		}
 	}*/
 
-	protected function extract($queries, $profileId)
+	private function extract($queries, $profileId)
 	{
+        $queries = $this->addViewIdToQueries($queries, $profileId);
 		$reports = $this->gaApi->getBatch($queries);
 
-		$this->logger->info("Extracting ...", [
+		$this->logger->debug("Extracting ...", [
 			'queries' => $queries,
 			'results' => count($reports)
 		]);
 
         $hasNextPages = false;
+        $createOutputFile = true;
+        $csvFiles = [];
         do {
             $nextQueries = [];
-            foreach ($reports as $reportKey => $report) {
-                $this->output->writeReport($report, $profileId, true);
+            foreach ($reports['reports'] as $reportKey => $report) {
+                if ($createOutputFile) {
+                    $csvFiles[$report['queryName']] = $this->output->createCsvFile($report['queryName']);
+                }
+                $this->output->writeReport($csvFiles[$report['queryName']], $report, $profileId);
 
                 // pagination
                 if (isset($report['nextPageToken'])) {
-                    $queries[$reportKey]['pageToken'] = $report['nextPageToken'];
+                    $queries[$reportKey]['query']['pageToken'] = $report['nextPageToken'];
                     $nextQueries[] = $queries[$reportKey];
                 }
+
                 $hasNextPages = !empty($nextQueries);
             }
+            $createOutputFile = false;
 
             if ($hasNextPages) {
+                $nextQueries = $this->addViewIdToQueries($nextQueries, $profileId);
                 $reports = $this->gaApi->getBatch($nextQueries);
             }
         } while ($hasNextPages);
 	}
 
-	public function setCurrAccountId($id)
-	{
-		$this->currAccountId = $id;
-	}
+    private function addViewIdToQueries($queries, $profileId)
+    {
+        foreach ($queries as $k => &$query) {
+            if (empty($query['query']['viewId'])) {
+                $query['query']['viewId'] = (string) $profileId;
+            } elseif ($query['query']['viewId'] != $profileId) {
+                unset($queries[$k]);
+            }
+        }
 
-	public function getCurrAccountId()
-	{
-		return $this->currAccountId;
-	}
+        return $queries;
+    }
 
 	public function refreshTokenCallback($accessToken, $refreshToken)
 	{
-//		$account = $this->configuration->getAccountBy('accountId', $this->currAccountId);
-//		$account->setAccessToken($accessToken);
-//		$account->setRefreshToken($refreshToken);
-//		$account->save();
 	}
+
+    public function getBackoffCallback403()
+    {
+        return function ($response) {
+            /** @var ResponseInterface $response */
+            $reason = $response->getReasonPhrase();
+
+            if (
+                $reason == 'insufficientPermissions'
+                || $reason == 'dailyLimitExceeded'
+                || $reason == 'usageLimits.userRateLimitExceededUnreg'
+            ) {
+                return false;
+            }
+
+            return true;
+        };
+    }
 }
 

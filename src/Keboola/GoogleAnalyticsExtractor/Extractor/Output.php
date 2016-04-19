@@ -20,10 +20,9 @@ class Output
 		$this->dataDir = $dataDir;
 	}
 
-	public function writeProfiles(array $profiles)
+	public function writeProfiles(CsvFile $csv, array $profiles)
 	{
-        $csv = $this->createOutputCsv('profiles');
-
+        $csv->writeRow(['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName']);
         foreach ($profiles as $profile) {
             $csv->writeRow($profile);
         }
@@ -31,20 +30,18 @@ class Output
         return $csv;
 	}
 
-	public function writeReport(array $report, $profileId, $incremental = false)
+	public function writeReport(CsvFile $csv, array $report, $profileId, $incremental = false)
 	{
         $cnt = 0;
-        $csv = $this->createOutputCsv($report['queryName']);
-
         /** @var Result $result */
-        foreach ($report as $result) {
+        foreach ($report['data'] as $result) {
             $metrics = $result->getMetrics();
             $dimensions = $result->getDimensions();
 
             // CSV Header
             if ($cnt == 0 && !$incremental) {
                 $headerRow = array_merge(
-                    array('id', 'idProfile'),
+                    ['id', 'idProfile'],
                     array_keys($dimensions),
                     array_keys($metrics)
                 );
@@ -54,20 +51,20 @@ class Output
             if (isset($dimensions['date'])) {
                 $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
             }
+
             $row = array_merge(array_values($dimensions), array_values($metrics));
             $outRow = array_merge(
-                array(sha1($profileId . implode('', $dimensions)), $profileId),
+                [sha1($profileId . implode('', $dimensions)), $profileId],
                 $row
             );
             $csv->writeRow($outRow);
-
             $cnt++;
         }
 
         return $csv;
 	}
 
-	protected function createOutputCsv($name)
+	public function createCsvFile($name)
 	{
 		$outTablesDir = $this->dataDir . '/out/tables';
 		if (!is_dir($outTablesDir)) {
