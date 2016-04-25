@@ -1,7 +1,12 @@
-sudo: false
+language: php
 
-services:
-  - docker
+php:
+- '5.6'
+- '7'
+
+before_script:
+  - composer self-update
+  - composer install --dev
 
 script:
-  - docker-compose run app
+  - ./vendor/bin/phpunit
