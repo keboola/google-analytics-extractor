@@ -46,23 +46,13 @@ class Client
      */
 	private function getReportRequest($query)
 	{
-		return [
-			'viewId' => $query['viewId'],
-            'dateRanges' => $query['dateRanges'],
-			'metrics' => $query['metrics'],
-			'dimensions' => $query['dimensions'],
-			'filtersExpression' => isset($query['filter'])?$query['filter']:null,
-//            'orderBys' => [isset($query['orderBy'])?$query['orderBy']:''],
-            'segments' => [],
-            'pivots' => [],
-//            'cohortGroups' => [],
-            'pageToken' => isset($query['pageToken'])?$query['pageToken']:null,
-            'pageSize' => 5000,
-            'includeEmptyRows' => true,
-            'hideTotals' => false,
-            'hideValueRanges' => true,
-            'samplingLevel' => 'LARGE',
-		];
+		$query['pageSize'] = 5000;
+        $query['includeEmptyRows'] = true;
+        $query['hideTotals'] = false;
+        $query['hideValueRanges'] = true;
+        $query['samplingLevel'] = 'LARGE';
+
+        return $query;
 	}
 
     /**

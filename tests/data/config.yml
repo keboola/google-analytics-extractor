@@ -35,7 +35,7 @@ parameters:
           -
             name: 'ga:country'
 
-        filters: []
+        filtersExpression: ''
         viewId: '69127714'
         dateRanges:
           -
