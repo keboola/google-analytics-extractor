@@ -27,23 +27,23 @@ class Application
     public function __construct($config)
     {
         $container = new Container();
-        $container['config'] = $this->validateConfig($config);
+        $container['parameters'] = $this->validateParamteters($config['parameters']);
         $container['logger'] = function () {
             return new Logger(APP_NAME);
         };
-        $container['google_client'] = function ($c) {
+        $container['google_client'] = function () use ($config) {
             return new RestApi(
-                $c['config']['authorization']['oauth_api']['credentials']['appKey'],
-                $c['config']['authorization']['oauth_api']['credentials']['#appSecret'],
-                $c['config']['authorization']['oauth_api']['credentials']['#data']['access_token'],
-                $c['config']['authorization']['oauth_api']['credentials']['#data']['refresh_token']
+                $config['authorization']['oauth_api']['credentials']['appKey'],
+                $config['authorization']['oauth_api']['credentials']['#appSecret'],
+                $config['authorization']['oauth_api']['credentials']['#data']['access_token'],
+                $config['authorization']['oauth_api']['credentials']['#data']['refresh_token']
             );
         };
         $container['google_analytics_client'] = function ($c) {
             return new Client($c['google_client']);
         };
         $container['output'] = function ($c) {
-            return new Output($c['config']['data_dir']);
+            return new Output($c['parameters']['data_dir']);
         };
         $container['extractor'] = function ($c) {
             return new Extractor(
@@ -59,10 +59,16 @@ class Application
     public function run()
     {
         $extracted = [];
-        $profiles = $this->container['config']['parameters']['profiles'];
-        $queries = array_filter($this->container['config']['parameters']['queries'], function ($query) {
+        $profiles = $this->container['parameters']['profiles'];
+        $queries = array_filter($this->container['parameters']['queries'], function ($query) {
             return $query['enabled'];
         });
+
+        /** @var Output $output */
+        $output = $this->container['output'];
+        $csv = $output->createCsvFile('profiles');
+        $output->createManifest('profiles', 'id', true);
+        $output->writeProfiles($csv, $profiles);
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
@@ -76,13 +82,13 @@ class Application
         ];
     }
 
-    private function validateConfig($config)
+    private function validateParamteters($parameters)
     {
         try {
             $processor = new Processor();
             return $processor->processConfiguration(
                 new ConfigDefinition(),
-                [$config]
+                [$parameters]
             );
         } catch (InvalidConfigurationException $e) {
             throw new UserException($e->getMessage(), 0, $e);

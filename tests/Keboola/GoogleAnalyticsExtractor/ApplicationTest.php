@@ -24,7 +24,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     private function getConfig()
     {
         $config = Yaml::parse(file_get_contents(ROOT_PATH . '/tests/data/config.yml'));
-        $config['data_dir'] = ROOT_PATH . '/tests/data/';
+        $config['parameters']['data_dir'] = ROOT_PATH . '/tests/data/';
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
             '#appSecret' => getenv('CLIENT_SECRET'),

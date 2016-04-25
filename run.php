@@ -16,7 +16,7 @@ try {
         throw new UserException('Data folder not set.');
     }
     $config = Yaml::parse(file_get_contents($arguments["data"] . "/config.yml"));
-    $config['data_dir'] = $arguments['data'];
+    $config['parameters']['data_dir'] = $arguments['data'];
     $app = new Application($config);
     $app->run();
 } catch(UserException $e) {

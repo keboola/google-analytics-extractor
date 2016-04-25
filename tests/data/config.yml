@@ -12,15 +12,32 @@ parameters:
     -
       id: 0
       name: 'users'
-      outputTable: 'in.c-main.ex-ga-users'
+      outputTable: 'users'
+      enabled: true
       query:
-        metrics: [ga:users, ga:pageviews, ga:bounces]
-        dimensions: [ga:date, ga:source, ga:medium, ga:country]
+        metrics:
+          -
+            expression: 'ga:users'
+          -
+            expression: 'ga:pageviews'
+          -
+            expression: 'ga:pageviews'
+          -
+            expression: 'ga:bounces'
+
+        dimensions:
+          -
+            name: 'ga:date'
+          -
+            name: 'ga:source'
+          -
+            name: 'ga:medium'
+          -
+            name: 'ga:country'
+
         filters: []
         viewId: '69127714'
         dateRanges:
           -
-            since: '2015-01-01'
-            until: '2016-01-01'
-      enabled: true
-
+            startDate: '2015-01-01'
+            endDate: '2016-01-01'

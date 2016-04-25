@@ -48,24 +48,15 @@ class Client
 	{
 		return [
 			'viewId' => $query['viewId'],
-            'dateRanges' => array_map(function ($range) {
-                return [
-                    'startDate' => $range['since'],
-                    'endDate' => $range['until']
-                ];
-            }, $query['dateRanges']),
-			'metrics' => array_map(function ($metric) {
-				return ['expression' => $metric];
-			}, $query['metrics']),
-			'dimensions' => array_map(function ($dimension) {
-                return ['name' => $dimension];
-            }, $query['dimensions']),
-			'filtersExpression' => isset($query['filter'])?$query['filter']:'',
+            'dateRanges' => $query['dateRanges'],
+			'metrics' => $query['metrics'],
+			'dimensions' => $query['dimensions'],
+			'filtersExpression' => isset($query['filter'])?$query['filter']:null,
 //            'orderBys' => [isset($query['orderBy'])?$query['orderBy']:''],
             'segments' => [],
             'pivots' => [],
 //            'cohortGroups' => [],
-            'pageToken' => empty($query['pageToken'])?null:$query['pageToken'],
+            'pageToken' => isset($query['pageToken'])?$query['pageToken']:null,
             'pageSize' => 5000,
             'includeEmptyRows' => true,
             'hideTotals' => false,

@@ -19,12 +19,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->client = new Client(new RestApi(
-            getenv('CLIENT_ID'),
-            getenv('CLIENT_SECRET'),
-            getenv('ACCESS_TOKEN'),
-            getenv('REFRESH_TOKEN')
-        ));
+        $this->client = new Client(
+            new RestApi(
+                getenv('CLIENT_ID'),
+                getenv('CLIENT_SECRET'),
+                getenv('ACCESS_TOKEN'),
+                getenv('REFRESH_TOKEN')
+            )
+        );
     }
 
     public function testGetBatch()
@@ -34,11 +36,18 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 'name' => 'users',
                 'query' => [
                     'viewId' => getenv('VIEW_ID'),
-                    'metrics' => ['ga:users','ga:pageviews'],
-                    'dimensions' => ['ga:date','ga:source','ga:medium'],
+                    'metrics' => [
+                        ['expression' => 'ga:users'],
+                        ['expression' => 'ga:pageviews']
+                    ],
+                    'dimensions' => [
+                        ['name' => 'ga:date'],
+                        ['name' => 'ga:source'],
+                        ['name' => 'ga:medium']
+                    ],
                     'dateRanges' => [[
-                        'since' => date('Y-m-d', strtotime('-12 months')),
-                        'until' => date('Y-m-d', strtotime('now'))
+                        'startDate' => date('Y-m-d', strtotime('-12 months')),
+                        'endDate' => date('Y-m-d', strtotime('now'))
                     ]]
                 ]
             ],
@@ -46,11 +55,18 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 'name' => 'sessions',
                 'query' => [
                     'viewId' => getenv('VIEW_ID'),
-                    'metrics' => ['ga:sessions','ga:bounces'],
-                    'dimensions' => ['ga:date', 'ga:country', 'ga:source'],
+                    'metrics' => [
+                        ['expression' => 'ga:sessions'],
+                        ['expression' => 'ga:bounces']
+                    ],
+                    'dimensions' => [
+                        ['name' => 'ga:date'],
+                        ['name' => 'ga:source'],
+                        ['name' => 'ga:country']
+                    ],
                     'dateRanges' => [[
-                        'since' => date('Y-m-d', strtotime('-12 months')),
-                        'until' => date('Y-m-d', strtotime('now'))
+                        'startDate' => date('Y-m-d', strtotime('-12 months')),
+                        'endDate' => date('Y-m-d', strtotime('now'))
                     ]]
                 ]
             ]

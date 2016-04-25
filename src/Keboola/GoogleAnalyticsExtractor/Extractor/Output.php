@@ -10,6 +10,7 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
+use Symfony\Component\Yaml\Yaml;
 
 class Output
 {
@@ -72,4 +73,20 @@ class Output
 		}
 		return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
 	}
+
+    public function createManifest($name, $primaryKey = null, $incremental = false)
+    {
+        $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
+
+        $manifestData = [
+            'destination' => $name,
+            'incremental' => $incremental
+        ];
+
+        if ($primaryKey !== null) {
+            $manifestData['primary_key'] = $primaryKey;
+        }
+
+        return file_put_contents($outFilename , Yaml::dump($manifestData));
+    }
 }
