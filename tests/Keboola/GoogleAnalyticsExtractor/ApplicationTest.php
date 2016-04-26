@@ -28,10 +28,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
             '#appSecret' => getenv('CLIENT_SECRET'),
-            '#data' => [
+            '#data' => json_encode([
                 'access_token' => getenv('ACCESS_TOKEN'),
                 'refresh_token' => getenv('REFRESH_TOKEN')
-            ]
+            ])
         ];
 
         return $config;

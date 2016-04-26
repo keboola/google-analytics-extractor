@@ -31,12 +31,13 @@ class Application
         $container['logger'] = function () {
             return new Logger(APP_NAME);
         };
-        $container['google_client'] = function () use ($config) {
+        $tokenData = json_decode($config['authorization']['oauth_api']['credentials']['#data'], true);
+        $container['google_client'] = function () use ($config, $tokenData) {
             return new RestApi(
                 $config['authorization']['oauth_api']['credentials']['appKey'],
                 $config['authorization']['oauth_api']['credentials']['#appSecret'],
-                $config['authorization']['oauth_api']['credentials']['#data']['access_token'],
-                $config['authorization']['oauth_api']['credentials']['#data']['refresh_token']
+                $tokenData['access_token'],
+                $tokenData['refresh_token']
             );
         };
         $container['google_analytics_client'] = function ($c) {
