@@ -6,4 +6,4 @@ WORKDIR /code
 
 RUN composer install --no-interaction
 
-ENTRYPOINT php ./src/run.php --data=/data
+ENTRYPOINT php ./run.php --data=/data
