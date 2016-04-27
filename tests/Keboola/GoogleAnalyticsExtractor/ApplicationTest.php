@@ -40,5 +40,25 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testRun()
     {
         $this->application->run();
+
+        $profilesOutputPath = ROOT_PATH . '/tests/data/out/tables/profiles.csv';
+        $profilesManifestPath = $profilesOutputPath . '.manifest';
+        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
+        $usersManifestPath = $usersOutputPath . '.manifest';
+
+        $this->assertFileExists($profilesOutputPath);
+        $this->assertFileExists($profilesManifestPath);
+        $this->assertFileExists($usersOutputPath);
+        $this->assertFileExists($usersManifestPath);
+
+        $profilesManifest = Yaml::parse(file_get_contents($profilesManifestPath));
+        $usersManifest = Yaml::parse(file_get_contents($usersManifestPath));
+
+        foreach ([$usersManifest, $profilesManifest] as $manifest) {
+            $this->assertArrayHasKey('incremental', $manifest);
+            $this->assertTrue($manifest['incremental']);
+            $this->assertArrayHasKey('primary_key', $manifest);
+            $this->assertEquals('id', $manifest['primary_key'][0]);
+        }
     }
 }

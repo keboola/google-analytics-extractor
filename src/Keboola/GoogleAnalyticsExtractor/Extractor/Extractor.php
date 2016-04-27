@@ -101,7 +101,7 @@ class Extractor
             $nextQueries = [];
             foreach ($reports['reports'] as $reportKey => $report) {
                 if ($createOutputFile) {
-                    $csvFiles[$report['query']['id']] = $this->createCsvFile(
+                    $csvFiles[$report['query']['id']] = $this->createOutputFile(
                         $queries[$reportKey]['outputTable']
                     );
                 }
@@ -129,7 +129,7 @@ class Extractor
         return $this->gaApi->getBatch($this->addViewIdToQueries($queries, $profileId));
     }
 
-    private function createCsvFile($filename, $primaryKey = 'id', $incremental = true)
+    private function createOutputFile($filename, $primaryKey = ['id'], $incremental = true)
     {
         $this->output->createManifest($filename, $primaryKey, $incremental);
         return $this->output->createCsvFile($filename);
