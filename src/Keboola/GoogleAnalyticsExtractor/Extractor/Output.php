@@ -79,7 +79,6 @@ class Output
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
 
         $manifestData = [
-            'destination' => $name,
             'incremental' => $incremental
         ];
 

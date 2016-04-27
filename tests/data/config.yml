@@ -12,7 +12,7 @@ parameters:
     -
       id: 0
       name: 'users'
-      outputTable: 'users'
+      outputTable: 'users' #webalized name
       enabled: true
       query:
         metrics:
