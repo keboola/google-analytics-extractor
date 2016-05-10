@@ -24,6 +24,10 @@ class ConfigDefinition implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('outputBucket')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
                 ->scalarNode('data_dir')
                     ->isRequired()
                     ->cannotBeEmpty()

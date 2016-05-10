@@ -20,15 +20,18 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     /** @var Extractor */
     private $extractor;
 
+    private $config;
+
     public function setUp()
     {
+        $this->config = $this->getConfig();
         $client = new Client(new RestApi(
             getenv('CLIENT_ID'),
             getenv('CLIENT_SECRET'),
             getenv('ACCESS_TOKEN'),
             getenv('REFRESH_TOKEN')
         ));
-        $output = new Output(ROOT_PATH . '/tests/data');
+        $output = new Output(ROOT_PATH . '/tests/data', $this->config['parameters']['outputBucket']);
         $logger = new Logger(APP_NAME);
         $this->extractor = new Extractor($client, $output, $logger);
     }
@@ -40,9 +43,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     public function testRun()
     {
-        $config = $this->getConfig();
-        $queries = $config['parameters']['queries'];
-        $profiles = $config['parameters']['profiles'];
+        $queries = $this->config['parameters']['queries'];
+        $profiles = $this->config['parameters']['profiles'];
 
         $this->extractor->run($queries, $profiles[0]);
 

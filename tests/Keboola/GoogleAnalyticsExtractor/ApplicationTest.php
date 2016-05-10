@@ -16,9 +16,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     /** @var Application */
     private $application;
 
+    private $config;
+
     public function setUp()
     {
-        $this->application = new Application($this->getConfig());
+        $this->config = $this->getConfig();
+        $this->application = new Application($this->config);
     }
 
     private function getConfig()
@@ -55,10 +58,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $usersManifest = Yaml::parse(file_get_contents($usersManifestPath));
 
         foreach ([$usersManifest, $profilesManifest] as $manifest) {
+            $this->assertArrayHasKey('destination', $manifest);
             $this->assertArrayHasKey('incremental', $manifest);
             $this->assertTrue($manifest['incremental']);
             $this->assertArrayHasKey('primary_key', $manifest);
             $this->assertEquals('id', $manifest['primary_key'][0]);
         }
+
+        $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv' , $usersManifest['destination']);
+        $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv' , $profilesManifest['destination']);
     }
 }

@@ -44,7 +44,7 @@ class Application
             return new Client($c['google_client']);
         };
         $container['output'] = function ($c) {
-            return new Output($c['parameters']['data_dir']);
+            return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket']);
         };
         $container['extractor'] = function ($c) {
             return new Extractor(

@@ -16,9 +16,12 @@ class Output
 {
 	private $dataDir;
 
-	public function __construct($dataDir)
+    private $outputBucket;
+
+	public function __construct($dataDir, $outputBucket)
 	{
 		$this->dataDir = $dataDir;
+        $this->outputBucket = $outputBucket;
 	}
 
 	public function writeProfiles(CsvFile $csv, array $profiles)
@@ -79,6 +82,7 @@ class Output
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
 
         $manifestData = [
+            'destination' => sprintf('%s.%s.csv', $this->outputBucket, $name),
             'incremental' => $incremental
         ];
 
