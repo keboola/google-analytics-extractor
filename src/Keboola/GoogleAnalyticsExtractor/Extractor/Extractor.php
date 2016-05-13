@@ -88,7 +88,6 @@ class Extractor
 	private function extract($queries, $profileId)
 	{
         $reports = $this->getReports($queries, $profileId);
-
 		$this->logger->debug("Extracting ...", [
 			'queries' => $queries,
 			'results' => count($reports)

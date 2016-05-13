@@ -52,4 +52,12 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($outputFile);
         $this->assertNotEmpty(file_get_contents($outputFile));
     }
+
+    public function testRunEmptyResult()
+    {
+        $queries = [];
+        $profiles = $this->config['parameters']['profiles'];
+
+        $this->extractor->run($queries, $profiles[0]);
+    }
 }

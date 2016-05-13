@@ -95,6 +95,9 @@ class Client
 	private function processResponse($response, $queries)
 	{
         $processed = [];
+        if (empty($response['reports'])) {
+            return ['reports' => []];
+        }
         foreach ($response['reports'] as $reportKey => $report) {
             $dataSet = [];
             $dimensions = [];
