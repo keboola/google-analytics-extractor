@@ -46,6 +46,12 @@ class Client
      */
 	private function getReportRequest($query)
 	{
+        $query['dateRanges'] = array_map(function ($item) {
+            return [
+                'startDate' => date('Y-m-d', strtotime($item['startDate'])),
+                'endDate' => date('Y-m-d', strtotime($item['endDate']))
+            ];
+        }, $query['dateRanges']);
 		$query['pageSize'] = 5000;
         $query['includeEmptyRows'] = true;
         $query['hideTotals'] = false;

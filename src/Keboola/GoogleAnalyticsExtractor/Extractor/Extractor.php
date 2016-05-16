@@ -68,23 +68,6 @@ class Extractor
         return $status;
 	}
 
-	/*protected function getData($profile, $tableName, $dateFrom, $dateTo, $antisampling = false)
-	{
-		// Optimize sampling if configured
-		if ($antisampling) {
-			$dt = new \DateTime($dateFrom);
-			$dtTo = new \DateTime($dateTo);
-			$dtTo->modify("+1 day");
-
-			while ($dt->format('Y-m-d') != $dtTo->format('Y-m-d')) {
-				$this->extract($account, $profile, $tableName, $dt->format('Y-m-d'), $dt->format('Y-m-d'));
-				$dt->modify("+1 day");
-			}
-		} else {
-			$this->extract($account, $profile, $tableName, $dateFrom, $dateTo);
-		}
-	}*/
-
 	private function extract($queries, $profileId)
 	{
         $reports = $this->getReports($queries, $profileId);

@@ -40,5 +40,5 @@ parameters:
         viewId: '69127714'
         dateRanges:
           -
-            startDate: '2015-01-01'
-            endDate: '2016-01-01'
+            startDate: '-30 days'
+            endDate: '-1 day'
