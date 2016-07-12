@@ -38,8 +38,8 @@ class Client
      *   - viewId - profile / view ID,
      *   - metrics - array of metrics
      *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filter - filter expression [OPTIONAL]
-     *   - segment - segment ID [OPTIONAL]
+     *   - filtersExpression - filter expression [OPTIONAL]
+     *   - segments - segment ID [OPTIONAL]
      *   - dateRanges - array of Date ranges
      *   - sort - dimension to sort by
      * @return array
@@ -68,8 +68,8 @@ class Client
      *   - viewId - profile / view ID,
      *   - metrics - array of metrics
      *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filter - filter expression [OPTIONAL]
-     *   - segment - segment ID [OPTIONAL]
+     *   - filtersExpression - filter expression [OPTIONAL]
+     *   - segments - segment ID [OPTIONAL]
      *   - dateRanges - array of Date ranges
      *   - orderBy - dimension or metric to order by
      *

@@ -48,16 +48,21 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $profilesManifestPath = $profilesOutputPath . '.manifest';
         $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
         $usersManifestPath = $usersOutputPath . '.manifest';
+        $organicOutputPath = ROOT_PATH . '/tests/data/out/tables/organicTraffic.csv';
+        $organicManifestPath = $organicOutputPath . '.manifest';
 
         $this->assertFileExists($profilesOutputPath);
         $this->assertFileExists($profilesManifestPath);
         $this->assertFileExists($usersOutputPath);
         $this->assertFileExists($usersManifestPath);
+        $this->assertFileExists($organicOutputPath);
+        $this->assertFileExists($organicManifestPath);
 
         $profilesManifest = Yaml::parse(file_get_contents($profilesManifestPath));
         $usersManifest = Yaml::parse(file_get_contents($usersManifestPath));
+        $organicManifest = Yaml::parse(file_get_contents($organicManifestPath));
 
-        foreach ([$usersManifest, $profilesManifest] as $manifest) {
+        foreach ([$usersManifest, $profilesManifest, $organicManifest] as $manifest) {
             $this->assertArrayHasKey('destination', $manifest);
             $this->assertArrayHasKey('incremental', $manifest);
             $this->assertTrue($manifest['incremental']);

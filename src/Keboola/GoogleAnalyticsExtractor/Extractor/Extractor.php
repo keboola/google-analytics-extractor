@@ -70,41 +70,66 @@ class Extractor
 
 	private function extract($queries, $profileId)
 	{
-        $reports = $this->getReports($queries, $profileId);
-		$this->logger->debug("Extracting ...", [
-			'queries' => $queries,
-			'results' => count($reports)
-		]);
+        // queries in a batch must have the same segmentId
+        $segmentGroups = $this->groupBySegment($queries);
+        foreach ($segmentGroups as $queries) {
+            $reports = $this->getReports($queries, $profileId);
+            $this->logger->debug("Extracting ...", [
+                'queries' => $queries,
+                'results' => count($reports)
+            ]);
 
-        $hasNextPages = false;
-        $createOutputFile = true;
-        $csvFiles = [];
-        do {
-            $nextQueries = [];
-            foreach ($reports['reports'] as $reportKey => $report) {
-                if ($createOutputFile) {
-                    $csvFiles[$report['query']['id']] = $this->createOutputFile(
-                        $queries[$reportKey]['outputTable']
-                    );
+            $hasNextPages = false;
+            $createOutputFile = true;
+            $csvFiles = [];
+            do {
+                $nextQueries = [];
+                foreach ($reports['reports'] as $reportKey => $report) {
+                    if ($createOutputFile) {
+                        $csvFiles[$report['query']['id']] = $this->createOutputFile(
+                            $queries[$reportKey]['outputTable']
+                        );
+                    }
+                    $this->output->writeReport($csvFiles[$report['query']['id']], $report, $profileId);
+
+                    // pagination
+                    if (isset($report['nextPageToken'])) {
+                        $queries[$reportKey]['query']['pageToken'] = $report['nextPageToken'];
+                        $nextQueries[] = $queries[$reportKey];
+                    }
+
+                    $hasNextPages = !empty($nextQueries);
                 }
-                $this->output->writeReport($csvFiles[$report['query']['id']], $report, $profileId);
+                $createOutputFile = false;
 
-                // pagination
-                if (isset($report['nextPageToken'])) {
-                    $queries[$reportKey]['query']['pageToken'] = $report['nextPageToken'];
-                    $nextQueries[] = $queries[$reportKey];
+                if ($hasNextPages) {
+                    $reports = $this->getReports($nextQueries, $profileId);
                 }
-
-                $hasNextPages = !empty($nextQueries);
-            }
-            $createOutputFile = false;
-
-            if ($hasNextPages) {
-                $reports = $this->getReports($nextQueries, $profileId);
-            }
-            $queries = $nextQueries;
-        } while ($hasNextPages);
+                $queries = $nextQueries;
+            } while ($hasNextPages);
+        }
 	}
+
+    private function groupBySegment($queries)
+    {
+        $cnt = 0;
+        $segmentGroups = [];
+        foreach ($queries as $query) {
+            if (empty($query['query']['segments'])) {
+                // no segment
+                $segmentGroups['nosegment'][] = $query;
+            } elseif (count($query['query']['segments']) == 1) {
+                // one segment - put in one group
+                $segmentGroups[$query['query']['segments'][0]['segmentId']][] = $query;
+            } else {
+                // multiple segments - one query per group
+                $segmentGroups[$cnt][] = $query;
+                $cnt++;
+            }
+        }
+
+        return $segmentGroups;
+    }
 
     private function getReports($queries, $profileId)
     {

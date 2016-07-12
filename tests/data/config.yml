@@ -22,8 +22,6 @@ parameters:
           -
             expression: 'ga:pageviews'
           -
-            expression: 'ga:pageviews'
-          -
             expression: 'ga:bounces'
 
         dimensions:
@@ -37,6 +35,38 @@ parameters:
             name: 'ga:country'
 
         filtersExpression: ''
+        viewId: '69127714'
+        dateRanges:
+          -
+            startDate: '-30 days'
+            endDate: '-1 day'
+    -
+      id: 1
+      name: 'Organic Traffic'
+      outputTable: 'organicTraffic' #webalized name
+      enabled: true
+      query:
+        metrics:
+          -
+            expression: 'ga:users'
+          -
+            expression: 'ga:sessions'
+          -
+            expression: 'ga:pageviews'
+          -
+            expression: 'ga:bounces'
+
+        dimensions:
+          -
+            name: 'ga:date'
+          -
+            name: 'ga:segment'
+
+        filtersExpression: ''
+        segments:
+          -
+            segmentId: 'gaid::-5'
+
         viewId: '69127714'
         dateRanges:
           -
