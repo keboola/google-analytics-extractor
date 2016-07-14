@@ -38,7 +38,7 @@ parameters:
         viewId: '69127714'
         dateRanges:
           -
-            startDate: '-30 days'
+            startDate: '-12 months'
             endDate: '-1 day'
     -
       id: 1
@@ -70,5 +70,5 @@ parameters:
         viewId: '69127714'
         dateRanges:
           -
-            startDate: '-30 days'
+            startDate: '-6 months'
             endDate: '-1 day'

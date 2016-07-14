@@ -43,7 +43,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                     'dimensions' => [
                         ['name' => 'ga:date'],
                         ['name' => 'ga:source'],
-                        ['name' => 'ga:medium']
+                        ['name' => 'ga:medium'],
                     ],
                     'dateRanges' => [[
                         'startDate' => date('Y-m-d', strtotime('-12 months')),
@@ -72,11 +72,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $reports = $this->client->getBatch($queries);
+        $reports = [];
+        foreach ($queries as $query) {
+            $reports[] = $this->client->getBatch($query);
+        }
 
-        $this->assertNotEmpty($reports['reports'][0]['data']);
-        $this->assertEquals('users', $reports['reports'][0]['query']['name']);
-        $this->assertNotEmpty($reports['reports'][1]['data']);
-        $this->assertEquals('sessions', $reports['reports'][1]['query']['name']);
+        $this->assertNotEmpty($reports[0]['data']);
+        $this->assertEquals('users', $reports[0]['query']['name']);
+        $this->assertNotEmpty($reports[1]['data']);
+        $this->assertEquals('sessions', $reports[1]['query']['name']);
     }
 }

@@ -62,7 +62,7 @@ class Client
 	}
 
     /**
-     * @param $queries
+     * @param $query
      *
      * array of arrays
      *   - viewId - profile / view ID,
@@ -76,11 +76,8 @@ class Client
      * @return array
      * @throws \Keboola\Google\ClientBundle\Exception\RestApiException
      */
-	public function getBatch($queries) {
-		$body['reportRequests'] = [];
-		foreach ($queries as $query) {
-			$body['reportRequests'][] = $this->getReportRequest($query['query']);
-		};
+	public function getBatch($query) {
+        $body['reportRequests'][] = $this->getReportRequest($query['query']);
 
         $response = $this->api->request(
             self::DATA_URL,
@@ -89,52 +86,52 @@ class Client
             ['json' => $body]
         );
 
-        return $this->processResponse(json_decode($response->getBody()->getContents(), true), $queries);
+        return $this->processResponse(json_decode($response->getBody()->getContents(), true), $query);
 	}
 
     /**
      * Parse JSON response to array of Result rows
      * @param $response
+     * @param $query
      * @return array
      * @internal param array $result json decoded response
      */
-	private function processResponse($response, $queries)
+	private function processResponse($response, $query)
 	{
-        $processed = [];
         if (empty($response['reports'])) {
-            return ['reports' => []];
+            return null;
         }
-        foreach ($response['reports'] as $reportKey => $report) {
-            $dataSet = [];
-            $dimensions = [];
-            $metrics = [];
-            $dimensionNames = $report['columnHeader']['dimensions'];
-            $metricNames = array_map(function ($metric) {
-                return $metric['name'];
-            }, $report['columnHeader']['metricHeader']['metricHeaderEntries']);
+        $report = $response['reports'][0];
 
-            if (!empty($report['data']['rows'])) {
-                foreach ($report['data']['rows'] as $row) {
-                    foreach ($row['dimensions'] as $k => $v) {
-                        $dimensions[$dimensionNames[$k]] = $v;
-                    }
-                    foreach ($row['metrics'][0]['values'] as $k => $v) {
-                        $metrics[$metricNames[$k]] = $v;
-                    }
-                    $dataSet[] = new Result($metrics, $dimensions);
+        $dataSet = [];
+        $dimensions = [];
+        $metrics = [];
+        $dimensionNames = $report['columnHeader']['dimensions'];
+        $metricNames = array_map(function ($metric) {
+            return $metric['name'];
+        }, $report['columnHeader']['metricHeader']['metricHeaderEntries']);
+
+        if (!empty($report['data']['rows'])) {
+            foreach ($report['data']['rows'] as $row) {
+                foreach ($row['dimensions'] as $k => $v) {
+                    $dimensions[$dimensionNames[$k]] = $v;
                 }
-		    }
-
-            $processed['reports'][$reportKey] = [
-                'data' => $dataSet,
-                'query' => $queries[$reportKey],
-                'totals' => $report['data']['totals'],
-                'rowCount' => $report['data']['rowCount']
-            ];
-
-            if (isset($report['nextPageToken'])) {
-                $processed['reports'][$reportKey]['nextPageToken'] = $report['nextPageToken'];
+                foreach ($row['metrics'][0]['values'] as $k => $v) {
+                    $metrics[$metricNames[$k]] = $v;
+                }
+                $dataSet[] = new Result($metrics, $dimensions);
             }
+        }
+
+        $processed = [
+            'data' => $dataSet,
+            'query' => $query,
+            'totals' => $report['data']['totals'],
+            'rowCount' => $report['data']['rowCount']
+        ];
+
+        if (isset($report['nextPageToken'])) {
+            $processed['nextPageToken'] = $report['nextPageToken'];
         }
 
         return $processed;

@@ -70,89 +70,58 @@ class Extractor
 
 	private function extract($queries, $profileId)
 	{
-        // queries in a batch must have the same segmentId
-        $segmentGroups = $this->groupBySegment($queries);
-        foreach ($segmentGroups as $queries) {
-            $reports = $this->getReports($queries, $profileId);
+        foreach ($queries as $query) {
+            if (empty($query['query']['viewId'])) {
+                $query['query']['viewId'] = (string) $profileId;
+            } elseif ($query['query']['viewId'] != $profileId) {
+                continue;
+            }
+
+            $report = $this->getReport($query);
+            if ($report == null) {
+                continue;
+            }
             $this->logger->debug("Extracting ...", [
-                'queries' => $queries,
-                'results' => count($reports)
+                'query' => $query
             ]);
 
-            $hasNextPages = false;
             $createOutputFile = true;
-            $csvFiles = [];
+            $csvFile = null;
             do {
-                $nextQueries = [];
-                foreach ($reports['reports'] as $reportKey => $report) {
-                    if ($createOutputFile) {
-                        $csvFiles[$report['query']['id']] = $this->createOutputFile(
-                            $queries[$reportKey]['outputTable']
-                        );
-                    }
-                    $this->output->writeReport($csvFiles[$report['query']['id']], $report, $profileId);
-
-                    // pagination
-                    if (isset($report['nextPageToken'])) {
-                        $queries[$reportKey]['query']['pageToken'] = $report['nextPageToken'];
-                        $nextQueries[] = $queries[$reportKey];
-                    }
-
-                    $hasNextPages = !empty($nextQueries);
+                $nextQuery = null;
+                if ($createOutputFile) {
+                    $csvFile = $this->createOutputFile(
+                        $query['outputTable']
+                    );
                 }
+                $this->output->writeReport($csvFile, $report, $profileId);
+
+                // pagination
+                if (isset($report['nextPageToken'])) {
+                    $query['query']['pageToken'] = $report['nextPageToken'];
+                    $nextQuery = $query;
+                }
+
+                $hasNextPages = !is_null($nextQuery);
                 $createOutputFile = false;
 
                 if ($hasNextPages) {
-                    $reports = $this->getReports($nextQueries, $profileId);
+                    $report = $this->getReport($nextQuery);
                 }
-                $queries = $nextQueries;
+                $query = $nextQuery;
             } while ($hasNextPages);
         }
 	}
 
-    private function groupBySegment($queries)
+    private function getReport($query)
     {
-        $cnt = 0;
-        $segmentGroups = [];
-        foreach ($queries as $query) {
-            if (empty($query['query']['segments'])) {
-                // no segment
-                $segmentGroups['nosegment'][] = $query;
-            } elseif (count($query['query']['segments']) == 1) {
-                // one segment - put in one group
-                $segmentGroups[$query['query']['segments'][0]['segmentId']][] = $query;
-            } else {
-                // multiple segments - one query per group
-                $segmentGroups[$cnt][] = $query;
-                $cnt++;
-            }
-        }
-
-        return $segmentGroups;
-    }
-
-    private function getReports($queries, $profileId)
-    {
-        return $this->gaApi->getBatch($this->addViewIdToQueries($queries, $profileId));
+        return $this->gaApi->getBatch($query);
     }
 
     private function createOutputFile($filename, $primaryKey = ['id'], $incremental = true)
     {
         $this->output->createManifest($filename, $primaryKey, $incremental);
         return $this->output->createCsvFile($filename);
-    }
-
-    private function addViewIdToQueries($queries, $profileId)
-    {
-        foreach ($queries as $k => &$query) {
-            if (empty($query['query']['viewId'])) {
-                $query['query']['viewId'] = (string) $profileId;
-            } elseif ($query['query']['viewId'] != $profileId) {
-                unset($queries[$k]);
-            }
-        }
-
-        return $queries;
     }
 
 	public function refreshTokenCallback($accessToken, $refreshToken)
