@@ -39,8 +39,8 @@ class Output
         $cnt = 0;
         /** @var Result $result */
         foreach ($report['data'] as $result) {
-            $metrics = $result->getMetrics();
-            $dimensions = $result->getDimensions();
+            $metrics = $this->formatResultKeys($result->getMetrics());
+            $dimensions = $this->formatResultKeys($result->getDimensions());
 
             // CSV Header
             if ($cnt == 0 && !$incremental) {
@@ -67,6 +67,15 @@ class Output
 
         return $csv;
 	}
+
+    private function formatResultKeys($metricsOrDimensions)
+    {
+        $res = [];
+        foreach ($metricsOrDimensions as $k => $v) {
+            $res[str_replace('ga:','',$k)] = $v;
+        }
+        return $res;
+    }
 
 	public function createCsvFile($name)
 	{

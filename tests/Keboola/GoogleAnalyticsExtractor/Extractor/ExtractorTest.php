@@ -8,6 +8,7 @@
  */
 namespace Keboola\GoogleAnalyticsExtractor\Test;
 
+use Keboola\Csv\CsvFile;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
@@ -51,6 +52,26 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $outputFile = ROOT_PATH . '/tests/data/out/tables/' . $queries[0]['outputTable'] . '.csv';
         $this->assertFileExists($outputFile);
         $this->assertNotEmpty(file_get_contents($outputFile));
+
+        $csv = new CsvFile($outputFile);
+        $csv->next();
+        $header = $csv->current();
+
+        // check CSV header
+        $dimensions = $queries[0]['query']['dimensions'];
+        $metrics = $queries[0]['query']['metrics'];
+        foreach ($dimensions as $dimension) {
+            $this->assertContains(str_replace('ga:','', $dimension['name']), $header);
+        }
+        foreach ($metrics as $metric) {
+            $this->assertContains(str_replace('ga:','', $metric['expression']), $header);
+        }
+
+        // check date format
+        $csv->next();
+        $row = $csv->current();
+        $dateCol = array_search('date', $header);
+        $this->assertContains('-', $row[$dateCol]);
     }
 
     public function testRunEmptyResult()
