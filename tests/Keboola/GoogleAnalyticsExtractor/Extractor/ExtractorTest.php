@@ -13,7 +13,7 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Monolog\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger;
 use Symfony\Component\Yaml\Yaml;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase

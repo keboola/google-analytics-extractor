@@ -15,7 +15,6 @@ use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Monolog\Logger;
 use Pimple\Container;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;

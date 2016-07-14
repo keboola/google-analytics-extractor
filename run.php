@@ -3,7 +3,7 @@
 use Keboola\GoogleAnalyticsExtractor\Application;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
-use Monolog\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger;
 use Symfony\Component\Yaml\Yaml;
 
 require_once(dirname(__FILE__) . "/bootstrap.php");
