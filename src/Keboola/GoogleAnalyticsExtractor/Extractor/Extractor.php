@@ -77,41 +77,50 @@ class Extractor
                 continue;
             }
 
-            $report = $this->getReport($query);
-            if ($report == null) {
-                continue;
-            }
             $this->logger->debug("Extracting ...", [
                 'query' => $query
             ]);
 
-            $createOutputFile = true;
-            $csvFile = null;
+            $report = $this->getReport($query);
+            if ($report == null) {
+                continue;
+            }
+
+            $csvFile = $this->createOutputFile(
+                $query['outputTable']
+            );
+            $this->output->writeReport($csvFile, $report, $profileId);
+
+            // pagination
             do {
                 $nextQuery = null;
-                if ($createOutputFile) {
-                    $csvFile = $this->createOutputFile(
-                        $query['outputTable']
-                    );
-                }
-                $this->output->writeReport($csvFile, $report, $profileId);
-
-                // pagination
                 if (isset($report['nextPageToken'])) {
                     $query['query']['pageToken'] = $report['nextPageToken'];
                     $nextQuery = $query;
-                }
-
-                $hasNextPages = !is_null($nextQuery);
-                $createOutputFile = false;
-
-                if ($hasNextPages) {
                     $report = $this->getReport($nextQuery);
+                    $this->output->writeReport($csvFile, $report, $profileId);
                 }
                 $query = $nextQuery;
-            } while ($hasNextPages);
+            } while ($nextQuery);
         }
 	}
+
+    public function getSampleReport($query)
+    {
+        $report = $this->getReport($query);
+        $report['data'] = array_slice($report['data'], 0, 100);
+
+        $csvFile = $this->createOutputFile(
+            $query['outputTable']
+        );
+        $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+
+        return [
+            'viewId' => $query['query']['viewId'],
+            'data' => file_get_contents($csvFile),
+            'rowCount' => $report['rowCount']
+        ];
+    }
 
     private function getReport($query)
     {

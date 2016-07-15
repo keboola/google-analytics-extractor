@@ -15,6 +15,7 @@ use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
+use Monolog\Handler\NullHandler;
 use Pimple\Container;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
@@ -26,9 +27,14 @@ class Application
     public function __construct($config)
     {
         $container = new Container();
+        $container['action'] = isset($config['action'])?$config['action']:'run';
         $container['parameters'] = $this->validateParamteters($config['parameters']);
-        $container['logger'] = function () {
-            return new Logger(APP_NAME);
+        $container['logger'] = function ($c) {
+            $logger = new Logger(APP_NAME);
+            if ($c['action'] !== 'run') {
+                $logger->setHandlers([new NullHandler(Logger::INFO)]);
+            }
+            return $logger;
         };
         $tokenData = json_decode($config['authorization']['oauth_api']['credentials']['#data'], true);
         $container['google_client'] = function () use ($config, $tokenData) {
@@ -58,6 +64,16 @@ class Application
 
     public function run()
     {
+        $actionMethod = $this->container['action'] . 'Action';
+        if (!method_exists($this, $actionMethod)) {
+            throw new UserException(sprintf("Action '%s' does not exist.", $this['action']));
+        }
+
+        return $this->$actionMethod();
+    }
+
+    private function runAction()
+    {
         $extracted = [];
         $profiles = $this->container['parameters']['profiles'];
         $queries = array_filter($this->container['parameters']['queries'], function ($query) {
@@ -80,6 +96,20 @@ class Application
             'status' => 'ok',
             'extracted' => $extracted
         ];
+    }
+
+    private function sampleAction()
+    {
+        $profile = $this->container['parameters']['profiles'][0];
+        $query = $this->container['parameters']['queries'][0];
+
+        if (empty($query['query']['viewId'])) {
+            $query['query']['viewId'] = $profile['id'];
+        }
+
+        /** @var Extractor $extractor */
+        $extractor = $this->container['extractor'];
+        return $extractor->getSampleReport($query);
     }
 
     private function validateParamteters($parameters)

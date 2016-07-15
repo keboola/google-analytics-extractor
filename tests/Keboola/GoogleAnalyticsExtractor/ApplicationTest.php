@@ -73,4 +73,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv' , $usersManifest['destination']);
         $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv' , $profilesManifest['destination']);
     }
+
+    public function testSample()
+    {
+        $this->config['action'] = 'sample';
+        $this->application = new Application($this->config);
+
+        $result = $this->application->run();
+
+        $this->assertArrayHasKey('viewId', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('rowCount', $result);
+    }
 }
