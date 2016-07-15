@@ -61,10 +61,10 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $dimensions = $queries[0]['query']['dimensions'];
         $metrics = $queries[0]['query']['metrics'];
         foreach ($dimensions as $dimension) {
-            $this->assertContains(str_replace('ga:','', $dimension['name']), $header);
+            $this->assertContains(str_replace('ga:', '', $dimension['name']), $header);
         }
         foreach ($metrics as $metric) {
-            $this->assertContains(str_replace('ga:','', $metric['expression']), $header);
+            $this->assertContains(str_replace('ga:', '', $metric['expression']), $header);
         }
 
         // check date format

@@ -70,8 +70,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals('id', $manifest['primary_key'][0]);
         }
 
-        $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv' , $usersManifest['destination']);
-        $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv' , $profilesManifest['destination']);
+        $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv', $usersManifest['destination']);
+        $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv', $profilesManifest['destination']);
     }
 
     public function testSample()

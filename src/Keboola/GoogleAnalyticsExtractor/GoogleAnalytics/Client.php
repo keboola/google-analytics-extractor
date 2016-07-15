@@ -12,54 +12,24 @@ use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
 
 class Client
 {
-	/** @var GoogleApi */
-	protected $api;
+    const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
+    const DATA_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
 
-	const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
-	const DATA_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    /** @var GoogleApi */
+    protected $api;
 
-	public function __construct(GoogleApi $api)
-	{
-		$this->api = $api;
-	}
-
-	/**
-	 * @return GoogleApi
-	 */
-	public function getApi()
-	{
-		return $this->api;
-	}
+    public function __construct(GoogleApi $api)
+    {
+        $this->api = $api;
+    }
 
     /**
-     * Format query array to ReportRequest
-     *
-     * @param $query
-     *   - viewId - profile / view ID,
-     *   - metrics - array of metrics
-     *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filtersExpression - filter expression [OPTIONAL]
-     *   - segments - segment ID [OPTIONAL]
-     *   - dateRanges - array of Date ranges
-     *   - sort - dimension to sort by
-     * @return array
+     * @return GoogleApi
      */
-	private function getReportRequest($query)
-	{
-        $query['dateRanges'] = array_map(function ($item) {
-            return [
-                'startDate' => date('Y-m-d', strtotime($item['startDate'])),
-                'endDate' => date('Y-m-d', strtotime($item['endDate']))
-            ];
-        }, $query['dateRanges']);
-		$query['pageSize'] = 5000;
-        $query['includeEmptyRows'] = true;
-        $query['hideTotals'] = false;
-        $query['hideValueRanges'] = true;
-        $query['samplingLevel'] = 'LARGE';
-
-        return $query;
-	}
+    public function getApi()
+    {
+        return $this->api;
+    }
 
     /**
      * @param $query
@@ -76,7 +46,8 @@ class Client
      * @return array
      * @throws \Keboola\Google\ClientBundle\Exception\RestApiException
      */
-	public function getBatch($query) {
+    public function getBatch($query)
+    {
         $body['reportRequests'][] = $this->getReportRequest($query['query']);
 
         $response = $this->api->request(
@@ -87,7 +58,37 @@ class Client
         );
 
         return $this->processResponse(json_decode($response->getBody()->getContents(), true), $query);
-	}
+    }
+
+    /**
+     * Format query array to ReportRequest
+     *
+     * @param $query
+     *   - viewId - profile / view ID,
+     *   - metrics - array of metrics
+     *   - dimensions - array of dimensions [OPTIONAL]
+     *   - filtersExpression - filter expression [OPTIONAL]
+     *   - segments - segment ID [OPTIONAL]
+     *   - dateRanges - array of Date ranges
+     *   - sort - dimension to sort by
+     * @return array
+     */
+    private function getReportRequest($query)
+    {
+        $query['dateRanges'] = array_map(function ($item) {
+            return [
+                'startDate' => date('Y-m-d', strtotime($item['startDate'])),
+                'endDate' => date('Y-m-d', strtotime($item['endDate']))
+            ];
+        }, $query['dateRanges']);
+        $query['pageSize'] = 5000;
+        $query['includeEmptyRows'] = true;
+        $query['hideTotals'] = false;
+        $query['hideValueRanges'] = true;
+        $query['samplingLevel'] = 'LARGE';
+
+        return $query;
+    }
 
     /**
      * Parse JSON response to array of Result rows
@@ -96,8 +97,8 @@ class Client
      * @return array
      * @internal param array $result json decoded response
      */
-	private function processResponse($response, $query)
-	{
+    private function processResponse($response, $query)
+    {
         if (empty($response['reports'])) {
             return null;
         }
@@ -135,5 +136,5 @@ class Client
         }
 
         return $processed;
-	}
+    }
 }

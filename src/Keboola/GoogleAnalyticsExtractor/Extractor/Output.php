@@ -14,28 +14,28 @@ use Symfony\Component\Yaml\Yaml;
 
 class Output
 {
-	private $dataDir;
+    private $dataDir;
 
     private $outputBucket;
 
-	public function __construct($dataDir, $outputBucket)
-	{
-		$this->dataDir = $dataDir;
+    public function __construct($dataDir, $outputBucket)
+    {
+        $this->dataDir = $dataDir;
         $this->outputBucket = $outputBucket;
-	}
+    }
 
-	public function writeProfiles(CsvFile $csv, array $profiles)
-	{
+    public function writeProfiles(CsvFile $csv, array $profiles)
+    {
         $csv->writeRow(['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName']);
         foreach ($profiles as $profile) {
             $csv->writeRow($profile);
         }
 
         return $csv;
-	}
+    }
 
-	public function writeReport(CsvFile $csv, array $report, $profileId, $incremental = false)
-	{
+    public function writeReport(CsvFile $csv, array $report, $profileId, $incremental = false)
+    {
         $cnt = 0;
         /** @var Result $result */
         foreach ($report['data'] as $result) {
@@ -66,25 +66,25 @@ class Output
         }
 
         return $csv;
-	}
+    }
 
     private function formatResultKeys($metricsOrDimensions)
     {
         $res = [];
         foreach ($metricsOrDimensions as $k => $v) {
-            $res[str_replace('ga:','',$k)] = $v;
+            $res[str_replace('ga:', '', $k)] = $v;
         }
         return $res;
     }
 
-	public function createCsvFile($name)
-	{
-		$outTablesDir = $this->dataDir . '/out/tables';
-		if (!is_dir($outTablesDir)) {
-			mkdir($outTablesDir, 0777, true);
-		}
-		return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
-	}
+    public function createCsvFile($name)
+    {
+        $outTablesDir = $this->dataDir . '/out/tables';
+        if (!is_dir($outTablesDir)) {
+            mkdir($outTablesDir, 0777, true);
+        }
+        return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
+    }
 
     public function createManifest($name, $primaryKey = null, $incremental = false)
     {
@@ -99,6 +99,6 @@ class Output
             $manifestData['primary_key'] = $primaryKey;
         }
 
-        return file_put_contents($outFilename , Yaml::dump($manifestData));
+        return file_put_contents($outFilename, Yaml::dump($manifestData));
     }
 }

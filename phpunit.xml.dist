@@ -17,4 +17,14 @@
     <testsuite name="Google Analytics Extractor Test Suite">
         <directory>tests/Keboola</directory>
     </testsuite>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src/Keboola/GoogleAnalyticsExtractor</directory>
+        </whitelist>
+    </filter>
+
+    <logging>
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+    </logging>
 </phpunit>
