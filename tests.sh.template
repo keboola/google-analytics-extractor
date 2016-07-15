@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+export CLIENT_ID="";
+export CLIENT_SECRET="";
+export ACCESS_TOKEN="";
+export REFRESH_TOKEN="";
+export VIEW_ID="";
+
+./vendor/bin/phpunit --verbose --debug

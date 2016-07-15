@@ -55,12 +55,12 @@ App is developed localy.
 1. Clone from repository: `git clone git@github.com:keboola/google-analytics-extractor.git`
 2. Change directory: `cd google-analytics-extractor`
 3. Install dependencies: `composer install --no-interaction`
-4. Run tests: `./vendor/bin/phpunit`
-
-To simulate real run:
-
-1. Create data dir: `mkdir -p data`
-2. Create `config.yml` file from configuration sample and place it to your data directory (`data/config.yml`):
-4. Simulate real run: `php src/run.php --data=./data`  
+4. Create `tests.sh` file from template `tests.sh.template`. 
+5. You will need working OAuth credentials. Go to Googles [OAuth 2.0 Playground](https://developers.google.com/oauthplayground). 
+   In the configuration (the cog wheel on the top right side) check `Use your own OAuth credentials` and paste your OAuth Client ID and secret.
+   Then go throug the authorization flow and generate Access and Refresh tokens. Copy and paste them into the tests.sh file.
+   Set `viewId` environment variable to the Google Analytics profile id, you want to run your tests against.
+6. Run the tests: `./tests.sh`
+  
 
 
