@@ -48,6 +48,8 @@ parameters:
       filters: []
 ```
 
+Note that this extractor is using [Keboola OAuth Bundle](https://github.com/keboola/oauth-v2-bundle) to store OAuth credentials. 
+
 ## Development
 
 App is developed localy.
