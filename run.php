@@ -22,6 +22,7 @@ try {
 
     if (isset($config['action'])) {
         echo json_encode($result);
+        exit(0);
     }
 } catch (UserException $e) {
     $logger->log('error', $e->getMessage(), (array) $e->getData());
