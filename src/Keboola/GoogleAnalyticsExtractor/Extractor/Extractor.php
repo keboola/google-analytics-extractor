@@ -144,6 +144,7 @@ class Extractor
         $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
 
         return [
+            'status' => 'success',
             'viewId' => $query['query']['viewId'],
             'data' => file_get_contents($csvFile),
             'rowCount' => $report['rowCount']
