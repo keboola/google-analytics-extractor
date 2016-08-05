@@ -25,7 +25,7 @@ try {
         exit(0);
     }
 } catch (UserException $e) {
-    if (!isset($config['action'])) {
+    if (isset($config['action']) && $config['action'] != 'run') {
         echo $e->getMessage();
     } else {
         $logger->log('error', $e->getMessage(), (array) $e->getData());
