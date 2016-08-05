@@ -85,4 +85,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('data', $result);
         $this->assertArrayHasKey('rowCount', $result);
     }
+
+    public function testUserException()
+    {
+        $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
+
+        $this->config = $this->getConfig();
+        // unset segment dimension to trigger API error
+        unset($this->config['parameters']['queries'][1]['query']['dimensions'][1]);
+        $this->application = new Application($this->config);
+        $this->application->run();
+    }
 }

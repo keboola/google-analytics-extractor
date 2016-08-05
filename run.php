@@ -25,7 +25,11 @@ try {
         exit(0);
     }
 } catch (UserException $e) {
-    $logger->log('error', $e->getMessage(), (array) $e->getData());
+    if (!isset($config['action'])) {
+        echo $e->getMessage();
+    } else {
+        $logger->log('error', $e->getMessage(), (array) $e->getData());
+    }
     exit(1);
 } catch (ApplicationException $e) {
     $logger->log('error', $e->getMessage(), (array) $e->getData());
