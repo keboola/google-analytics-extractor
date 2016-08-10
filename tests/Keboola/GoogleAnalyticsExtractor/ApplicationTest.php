@@ -9,6 +9,8 @@
 namespace Keboola\GoogleAnalyticsExtractor\Test;
 
 use Keboola\GoogleAnalyticsExtractor\Application;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
@@ -40,7 +42,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         return $config;
     }
 
-    public function testRun()
+    public function testAppRun()
     {
         $this->application->run();
 
@@ -74,7 +76,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv', $profilesManifest['destination']);
     }
 
-    public function testSample()
+    public function testAppSample()
     {
         $this->config['action'] = 'sample';
         $this->application = new Application($this->config);
@@ -95,5 +97,27 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         unset($this->config['parameters']['queries'][1]['query']['dimensions'][1]);
         $this->application = new Application($this->config);
         $this->application->run();
+    }
+
+    public function testRun()
+    {
+        $dataPath = __DIR__ . '/data-test';
+        $fs = new Filesystem();
+        $fs->remove($dataPath);
+        $fs->mkdir($dataPath);
+
+        $yaml = new Yaml();
+        file_put_contents($dataPath . '/config.yml', $yaml->dump($this->config));
+
+        $process = new Process(sprintf('php run.php --data=%s', $dataPath));
+        $process->mustRun();
+
+        $output = $process->getOutput();
+        $errorOutput = $process->getErrorOutput();
+        $exitCode = $process->getExitCode();
+
+        var_dump($output);
+        var_dump($errorOutput);
+        var_dump($exitCode);
     }
 }

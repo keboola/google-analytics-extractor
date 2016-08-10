@@ -26,14 +26,18 @@ try {
     }
 } catch (UserException $e) {
     if (isset($config['action']) && $config['action'] != 'run') {
-        echo $e->getMessage();
+        echo json_encode([
+            'status' => 'error',
+            'error' => 'User Error',
+            'message' => $e->getMessage()
+        ]);
     } else {
         $logger->log('error', $e->getMessage(), (array) $e->getData());
     }
     exit(1);
 } catch (ApplicationException $e) {
     $logger->log('error', $e->getMessage(), (array) $e->getData());
-    exit($e->getCode() > 1 ? $e->getCode(): 2);
+    exit(2);
 } catch (\Exception $e) {
     $logger->log('error', $e->getMessage(), [
         'errFile' => $e->getFile(),
