@@ -17,6 +17,7 @@
     "monolog/monolog": "^1.17",
     "symfony/config": "^3.0",
     "symfony/yaml": "^3.0",
+    "symfony/process": "^3.0",
     "guzzlehttp/guzzle": "^6.2",
     "keboola/php-temp": "^0.1.6",
     "keboola/google-client-bundle": "^4.0"

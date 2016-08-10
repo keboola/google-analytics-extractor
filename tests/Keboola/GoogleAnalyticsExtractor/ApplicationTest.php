@@ -101,23 +101,56 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testRun()
     {
-        $dataPath = __DIR__ . '/data-test';
+        $process = $this->runProcess();
+        $this->assertEquals(0, $process->getExitCode());
+    }
+
+    public function testRunSampleAction()
+    {
+        $this->config['action'] = 'sample';
+        $process = $this->runProcess();
+        $this->assertEquals(0, $process->getExitCode());
+
+        $output = json_decode($process->getOutput(), true);
+        $this->assertArrayHasKey('status', $output);
+        $this->assertArrayHasKey('viewId', $output);
+        $this->assertArrayHasKey('data', $output);
+        $this->assertArrayHasKey('rowCount', $output);
+        $this->assertEquals('success', $output['status']);
+        $this->assertNotEmpty($output['viewId']);
+        $this->assertNotEmpty($output['data']);
+        $this->assertNotEmpty($output['rowCount']);
+    }
+
+    public function testActionUserException()
+    {
+        $this->config['action'] = 'sample';
+        $this->config['parameters']['queries'][0]['metrics'] = [
+            ['expression' => 'ga:nonexistingmetric']
+        ];
+
+        $process = $this->runProcess();
+        $this->assertEquals(1, $process->getExitCode());
+        $output = json_decode($process->getOutput(), true);
+        $this->assertEquals('error', $output['status']);
+        $this->assertEquals('User Error', $output['error']);
+        $this->assertNotEmpty($output['message']);
+    }
+
+    private function runProcess()
+    {
+        $dataPath = '/tmp/data-test';
         $fs = new Filesystem();
         $fs->remove($dataPath);
         $fs->mkdir($dataPath);
+        $fs->mkdir($dataPath . '/out/tables');
 
         $yaml = new Yaml();
         file_put_contents($dataPath . '/config.yml', $yaml->dump($this->config));
 
         $process = new Process(sprintf('php run.php --data=%s', $dataPath));
-        $process->mustRun();
+        $process->run();
 
-        $output = $process->getOutput();
-        $errorOutput = $process->getErrorOutput();
-        $exitCode = $process->getExitCode();
-
-        var_dump($output);
-        var_dump($errorOutput);
-        var_dump($exitCode);
+        return $process;
     }
 }

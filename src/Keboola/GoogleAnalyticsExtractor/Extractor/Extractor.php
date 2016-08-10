@@ -136,7 +136,7 @@ class Extractor
     public function getSampleReport($query)
     {
         $report = $this->getReport($query);
-        $report['data'] = array_slice($report['data'], 0, 100);
+        $report['data'] = array_slice($report['data'], 0, 20);
 
         $csvFile = $this->createOutputFile(
             $query['outputTable']
@@ -149,6 +149,11 @@ class Extractor
             'data' => file_get_contents($csvFile),
             'rowCount' => isset($report['rowCount'])?$report['rowCount']:0
         ];
+    }
+
+    public function getSegments()
+    {
+
     }
 
     public function refreshTokenCallback($accessToken, $refreshToken)
