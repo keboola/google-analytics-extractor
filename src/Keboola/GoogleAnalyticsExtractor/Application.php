@@ -9,8 +9,10 @@
 
 namespace Keboola\GoogleAnalyticsExtractor;
 
+use GuzzleHttp\Exception\RequestException;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
+use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
@@ -36,6 +38,9 @@ class Application
             }
             return $logger;
         };
+        if (empty($config['authorization'])) {
+            throw new UserException('Missing authorization data');
+        }
         $tokenData = json_decode($config['authorization']['oauth_api']['credentials']['#data'], true);
         $container['google_client'] = function () use ($config, $tokenData) {
             return new RestApi(
@@ -69,7 +74,28 @@ class Application
             throw new UserException(sprintf("Action '%s' does not exist.", $this['action']));
         }
 
-        return $this->$actionMethod();
+        try {
+            return $this->$actionMethod();
+        } catch (RequestException $e) {
+            if ($e->getCode() == 401) {
+                throw new UserException("Expired or wrong credentials, please reauthorize.", $e);
+            }
+            if ($e->getCode() == 403) {
+                if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
+                    $this->container['logger']->warning("You don't have access to Google Analytics resource. Probably you don't have access to profile, or profile doesn't exists anymore.");
+                    return [];
+                } else {
+                    throw new UserException("Reason: " . $e->getResponse()->getReasonPhrase(), $e);
+                }
+            }
+            if ($e->getCode() == 400) {
+                throw new UserException($e->getMessage());
+            }
+            if ($e->getCode() == 503) {
+                throw new UserException("Google API error: " . $e->getMessage(), $e);
+            }
+            throw new ApplicationException($e->getResponse()->getBody(), 500, $e);
+        }
     }
 
     private function runAction()

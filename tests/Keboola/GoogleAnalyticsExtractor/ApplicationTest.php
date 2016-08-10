@@ -157,11 +157,26 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testActionUserException()
     {
         $this->config['action'] = 'sample';
-        $this->config['parameters']['queries'][0]['metrics'] = [
+        $this->config['parameters']['queries'][0]['query']['metrics'] = [
             ['expression' => 'ga:nonexistingmetric']
         ];
 
         $process = $this->runProcess();
+
+        $this->assertEquals(1, $process->getExitCode());
+        $output = json_decode($process->getOutput(), true);
+        $this->assertEquals('error', $output['status']);
+        $this->assertEquals('User Error', $output['error']);
+        $this->assertNotEmpty($output['message']);
+    }
+
+    public function testActionAuthUserException()
+    {
+        $this->config['action'] = 'sample';
+        unset($this->config['authorization']);
+
+        $process = $this->runProcess();
+
         $this->assertEquals(1, $process->getExitCode());
         $output = json_decode($process->getOutput(), true);
         $this->assertEquals('error', $output['status']);

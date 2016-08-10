@@ -8,9 +8,6 @@
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
-use GuzzleHttp\Exception\RequestException;
-use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
-use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
@@ -57,30 +54,8 @@ class Extractor
     public function run(array $queries, array $profile)
     {
         $status = [];
-
-        try {
-            $this->extract($queries, $profile['id']);
-            $status[$profile['name']] = 'ok';
-        } catch (RequestException $e) {
-            if ($e->getCode() == 401) {
-                throw new UserException("Expired or wrong credentials, please reauthorize.", $e);
-            }
-            if ($e->getCode() == 403) {
-                if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
-                    $this->logger->warning("You don't have access to Google Analytics resource. Probably you don't have access to profile, or profile doesn't exists anymore.");
-                    return $status;
-                } else {
-                    throw new UserException("Reason: " . $e->getResponse()->getReasonPhrase(), $e);
-                }
-            }
-            if ($e->getCode() == 400) {
-                throw new UserException($e->getMessage());
-            }
-            if ($e->getCode() == 503) {
-                throw new UserException("Google API error: " . $e->getMessage(), $e);
-            }
-            throw new ApplicationException($e->getResponse()->getBody(), 500, $e);
-        }
+        $this->extract($queries, $profile['id']);
+        $status[$profile['name']] = 'ok';
 
         return $status;
     }

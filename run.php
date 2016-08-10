@@ -17,6 +17,7 @@ try {
     }
     $config = Yaml::parse(file_get_contents($arguments["data"] . "/config.yml"));
     $config['parameters']['data_dir'] = $arguments['data'];
+
     $app = new Application($config);
     $result = $app->run();
 
