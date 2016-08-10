@@ -136,6 +136,24 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($output['rowCount']);
     }
 
+    public function testRunSegmentsAction()
+    {
+        $this->config['action'] = 'segments';
+        $process = $this->runProcess();
+        $this->assertEquals(0, $process->getExitCode());
+
+        $output = json_decode($process->getOutput(), true);
+        $this->assertArrayHasKey('status', $output);
+        $this->assertArrayHasKey('data', $output);
+        $this->assertEquals('success', $output['status']);
+        $this->assertNotEmpty($output['data']);
+        $segment = $output['data'][0];
+        $this->assertArrayHasKey('id', $segment);
+        $this->assertArrayHasKey('kind', $segment);
+        $this->assertArrayHasKey('segmentId', $segment);
+        $this->assertArrayHasKey('name', $segment);
+    }
+
     public function testActionUserException()
     {
         $this->config['action'] = 'sample';
