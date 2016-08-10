@@ -112,6 +112,13 @@ class Application
         return $extractor->getSampleReport($query);
     }
 
+    private function segmentsAction()
+    {
+        /** @var Extractor $extractor */
+        $extractor = $this->container['extractor'];
+        return $extractor->getSegments();
+    }
+
     private function validateParamteters($parameters)
     {
         try {

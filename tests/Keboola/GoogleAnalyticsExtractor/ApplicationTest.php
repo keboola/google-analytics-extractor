@@ -83,9 +83,23 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->application->run();
 
+        $this->assertArrayHasKey('status', $result);
         $this->assertArrayHasKey('viewId', $result);
         $this->assertArrayHasKey('data', $result);
         $this->assertArrayHasKey('rowCount', $result);
+        $this->assertEquals('success', $result['status']);
+    }
+
+    public function testAppSegments()
+    {
+        $this->config['action'] = 'segments';
+        $this->application = new Application($this->config);
+
+        $result = $this->application->run();
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertEquals('success', $result['status']);
     }
 
     public function testUserException()

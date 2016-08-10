@@ -14,6 +14,7 @@ class Client
 {
     const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
     const DATA_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
 
     /** @var GoogleApi */
     protected $api;
@@ -29,6 +30,13 @@ class Client
     public function getApi()
     {
         return $this->api;
+    }
+
+    public function getSegments()
+    {
+        $response = $this->api->request(self::SEGMENTS_URL);
+        $body = json_decode($response->getBody()->getContents(), true);
+        return $body['items'];
     }
 
     /**

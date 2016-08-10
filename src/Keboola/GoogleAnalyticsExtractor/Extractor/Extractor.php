@@ -153,7 +153,12 @@ class Extractor
 
     public function getSegments()
     {
+        $segments = $this->gaApi->getSegments();
 
+        return [
+            'status' => 'success',
+            'data' => $segments,
+        ];
     }
 
     public function refreshTokenCallback($accessToken, $refreshToken)
