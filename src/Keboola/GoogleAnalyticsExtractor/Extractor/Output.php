@@ -28,7 +28,14 @@ class Output
     {
         $csv->writeRow(['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName']);
         foreach ($profiles as $profile) {
-            $csv->writeRow($profile);
+            $csv->writeRow([
+                'id' => $profile['id'],
+                'name' => $profile['name'],
+                'webPropertyId' => $profile['webPropertyId'],
+                'webPropertyName' => $profile['webPropertyName'],
+                'accountId' => $profile['accountId'],
+                'accountName' => $profile['accountName']
+            ]);
         }
 
         return $csv;

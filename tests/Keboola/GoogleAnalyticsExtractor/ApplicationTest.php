@@ -8,7 +8,6 @@
  */
 namespace Keboola\GoogleAnalyticsExtractor\Test;
 
-use Composer\Package\RootAliasPackage;
 use Keboola\GoogleAnalyticsExtractor\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -25,6 +24,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $this->config = $this->getConfig();
         $this->application = new Application($this->config);
+
+        $filesystem = new Filesystem();
+        $filesystem->remove(ROOT_PATH . '/tests/data/out/tables');
+        $filesystem->mkdir(ROOT_PATH . '/tests/data/out/tables');
     }
 
     private function getConfig()
