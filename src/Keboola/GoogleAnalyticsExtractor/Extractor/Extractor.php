@@ -64,7 +64,7 @@ class Extractor
     {
         foreach ($queries as $query) {
             if (empty($query['query']['viewId'])) {
-                $query['query']['viewId'] = (string)$profileId;
+                $query['query']['viewId'] = (string) $profileId;
             } elseif ($query['query']['viewId'] != $profileId) {
                 continue;
             }
@@ -81,6 +81,7 @@ class Extractor
             $csvFile = $this->createOutputFile(
                 $query['outputTable']
             );
+
             $this->output->writeReport($csvFile, $report, $profileId);
 
             // pagination
@@ -102,9 +103,10 @@ class Extractor
         return $this->gaApi->getBatch($query);
     }
 
-    private function createOutputFile($filename, $primaryKey = ['id'], $incremental = true)
+    private function createOutputFile($destination, $primaryKey = ['id'], $incremental = true)
     {
-        $this->output->createManifest($filename, $primaryKey, $incremental);
+        $filename = sprintf('%s_%s', $destination, uniqid());
+        $this->output->createManifest($filename, $destination, $primaryKey, $incremental);
         return $this->output->createCsvFile($filename);
     }
 

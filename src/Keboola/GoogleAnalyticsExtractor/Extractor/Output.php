@@ -41,7 +41,7 @@ class Output
         return $csv;
     }
 
-    public function writeReport(CsvFile $csv, array $report, $profileId, $incremental = false)
+    public function writeReport(CsvFile $csv, array $report, $profileId)
     {
         $cnt = 0;
         /** @var Result $result */
@@ -50,7 +50,7 @@ class Output
             $dimensions = $this->formatResultKeys($result->getDimensions());
 
             // CSV Header
-            if ($cnt == 0 && !$incremental) {
+            if ($cnt == 0) {
                 $headerRow = array_merge(
                     ['id', 'idProfile'],
                     array_keys($dimensions),
@@ -75,6 +75,26 @@ class Output
         return $csv;
     }
 
+    public function appendReport(CsvFile $csv, array $report, $profileId)
+    {
+        /** @var Result $result */
+        foreach ($report['data'] as $result) {
+            $metrics = $this->formatResultKeys($result->getMetrics());
+            $dimensions = $this->formatResultKeys($result->getDimensions());
+
+            if (isset($dimensions['date'])) {
+                $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
+            }
+
+            $row = array_merge(array_values($dimensions), array_values($metrics));
+            $outRow = array_merge(
+                [sha1($profileId . implode('', $dimensions)), $profileId],
+                $row
+            );
+            $csv->writeRow($outRow);
+        }
+    }
+
     private function formatResultKeys($metricsOrDimensions)
     {
         $res = [];
@@ -93,12 +113,12 @@ class Output
         return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
     }
 
-    public function createManifest($name, $primaryKey = null, $incremental = false)
+    public function createManifest($name, $destination, $primaryKey = null, $incremental = false)
     {
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
 
         $manifestData = [
-            'destination' => sprintf('%s.%s.csv', $this->outputBucket, $name),
+            'destination' => sprintf('%s.%s.csv', $this->outputBucket, $destination),
             'incremental' => $incremental
         ];
 

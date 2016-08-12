@@ -8,6 +8,13 @@ parameters:
       webPropertyName: 'Keboola Website'
       accountId: 38521826
       accountName: 'Keboola Website'
+    -
+      id: 111914984
+      name: 'All Web Site Data'
+      webPropertyId: 'UA-38521826-2'
+      webPropertyName: 'Keboola meetup group'
+      accountId: 38521826
+      accountName: 'Keboola Website'
 
   queries:
     -
@@ -35,7 +42,6 @@ parameters:
             name: 'ga:country'
 
         filtersExpression: ''
-        viewId: '69127714'
         dateRanges:
           -
             startDate: '-12 months'
@@ -67,7 +73,6 @@ parameters:
           -
             segmentId: 'gaid::-5'
 
-        viewId: '69127714'
         dateRanges:
           -
             startDate: '-6 months'

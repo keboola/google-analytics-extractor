@@ -109,7 +109,7 @@ class Application
         /** @var Output $output */
         $output = $this->container['output'];
         $csv = $output->createCsvFile('profiles');
-        $output->createManifest('profiles', ['id'], true);
+        $output->createManifest('profiles', 'profiles', ['id'], true);
         $output->writeProfiles($csv, $profiles);
 
         /** @var Extractor $extractor */
