@@ -74,7 +74,7 @@ class Extractor
             ]);
 
             $report = $this->getReport($query);
-            if ($report == null) {
+            if (empty($report['data'])) {
                 continue;
             }
 
@@ -111,18 +111,26 @@ class Extractor
     public function getSampleReport($query)
     {
         $report = $this->getReport($query);
-        $report['data'] = array_slice($report['data'], 0, 20);
 
-        $csvFile = $this->createOutputFile(
-            $query['outputTable']
-        );
-        $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+        $data = [];
+        $rowCount = 0;
+        if (!empty($report['data'])) {
+            $report['data'] = array_slice($report['data'], 0, 20);
+
+            $csvFile = $this->createOutputFile(
+                $query['outputTable']
+            );
+            $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+
+            $data = file_get_contents($csvFile);
+            $rowCount = $report['rowCount'];
+        }
 
         return [
             'status' => 'success',
             'viewId' => $query['query']['viewId'],
-            'data' => file_get_contents($csvFile),
-            'rowCount' => $report['rowCount']
+            'data' => $data,
+            'rowCount' => $rowCount
         ];
     }
 

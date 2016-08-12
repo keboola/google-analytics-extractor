@@ -8,6 +8,7 @@
  */
 namespace Keboola\GoogleAnalyticsExtractor\Test;
 
+use Composer\Package\RootAliasPackage;
 use Keboola\GoogleAnalyticsExtractor\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -102,7 +103,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('success', $result['status']);
     }
 
-    public function testUserException()
+    public function testAppUserException()
     {
         $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
 
@@ -182,6 +183,45 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('error', $output['status']);
         $this->assertEquals('User Error', $output['error']);
         $this->assertNotEmpty($output['message']);
+    }
+
+    public function testRunEmptyResult()
+    {
+        // set metric that will return no data
+        unset($this->config['parameters']['queries'][1]);
+        $this->config['parameters']['queries'][0]['query']['metrics'] = [
+            ['expression' => 'ga:adxRevenue']
+        ];
+        $process = $this->runProcess();
+        $this->assertEquals(0, $process->getExitCode());
+
+        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
+        $usersManifestPath = $usersOutputPath . '.manifest';
+
+        $this->assertFileNotExists($usersOutputPath);
+        $this->assertFileNotExists($usersManifestPath);
+    }
+
+    public function testSampleActionEmptyResult()
+    {
+        $this->config['action'] = 'sample';
+        // set metric that will return no data
+        unset($this->config['parameters']['queries'][1]);
+        $this->config['parameters']['queries'][0]['query']['metrics'] = [
+            ['expression' => 'ga:adxRevenue']
+        ];
+        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
+        $usersManifestPath = $usersOutputPath . '.manifest';
+
+        $process = $this->runProcess();
+        $output = json_decode($process->getOutput(), true);
+
+        $this->assertEquals(0, $process->getExitCode());
+        $this->assertEmpty($output['data']);
+        $this->assertEquals('success', $output['status']);
+        $this->assertEquals(0, $output['rowCount']);
+        $this->assertFileNotExists($usersOutputPath);
+        $this->assertFileNotExists($usersManifestPath);
     }
 
     private function runProcess()
