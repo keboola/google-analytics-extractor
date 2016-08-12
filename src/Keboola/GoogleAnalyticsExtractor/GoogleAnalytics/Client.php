@@ -136,7 +136,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $report['data']['totals'],
-            'rowCount' => $report['data']['rowCount']
+            'rowCount' => isset($report['data']['rowCount'])?$report['data']['rowCount']:0
         ];
 
         if (isset($report['nextPageToken'])) {

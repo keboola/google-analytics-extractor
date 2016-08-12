@@ -147,6 +147,11 @@ class Application
 
     private function validateParamteters($parameters)
     {
+        // no parameters needed for `segments` action
+        if ($this->container['action'] == 'segments') {
+            return [];
+        }
+
         try {
             $processor = new Processor();
             return $processor->processConfiguration(

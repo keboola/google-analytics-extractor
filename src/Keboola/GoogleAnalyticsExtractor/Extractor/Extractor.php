@@ -122,7 +122,7 @@ class Extractor
             'status' => 'success',
             'viewId' => $query['query']['viewId'],
             'data' => file_get_contents($csvFile),
-            'rowCount' => isset($report['rowCount'])?$report['rowCount']:0
+            'rowCount' => $report['rowCount']
         ];
     }
 
