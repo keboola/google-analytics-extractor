@@ -74,17 +74,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         foreach ($profilesManifests as $profilesManifestFile) {
             $profilesManifest = Yaml::parse(file_get_contents($profilesManifestFile));
-            $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv', $profilesManifest['destination']);
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles', $profilesManifest['destination']);
         }
 
         foreach ($usersManifests as $usersManifestFile) {
             $usersManifest = Yaml::parse(file_get_contents($usersManifestFile));
-            $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv', $usersManifest['destination']);
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.users', $usersManifest['destination']);
         }
 
         foreach ($organicManifests as $organicManifestFile) {
             $organicManifest = Yaml::parse(file_get_contents($organicManifestFile));
-            $this->assertEquals($this->config['parameters']['outputBucket'] . '.organicTraffic.csv', $organicManifest['destination']);
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.organicTraffic', $organicManifest['destination']);
         }
 
         foreach ($manifests as $manifestFile) {

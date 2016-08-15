@@ -118,7 +118,7 @@ class Output
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
 
         $manifestData = [
-            'destination' => sprintf('%s.%s.csv', $this->outputBucket, $destination),
+            'destination' => sprintf('%s.%s', $this->outputBucket, $destination),
             'incremental' => $incremental
         ];
 
