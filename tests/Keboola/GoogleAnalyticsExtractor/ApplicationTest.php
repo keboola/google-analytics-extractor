@@ -10,6 +10,8 @@ namespace Keboola\GoogleAnalyticsExtractor\Test;
 
 use Keboola\GoogleAnalyticsExtractor\Application;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 
@@ -50,34 +52,49 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $this->application->run();
 
-        $profilesOutputPath = ROOT_PATH . '/tests/data/out/tables/profiles.csv';
-        $profilesManifestPath = $profilesOutputPath . '.manifest';
-        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
-        $usersManifestPath = $usersOutputPath . '.manifest';
-        $organicOutputPath = ROOT_PATH . '/tests/data/out/tables/organicTraffic.csv';
-        $organicManifestPath = $organicOutputPath . '.manifest';
+        $profiles = $this->getOutputFiles('profiles');
+        $profilesManifests = $this->getManifestFiles('profiles');
 
-        $this->assertFileExists($profilesOutputPath);
-        $this->assertFileExists($profilesManifestPath);
-        $this->assertFileExists($usersOutputPath);
-        $this->assertFileExists($usersManifestPath);
-        $this->assertFileExists($organicOutputPath);
-        $this->assertFileExists($organicManifestPath);
+        $users = $this->getOutputFiles('users');
+        $usersManifests = $this->getManifestFiles('users');
 
-        $profilesManifest = Yaml::parse(file_get_contents($profilesManifestPath));
-        $usersManifest = Yaml::parse(file_get_contents($usersManifestPath));
-        $organicManifest = Yaml::parse(file_get_contents($organicManifestPath));
+        $organic = $this->getOutputFiles('organic');
+        $organicManifests = $this->getManifestFiles('organic');
 
-        foreach ([$usersManifest, $profilesManifest, $organicManifest] as $manifest) {
+        $manifests = $this->getManifestFiles('');
+
+        $this->assertEquals(1, count($profiles));
+        $this->assertEquals(1, count($profilesManifests));
+
+        $this->assertEquals(2, count($users));
+        $this->assertEquals(2, count($usersManifests));
+
+        $this->assertEquals(2, count($organic));
+        $this->assertEquals(2, count($organicManifests));
+
+        foreach ($profilesManifests as $profilesManifestFile) {
+            $profilesManifest = Yaml::parse(file_get_contents($profilesManifestFile));
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv', $profilesManifest['destination']);
+        }
+
+        foreach ($usersManifests as $usersManifestFile) {
+            $usersManifest = Yaml::parse(file_get_contents($usersManifestFile));
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv', $usersManifest['destination']);
+        }
+
+        foreach ($organicManifests as $organicManifestFile) {
+            $organicManifest = Yaml::parse(file_get_contents($organicManifestFile));
+            $this->assertEquals($this->config['parameters']['outputBucket'] . '.organicTraffic.csv', $organicManifest['destination']);
+        }
+
+        foreach ($manifests as $manifestFile) {
+            $manifest = Yaml::parse(file_get_contents($manifestFile));
             $this->assertArrayHasKey('destination', $manifest);
             $this->assertArrayHasKey('incremental', $manifest);
             $this->assertTrue($manifest['incremental']);
             $this->assertArrayHasKey('primary_key', $manifest);
             $this->assertEquals('id', $manifest['primary_key'][0]);
         }
-
-        $this->assertEquals($this->config['parameters']['outputBucket'] . '.users.csv', $usersManifest['destination']);
-        $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles.csv', $profilesManifest['destination']);
     }
 
     public function testAppSample()
@@ -198,11 +215,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $process = $this->runProcess();
         $this->assertEquals(0, $process->getExitCode());
 
-        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
-        $usersManifestPath = $usersOutputPath . '.manifest';
+        $usersOutputFiles = $this->getOutputFiles('users');
+        $usersManifestFiles = $this->getManifestFiles('users');
 
-        $this->assertFileNotExists($usersOutputPath);
-        $this->assertFileNotExists($usersManifestPath);
+        $this->assertEmpty($usersOutputFiles);
+        $this->assertEmpty($usersManifestFiles);
     }
 
     public function testSampleActionEmptyResult()
@@ -213,8 +230,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->config['parameters']['queries'][0]['query']['metrics'] = [
             ['expression' => 'ga:adxRevenue']
         ];
-        $usersOutputPath = ROOT_PATH . '/tests/data/out/tables/users.csv';
-        $usersManifestPath = $usersOutputPath . '.manifest';
+        $usersOutputFiles = $this->getOutputFiles('users');
+        $usersManifestFiles = $this->getManifestFiles('users');
 
         $process = $this->runProcess();
         $output = json_decode($process->getOutput(), true);
@@ -223,8 +240,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($output['data']);
         $this->assertEquals('success', $output['status']);
         $this->assertEquals(0, $output['rowCount']);
-        $this->assertFileNotExists($usersOutputPath);
-        $this->assertFileNotExists($usersManifestPath);
+        $this->assertEmpty($usersOutputFiles);
+        $this->assertEmpty($usersManifestFiles);
     }
 
     private function runProcess()
@@ -242,5 +259,25 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $process->run();
 
         return $process;
+    }
+
+    private function getOutputFiles($queryName)
+    {
+        $finder = new Finder();
+
+        return $finder->files()
+            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->name('/^' . $queryName . '.*\.csv$/i')
+        ;
+    }
+
+    private function getManifestFiles($queryName)
+    {
+        $finder = new Finder();
+
+        return $finder->files()
+            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->name('/^' . $queryName . '.*\.manifest$/i')
+        ;
     }
 }

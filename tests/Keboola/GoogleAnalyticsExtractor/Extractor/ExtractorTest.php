@@ -14,6 +14,7 @@ use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\Logger;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase
@@ -49,29 +50,32 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         $this->extractor->run($queries, $profiles[0]);
 
-        $outputFile = ROOT_PATH . '/tests/data/out/tables/' . $queries[0]['outputTable'] . '.csv';
-        $this->assertFileExists($outputFile);
-        $this->assertNotEmpty(file_get_contents($outputFile));
+        $outputFiles = $this->getOutputFiles($queries[0]['outputTable']);
+        $this->assertNotEmpty($outputFiles);
+        foreach ($outputFiles as $outputFile) {
+            $this->assertFileExists($outputFile->getRealPath());
+            $this->assertNotEmpty(file_get_contents($outputFile->getRealPath()));
 
-        $csv = new CsvFile($outputFile);
-        $csv->next();
-        $header = $csv->current();
+            $csv = new CsvFile($outputFile->getRealPath());
+            $csv->next();
+            $header = $csv->current();
 
-        // check CSV header
-        $dimensions = $queries[0]['query']['dimensions'];
-        $metrics = $queries[0]['query']['metrics'];
-        foreach ($dimensions as $dimension) {
-            $this->assertContains(str_replace('ga:', '', $dimension['name']), $header);
+            // check CSV header
+            $dimensions = $queries[0]['query']['dimensions'];
+            $metrics = $queries[0]['query']['metrics'];
+            foreach ($dimensions as $dimension) {
+                $this->assertContains(str_replace('ga:', '', $dimension['name']), $header);
+            }
+            foreach ($metrics as $metric) {
+                $this->assertContains(str_replace('ga:', '', $metric['expression']), $header);
+            }
+
+            // check date format
+            $csv->next();
+            $row = $csv->current();
+            $dateCol = array_search('date', $header);
+            $this->assertContains('-', $row[$dateCol]);
         }
-        foreach ($metrics as $metric) {
-            $this->assertContains(str_replace('ga:', '', $metric['expression']), $header);
-        }
-
-        // check date format
-        $csv->next();
-        $row = $csv->current();
-        $dateCol = array_search('date', $header);
-        $this->assertContains('-', $row[$dateCol]);
     }
 
     public function testRunEmptyResult()
@@ -80,5 +84,25 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $profiles = $this->config['parameters']['profiles'];
 
         $this->extractor->run($queries, $profiles[0]);
+    }
+
+    private function getOutputFiles($queryName)
+    {
+        $finder = new Finder();
+
+        return $finder->files()
+            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->name('/^' . $queryName . '.*\.csv$/i')
+            ;
+    }
+
+    private function getManifestFiles($queryName)
+    {
+        $finder = new Finder();
+
+        return $finder->files()
+            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->name('/^' . $queryName . '.*\.manifest$/i')
+            ;
     }
 }

@@ -130,7 +130,7 @@ class Application
         $query = $this->container['parameters']['queries'][0];
 
         if (empty($query['query']['viewId'])) {
-            $query['query']['viewId'] = $profile['id'];
+            $query['query']['viewId'] = (string) $profile['id'];
         }
 
         /** @var Extractor $extractor */
