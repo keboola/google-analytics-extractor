@@ -91,7 +91,7 @@ class Extractor
                     $query['query']['pageToken'] = $report['nextPageToken'];
                     $nextQuery = $query;
                     $report = $this->getReport($nextQuery);
-                    $this->output->writeReport($csvFile, $report, $profileId);
+                    $this->output->appendReport($csvFile, $report, $profileId);
                 }
                 $query = $nextQuery;
             } while ($nextQuery);

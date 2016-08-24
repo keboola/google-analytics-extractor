@@ -41,6 +41,15 @@ class Output
         return $csv;
     }
 
+    /**
+     * Write report data to output csv file (with header)
+     *
+     * @param CsvFile $csv
+     * @param array $report
+     * @param $profileId
+     * @return CsvFile
+     * @throws \Keboola\Csv\Exception
+     */
     public function writeReport(CsvFile $csv, array $report, $profileId)
     {
         $cnt = 0;
@@ -75,6 +84,14 @@ class Output
         return $csv;
     }
 
+    /**
+     * Append existing output csv file (write data without header)
+     *
+     * @param CsvFile $csv
+     * @param array $report
+     * @param $profileId
+     * @throws \Keboola\Csv\Exception
+     */
     public function appendReport(CsvFile $csv, array $report, $profileId)
     {
         /** @var Result $result */
