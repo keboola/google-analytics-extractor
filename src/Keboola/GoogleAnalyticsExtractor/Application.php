@@ -70,6 +70,7 @@ class Application
     public function run()
     {
         $actionMethod = $this->container['action'] . 'Action';
+
         if (!method_exists($this, $actionMethod)) {
             throw new UserException(sprintf("Action '%s' does not exist.", $this['action']));
         }
@@ -143,6 +144,15 @@ class Application
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
         return $extractor->getSegments();
+    }
+
+    private function customMetricsAction()
+    {
+        $profile = $this->container['parameters']['profiles'][0];
+
+        /** @var Extractor $extractor */
+        $extractor = $this->container['extractor'];
+        return $extractor->getCustomMetrics($profile['accountId'], $profile['webPropertyId']);
     }
 
     private function validateParamteters($parameters)

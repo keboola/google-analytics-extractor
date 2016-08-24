@@ -146,6 +146,16 @@ class Extractor
         ];
     }
 
+    public function getCustomMetrics($accountId, $webPropertyId)
+    {
+        $metrics = $this->gaApi->getCustomMetrics($accountId, $webPropertyId);
+
+        return [
+            'status' => 'success',
+            'data' => $metrics,
+        ];
+    }
+
     public function refreshTokenCallback($accessToken, $refreshToken)
     {
     }

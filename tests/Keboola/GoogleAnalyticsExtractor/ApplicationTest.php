@@ -123,6 +123,18 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('success', $result['status']);
     }
 
+    public function testAppCustomMetrics()
+    {
+        $this->config['action'] = 'customMetrics';
+        $this->application = new Application($this->config);
+
+        $result = $this->application->run();
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertEquals('success', $result['status']);
+    }
+
     public function testAppUserException()
     {
         $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');

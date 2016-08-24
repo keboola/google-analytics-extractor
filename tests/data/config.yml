@@ -46,6 +46,7 @@ parameters:
           -
             startDate: '-12 months'
             endDate: '-1 day'
+
     -
       id: 1
       name: 'Organic Traffic'
