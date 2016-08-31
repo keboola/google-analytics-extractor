@@ -146,6 +146,22 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->run();
     }
 
+    public function testAppAuthException()
+    {
+        $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
+        $this->config = $this->getConfig();
+        $this->config['authorization']['oauth_api']['credentials'] = [
+            'appKey' => getenv('CLIENT_ID'),
+            '#appSecret' => getenv('CLIENT_SECRET'),
+            '#data' => json_encode([
+                'access_token' => 'cowshit',
+                'refresh_token' => 'bullcrap'
+            ])
+        ];
+        $this->application = new Application($this->config);
+        $this->application->run();
+    }
+
     public function testRun()
     {
         $process = $this->runProcess();
