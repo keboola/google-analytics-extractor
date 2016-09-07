@@ -21,6 +21,7 @@ parameters:
       id: 0
       name: 'users'
       outputTable: 'users' #webalized name
+      antisampling: true
       enabled: true
       query:
         metrics:
@@ -51,6 +52,7 @@ parameters:
       id: 1
       name: 'Organic Traffic'
       outputTable: 'organicTraffic' #webalized name
+      antisampling: true
       enabled: true
       query:
         metrics:

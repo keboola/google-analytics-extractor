@@ -47,6 +47,18 @@ class Client
         return $body['items'];
     }
 
+    public function request($method, $url, $body = null)
+    {
+        $response = $this->api->request(
+            self::DATA_URL,
+            'POST',
+            ['Accept' => 'application/json'],
+            ['json' => $body]
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     /**
      * @param $query
      *
@@ -64,16 +76,18 @@ class Client
      */
     public function getBatch($query)
     {
-        $body['reportRequests'][] = $this->getReportRequest($query['query']);
+        $reportRequest = $this->getReportRequest($query['query']);
+        $reports = $this->request('POST', self::DATA_URL, ['reportRequests' => [$reportRequest]]);
+        $data = $reports['reports'][0]['data'];
 
-        $response = $this->api->request(
-            self::DATA_URL,
-            'POST',
-            ['Accept' => 'application/json'],
-            ['json' => $body]
-        );
+        if (!empty($data['samplesReadCounts']) && !empty($data['samplingSpaceSizes']) && !empty($query['antisampling'])) {
+            $antisampling = new Antisampling($this);
+            $algorithm = $query['antisampling'];
+            $runner = $antisampling->$algorithm();
+            $reports = $runner($reportRequest, $reports);
+        }
 
-        return $this->processResponse(json_decode($response->getBody()->getContents(), true), $query);
+        return $this->processResponse($reports, $query);
     }
 
     /**

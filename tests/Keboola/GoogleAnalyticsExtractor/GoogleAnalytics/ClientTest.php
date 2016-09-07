@@ -38,15 +38,18 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                     'viewId' => getenv('VIEW_ID'),
                     'metrics' => [
                         ['expression' => 'ga:users'],
+                        ['expression' => 'ga:newUsers'],
+                        ['expression' => 'ga:bounces'],
                         ['expression' => 'ga:pageviews']
                     ],
                     'dimensions' => [
                         ['name' => 'ga:date'],
                         ['name' => 'ga:source'],
                         ['name' => 'ga:medium'],
+                        ['name' => 'ga:pagePath']
                     ],
                     'dateRanges' => [[
-                        'startDate' => date('Y-m-d', strtotime('-12 months')),
+                        'startDate' => date('Y-m-d', strtotime('-36 months')),
                         'endDate' => date('Y-m-d', strtotime('now'))
                     ]]
                 ]
@@ -62,7 +65,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                     'dimensions' => [
                         ['name' => 'ga:date'],
                         ['name' => 'ga:source'],
-                        ['name' => 'ga:country']
+                        ['name' => 'ga:country'],
+                        ['name' => 'ga:pagePath']
                     ],
                     'dateRanges' => [[
                         'startDate' => date('Y-m-d', strtotime('-12 months')),
