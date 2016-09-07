@@ -8,7 +8,6 @@
 
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
-
 class Antisampling
 {
     /** @var Client */
