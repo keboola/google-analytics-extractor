@@ -69,10 +69,6 @@ class Extractor
                 continue;
             }
 
-            $this->logger->debug("Extracting ...", [
-                'query' => $query
-            ]);
-
             $report = $this->getReport($query);
             if (empty($report['data'])) {
                 continue;

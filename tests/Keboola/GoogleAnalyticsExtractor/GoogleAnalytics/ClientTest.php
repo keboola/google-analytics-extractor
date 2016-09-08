@@ -10,6 +10,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi;
+use Keboola\GoogleAnalyticsExtractor\Logger;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +25,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 getenv('CLIENT_SECRET'),
                 getenv('ACCESS_TOKEN'),
                 getenv('REFRESH_TOKEN')
-            )
+            ),
+            new Logger(APP_NAME)
         );
     }
 

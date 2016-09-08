@@ -9,6 +9,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
+use Keboola\GoogleAnalyticsExtractor\Logger;
 
 class Client
 {
@@ -20,9 +21,13 @@ class Client
     /** @var GoogleApi */
     protected $api;
 
-    public function __construct(GoogleApi $api)
+    /** @var Logger */
+    protected $logger;
+
+    public function __construct(GoogleApi $api, Logger $logger)
     {
         $this->api = $api;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,11 +85,15 @@ class Client
         $reports = $this->request('POST', self::DATA_URL, ['reportRequests' => [$reportRequest]]);
         $data = $reports['reports'][0]['data'];
 
-        if (!empty($data['samplesReadCounts']) && !empty($data['samplingSpaceSizes']) && !empty($query['antisampling'])) {
-            $antisampling = new Antisampling($this);
-            $algorithm = $query['antisampling'];
-            $runner = $antisampling->$algorithm();
-            $reports = $runner($reportRequest, $reports);
+        if (!empty($data['samplesReadCounts']) && !empty($data['samplingSpaceSizes'])) {
+            $this->logger->warning("Report contains sampled data");
+            if (!empty($query['antisampling'])) {
+                $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
+                $antisampling = new Antisampling($this);
+                $algorithm = $query['antisampling'];
+                $runner = $antisampling->$algorithm();
+                $reports = $runner($reportRequest, $reports);
+            }
         }
 
         return $this->processResponse($reports, $query);

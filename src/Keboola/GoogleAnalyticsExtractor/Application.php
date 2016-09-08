@@ -51,7 +51,7 @@ class Application
             );
         };
         $container['google_analytics_client'] = function ($c) {
-            return new Client($c['google_client']);
+            return new Client($c['google_client'], $c['logger']);
         };
         $container['output'] = function ($c) {
             return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket']);
