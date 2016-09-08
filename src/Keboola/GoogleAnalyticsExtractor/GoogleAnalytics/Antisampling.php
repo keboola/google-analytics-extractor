@@ -99,14 +99,16 @@ class Antisampling
     public function adaptive()
     {
         return function ($reportRequest, $reports) {
-            $dateRangeBuckets = $this->getDateRangeBuckets($reportRequest, $reports);
+            $dateRangeBuckets = $this->getDateRangeBuckets($reportRequest, $reports['reports'][0]['data']);
             $reportsDataRows = [];
             foreach ($dateRangeBuckets as $dateRange) {
                 $reportRequest['dateRanges'][0] = $dateRange;
                 $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$reportRequest]]);
-
-                foreach ($json['reports'][0]['data']['rows'] as $row) {
-                    $reportsDataRows[] = $row;
+                $data = $json['reports'][0]['data'];
+                if (!empty($data['rows'])) {
+                    foreach ($data['rows'] as $row) {
+                        $reportsDataRows[] = $row;
+                    }
                 }
             }
 

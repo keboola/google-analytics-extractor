@@ -30,7 +30,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Keboola\\": "src/Keboola/"
+      "Keboola\\": ["src/Keboola/", "tests/Keboola/"]
     }
   }
 }

@@ -21,7 +21,7 @@ parameters:
       id: 0
       name: 'users'
       outputTable: 'users' #webalized name
-      antisampling: true
+      antisampling: 'adaptive'
       enabled: true
       query:
         metrics:
@@ -52,7 +52,7 @@ parameters:
       id: 1
       name: 'Organic Traffic'
       outputTable: 'organicTraffic' #webalized name
-      antisampling: true
+      antisampling: 'dailyWalk'
       enabled: true
       query:
         metrics:
@@ -78,5 +78,5 @@ parameters:
 
         dateRanges:
           -
-            startDate: '-6 months'
+            startDate: '-3 months'
             endDate: '-1 day'

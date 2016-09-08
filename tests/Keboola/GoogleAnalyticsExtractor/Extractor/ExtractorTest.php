@@ -6,12 +6,10 @@
  * Date: 18/04/16
  * Time: 18:38
  */
-namespace Keboola\GoogleAnalyticsExtractor\Test;
+namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
 use Keboola\Google\ClientBundle\Google\RestApi;
-use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
-use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\Logger;
 use Symfony\Component\Finder\Finder;

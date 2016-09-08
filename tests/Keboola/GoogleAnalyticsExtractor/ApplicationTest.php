@@ -284,6 +284,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         file_put_contents($dataPath . '/config.yml', $yaml->dump($this->config));
 
         $process = new Process(sprintf('php run.php --data=%s', $dataPath));
+        $process->setTimeout(180);
         $process->run();
 
         return $process;

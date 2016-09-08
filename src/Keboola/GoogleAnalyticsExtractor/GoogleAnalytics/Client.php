@@ -115,7 +115,7 @@ class Client
         $query['includeEmptyRows'] = true;
         $query['hideTotals'] = false;
         $query['hideValueRanges'] = true;
-        $query['samplingLevel'] = 'LARGE';
+        $query['samplingLevel'] = empty($query['samplingLevel'])?'LARGE':$query['samplingLevel'];
 
         return $query;
     }

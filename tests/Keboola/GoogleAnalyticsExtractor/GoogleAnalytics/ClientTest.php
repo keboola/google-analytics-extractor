@@ -7,15 +7,14 @@
  * Time: 15:22
  */
 
-namespace Keboola\GoogleAnalyticsExtractor\Test;
+namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi;
-use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Client */
-    private $client;
+    protected $client;
 
     public function setUp()
     {
