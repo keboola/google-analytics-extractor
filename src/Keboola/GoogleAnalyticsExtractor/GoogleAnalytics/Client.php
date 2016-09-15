@@ -83,18 +83,6 @@ class Client
     {
         $reportRequest = $this->getReportRequest($query['query']);
         $reports = $this->request('POST', self::DATA_URL, ['reportRequests' => [$reportRequest]]);
-        $data = $reports['reports'][0]['data'];
-
-        if (!empty($data['samplesReadCounts']) && !empty($data['samplingSpaceSizes'])) {
-            $this->logger->warning("Report contains sampled data");
-            if (!empty($query['antisampling'])) {
-                $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
-                $antisampling = new Antisampling($this);
-                $algorithm = $query['antisampling'];
-                $runner = $antisampling->$algorithm();
-                $reports = $runner($reportRequest, $reports);
-            }
-        }
 
         return $this->processResponse($reports, $query);
     }
@@ -169,6 +157,14 @@ class Client
             'totals' => $report['data']['totals'],
             'rowCount' => isset($report['data']['rowCount'])?$report['data']['rowCount']:0
         ];
+
+        if (isset($report['data']['samplesReadCounts'])) {
+            $processed['samplesReadCounts'] = $report['data']['samplesReadCounts'];
+        }
+
+        if (isset($report['data']['samplingSpaceSizes'])) {
+            $processed['samplingSpaceSizes'] = $report['data']['samplingSpaceSizes'];
+        }
 
         if (isset($report['nextPageToken'])) {
             $processed['nextPageToken'] = $report['nextPageToken'];

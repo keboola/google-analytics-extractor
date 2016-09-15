@@ -32,9 +32,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $filesystem->mkdir(ROOT_PATH . '/tests/data/out/tables');
     }
 
-    private function getConfig()
+    private function getConfig($suffix = '')
     {
-        $config = Yaml::parse(file_get_contents(ROOT_PATH . '/tests/data/config.yml'));
+        $config = Yaml::parse(file_get_contents(ROOT_PATH . '/tests/data/config' . $suffix . '.yml'));
         $config['parameters']['data_dir'] = ROOT_PATH . '/tests/data/';
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
@@ -95,6 +95,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('primary_key', $manifest);
             $this->assertEquals('id', $manifest['primary_key'][0]);
         }
+    }
+
+    public function testAppRunAntisampling()
+    {
+        $this->config = $this->getConfig('_antisampling');
+        $this->application = new Application($this->config);
+        $this->application->run();
     }
 
     public function testAppSample()

@@ -62,6 +62,8 @@ class Extractor
 
     private function extract($queries, $profileId)
     {
+        $paginator = new Paginator($this->output, $this->gaApi);
+
         foreach ($queries as $query) {
             if (empty($query['query']['viewId'])) {
                 $query['query']['viewId'] = (string) $profileId;
@@ -74,36 +76,24 @@ class Extractor
                 continue;
             }
 
-            $csvFile = $this->createOutputFile(
-                $query['outputTable']
-            );
-
-            $this->output->writeReport($csvFile, $report, $profileId);
-
-            // pagination
-            do {
-                $nextQuery = null;
-                if (isset($report['nextPageToken'])) {
-                    $query['query']['pageToken'] = $report['nextPageToken'];
-                    $nextQuery = $query;
-                    $report = $this->getReport($nextQuery);
-                    $this->output->appendReport($csvFile, $report, $profileId);
+            if (!empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes'])) {
+                $this->logger->warning("Report contains sampled data");
+                if (!empty($query['antisampling'])) {
+                    $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
+                    $antisampling = new Antisampling($paginator);
+                    $algorithm = $query['antisampling'];
+                    $antisampling->$algorithm($query, $report);
+                    continue;
                 }
-                $query = $nextQuery;
-            } while ($nextQuery);
+            }
+
+            $paginator->paginate($query, $report);
         }
     }
 
     private function getReport($query)
     {
         return $this->gaApi->getBatch($query);
-    }
-
-    private function createOutputFile($destination, $primaryKey = ['id'], $incremental = true)
-    {
-        $filename = sprintf('%s_%s', $destination, uniqid());
-        $this->output->createManifest($filename, $destination, $primaryKey, $incremental);
-        return $this->output->createCsvFile($filename);
     }
 
     public function getSampleReport($query)
@@ -115,7 +105,7 @@ class Extractor
         if (!empty($report['data'])) {
             $report['data'] = array_slice($report['data'], 0, 20);
 
-            $csvFile = $this->createOutputFile(
+            $csvFile = $this->output->createReport(
                 $query['outputTable']
             );
             $this->output->writeReport($csvFile, $report, $query['query']['viewId']);

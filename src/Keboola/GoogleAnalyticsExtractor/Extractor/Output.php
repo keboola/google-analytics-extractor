@@ -41,6 +41,13 @@ class Output
         return $csv;
     }
 
+    public function createReport($destination, $primaryKey = ['id'], $incremental = true)
+    {
+        $filename = sprintf('%s_%s', $destination, uniqid());
+        $this->createManifest($filename, $destination, $primaryKey, $incremental);
+        return $this->createCsvFile($filename);
+    }
+
     /**
      * Write report data to output csv file (with header)
      *

@@ -17,21 +17,17 @@ class AntisamplingTest extends ClientTest
             'query' => [
                 'viewId' => getenv('VIEW_ID'),
                 'metrics' => [
-                    ['expression' => 'ga:users'],
-                    ['expression' => 'ga:sessions'],
                     ['expression' => 'ga:pageviews'],
-                    ['expression' => 'ga:bounces']
                 ],
                 'dimensions' => [
                     ['name' => 'ga:date'],
                     ['name' => 'ga:source'],
                     ['name' => 'ga:medium'],
-                    ['name' => 'ga:landingPagePath'],
-                    ['name' => 'ga:pagePath']
+                    ['name' => 'ga:landingPagePath']
                 ],
                 'dateRanges' => [[
-                    'startDate' => date('Y-m-d', strtotime('-3 years')),
-                    'endDate' => date('Y-m-d', strtotime('now'))
+                    'startDate' => date('Y-m-d', strtotime('-4 days')),
+                    'endDate' => date('Y-m-d', strtotime('-1 day'))
                 ]]
             ]
         ];
