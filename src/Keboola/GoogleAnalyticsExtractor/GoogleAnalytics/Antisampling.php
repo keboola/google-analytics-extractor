@@ -69,6 +69,7 @@ class Antisampling
     public function dailyWalk()
     {
         return function ($reportRequest, $reports) {
+            unset($reportRequest['pageToken']);
             $dateRanges = $reportRequest['dateRanges'][0];
             $startDate = new \DateTime($dateRanges['startDate']);
             $endDate = new \DateTime($dateRanges['endDate']);
@@ -85,6 +86,7 @@ class Antisampling
                 ];
                 $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$reportRequest]]);
 
+                $data = $json['reports'][0]['data'];
                 if (!empty($data['rows'])) {
                     foreach ($json['reports'][0]['data']['rows'] as $row) {
                         $reportsDataRows[] = $row;
