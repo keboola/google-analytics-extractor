@@ -84,8 +84,10 @@ class Antisampling
                 ];
                 $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$reportRequest]]);
 
-                foreach ($json['reports'][0]['data']['rows'] as $row) {
-                    $reportsDataRows[] = $row;
+                if (!empty($data['rows'])) {
+                    foreach ($json['reports'][0]['data']['rows'] as $row) {
+                        $reportsDataRows[] = $row;
+                    }
                 }
 
                 $startDate->modify("+1 Day");
