@@ -29,6 +29,7 @@ class Antisampling
         $sessionReportRequest['dimensions'] = [
             ['name' => 'ga:date']
         ];
+        unset($sessionReportRequest['pageToken']);
 
         // get all sessions from full date range
         $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$sessionReportRequest]]);

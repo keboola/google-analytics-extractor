@@ -18,18 +18,19 @@ class AntisamplingTest extends ClientTest
                 'viewId' => getenv('VIEW_ID'),
                 'metrics' => [
                     ['expression' => 'ga:users'],
-                    ['expression' => 'ga:newUsers'],
-                    ['expression' => 'ga:bounces'],
-                    ['expression' => 'ga:pageviews']
+                    ['expression' => 'ga:sessions'],
+                    ['expression' => 'ga:pageviews'],
+                    ['expression' => 'ga:bounces']
                 ],
                 'dimensions' => [
                     ['name' => 'ga:date'],
                     ['name' => 'ga:source'],
                     ['name' => 'ga:medium'],
+                    ['name' => 'ga:landingPagePath'],
                     ['name' => 'ga:pagePath']
                 ],
                 'dateRanges' => [[
-                    'startDate' => date('Y-m-d', strtotime('-36 months')),
+                    'startDate' => date('Y-m-d', strtotime('-3 years')),
                     'endDate' => date('Y-m-d', strtotime('now'))
                 ]]
             ]
@@ -43,11 +44,22 @@ class AntisamplingTest extends ClientTest
         $query['samplingLevel'] = 'SMALL';
         $report = $this->client->getBatch($query);
 
-        $this->arrayHasKey($report['data']);
-        $this->assertNotEmpty($report['data']);
-        $this->arrayHasKey($report['query']);
-        $this->assertNotEmpty($report['query']);
-        $this->arrayHasKey($report['rowCount']);
+        // pagination
+        do {
+            $this->arrayHasKey($report['data']);
+            $this->assertNotEmpty($report['data']);
+            $this->arrayHasKey($report['query']);
+            $this->assertNotEmpty($report['query']);
+            $this->arrayHasKey($report['rowCount']);
+
+            $nextQuery = null;
+            if (isset($report['nextPageToken'])) {
+                $query['query']['pageToken'] = $report['nextPageToken'];
+                $nextQuery = $query;
+                $report = $this->client->getBatch($nextQuery);
+            }
+            $query = $nextQuery;
+        } while ($nextQuery);
     }
 
     public function testAdaptive()
@@ -57,10 +69,21 @@ class AntisamplingTest extends ClientTest
         $query['samplingLevel'] = 'SMALL';
         $report = $this->client->getBatch($query);
 
-        $this->arrayHasKey($report['data']);
-        $this->assertNotEmpty($report['data']);
-        $this->arrayHasKey($report['query']);
-        $this->assertNotEmpty($report['query']);
-        $this->arrayHasKey($report['rowCount']);
+        // pagination
+        do {
+            $this->arrayHasKey($report['data']);
+            $this->assertNotEmpty($report['data']);
+            $this->arrayHasKey($report['query']);
+            $this->assertNotEmpty($report['query']);
+            $this->arrayHasKey($report['rowCount']);
+
+            $nextQuery = null;
+            if (isset($report['nextPageToken'])) {
+                $query['query']['pageToken'] = $report['nextPageToken'];
+                $nextQuery = $query;
+                $report = $this->client->getBatch($nextQuery);
+            }
+            $query = $nextQuery;
+        } while ($nextQuery);
     }
 }
