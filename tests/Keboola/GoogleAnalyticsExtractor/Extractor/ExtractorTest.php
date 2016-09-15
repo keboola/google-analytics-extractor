@@ -49,7 +49,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $queries = $this->config['parameters']['queries'];
         $profiles = $this->config['parameters']['profiles'];
 
-        $this->extractor->run($queries, $profiles[0]);
+        $this->extractor->run($queries, [$profiles[0]]);
 
         $outputFiles = $this->getOutputFiles($queries[0]['outputTable']);
         $this->assertNotEmpty($outputFiles);

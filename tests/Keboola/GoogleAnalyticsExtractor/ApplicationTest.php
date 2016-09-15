@@ -66,11 +66,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($profiles));
         $this->assertEquals(1, count($profilesManifests));
 
-        $this->assertEquals(2, count($users));
-        $this->assertEquals(2, count($usersManifests));
+        $this->assertEquals(1, count($users));
+        $this->assertEquals(1, count($usersManifests));
 
-        $this->assertEquals(2, count($organic));
-        $this->assertEquals(2, count($organicManifests));
+        $this->assertEquals(1, count($organic));
+        $this->assertEquals(1, count($organicManifests));
 
         foreach ($profilesManifests as $profilesManifestFile) {
             $profilesManifest = Yaml::parse(file_get_contents($profilesManifestFile));

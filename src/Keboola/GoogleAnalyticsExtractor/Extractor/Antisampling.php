@@ -8,6 +8,7 @@
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Antisampling
@@ -16,10 +17,13 @@ class Antisampling
 
     private $client;
 
-    public function __construct(Paginator $paginator)
+    private $outputCsv;
+
+    public function __construct(Paginator $paginator, CsvFile $outputCsv)
     {
         $this->paginator = $paginator;
         $this->client = $paginator->getClient();
+        $this->outputCsv = $outputCsv;
     }
 
     private function getDateRangeBuckets($query, $report)
@@ -78,6 +82,7 @@ class Antisampling
         $startDate = new \DateTime($dateRanges['startDate']);
         $endDate = new \DateTime($dateRanges['endDate']);
 
+        $isFirstRun = true;
         while ($startDate->diff($endDate)->format('%r%a') > 0) {
             $startDateString = $startDate->format('Y-m-d');
             $startDate->modify("+1 Day");
@@ -87,8 +92,15 @@ class Antisampling
                 'startDate' => $startDateString,
                 'endDate' => $endDateString
             ];
+
             $report = $this->client->getBatch($query);
-            $this->paginator->paginate($query, $report);
+
+            if ($isFirstRun) {
+                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
+                $isFirstRun = false;
+            }
+
+            $this->paginator->paginate($query, $report, $this->outputCsv);
 
             $startDate->modify("+1 Day");
         }
@@ -97,10 +109,15 @@ class Antisampling
     public function adaptive($query, $report)
     {
         $dateRangeBuckets = $this->getDateRangeBuckets($query, $report['data']);
+        $isFirstRun = true;
         foreach ($dateRangeBuckets as $dateRange) {
             $query['query']['dateRanges'][0] = $dateRange;
             $report = $this->client->getBatch($query);
-            $this->paginator->paginate($query, $report);
+            if ($isFirstRun) {
+                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
+                $isFirstRun = false;
+            }
+            $this->paginator->paginate($query, $report, $this->outputCsv);
         }
     }
 }

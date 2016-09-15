@@ -22,15 +22,22 @@ class Paginator
         $this->client = $client;
     }
 
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
     public function getClient()
     {
         return $this->client;
     }
 
-    public function paginate($query, $report)
+    public function paginate($query, $report, $csvFile = null)
     {
-        $csvFile = $this->output->createReport($query['outputTable']);
-        $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+        if ($csvFile == null) {
+            $csvFile = $this->output->createReport($query['outputTable']);
+            $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+        }
 
         do {
             $nextQuery = null;

@@ -115,9 +115,7 @@ class Application
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
-        foreach ($profiles as $profile) {
-            $extracted[] = $extractor->run($queries, $profile);
-        }
+        $extracted[] = $extractor->run($queries, $profiles);
 
         return [
             'status' => 'ok',

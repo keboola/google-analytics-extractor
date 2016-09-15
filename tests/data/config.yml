@@ -78,24 +78,3 @@ parameters:
           -
             startDate: '-3 months'
             endDate: '-1 day'
-
-    -
-      id: 2
-      name: 'Antisampling'
-      outputTable: 'organicTraffic' #webalized name
-      enabled: true
-      query:
-        metrics:
-          -
-            expression: 'ga:pageviews'
-
-        dimensions:
-          -
-            name: 'ga:date'
-
-        filtersExpression: ''
-        segments:
-        dateRanges:
-          -
-            startDate: '-4 days'
-            endDate: '-1 day'

@@ -51,44 +51,51 @@ class Extractor
         };
     }
 
-    public function run(array $queries, array $profile)
+    public function run(array $queries, array $profiles)
     {
         $status = [];
-        $this->extract($queries, $profile['id']);
-        $status[$profile['name']] = 'ok';
 
-        return $status;
-    }
-
-    private function extract($queries, $profileId)
-    {
         $paginator = new Paginator($this->output, $this->gaApi);
 
         foreach ($queries as $query) {
-            if (empty($query['query']['viewId'])) {
-                $query['query']['viewId'] = (string) $profileId;
-            } elseif ($query['query']['viewId'] != $profileId) {
-                continue;
-            }
 
-            $report = $this->getReport($query);
-            if (empty($report['data'])) {
-                continue;
-            }
+            $outputCsv = $this->output->createReport($query['outputTable']);
 
-            if (!empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes'])) {
-                $this->logger->warning("Report contains sampled data");
-                if (!empty($query['antisampling'])) {
-                    $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
-                    $antisampling = new Antisampling($paginator);
-                    $algorithm = $query['antisampling'];
-                    $antisampling->$algorithm($query, $report);
+            foreach ($profiles as $profile) {
+                if (empty($query['query']['viewId'])) {
+                    $query['query']['viewId'] = (string) $profile['id'];
+                } elseif ($query['query']['viewId'] != $profile['id']) {
                     continue;
                 }
-            }
 
-            $paginator->paginate($query, $report);
+                $report = $this->getReport($query);
+                if (empty($report['data'])) {
+                    continue;
+                }
+
+                if (!empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes'])) {
+                    $this->logger->warning("Report contains sampled data");
+                    if (!empty($query['antisampling'])) {
+                        $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
+                        $antisampling = new Antisampling($paginator, $outputCsv);
+                        $algorithm = $query['antisampling'];
+                        $antisampling->$algorithm($query, $report);
+
+                        $status[$query['name'][$profile['id']]] = 'ok';
+
+                        continue;
+                    }
+                }
+
+                $this->output->writeReport($outputCsv, $report, $profile['id']);
+
+                $paginator->paginate($query, $report, $outputCsv);
+
+                $status[$query['name']][$profile['id']] = 'ok';
+            }
         }
+
+        return $status;
     }
 
     private function getReport($query)
