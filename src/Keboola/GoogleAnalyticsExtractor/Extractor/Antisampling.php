@@ -27,16 +27,16 @@ class Antisampling
         $readCount = intval($report['samplesReadCounts'][0]) * 0.8;
 
         $sessionQuery = $query;
-        $sessionQuery['metrics'] = [
+        $sessionQuery['query']['metrics'] = [
             ['expression' => 'ga:sessions']
         ];
-        $sessionQuery['dimensions'] = [
+        $sessionQuery['query']['dimensions'] = [
             ['name' => 'ga:date']
         ];
-        unset($query['pageToken']);
+        unset($sessionQuery['query']['pageToken']);
 
         // get all sessions from full date range
-        $report = $this->client->getBatch($query);
+        $report = $this->client->getBatch($sessionQuery);
         $data = $report['data'];
 
         // cumulative sum of sessions
@@ -49,7 +49,7 @@ class Antisampling
         $bucketSize = $cumulative % $readCount;
 
         // only first date range
-        $dateRanges = $query['dateRanges'][0];
+        $dateRanges = $query['query']['dateRanges'][0];
         $dateRangeBuckets = [];
         $startDate = new \DateTime($dateRanges['startDate']);
         $endDate = new \DateTime($dateRanges['endDate']);
@@ -73,53 +73,34 @@ class Antisampling
 
     public function dailyWalk($query, $report)
     {
-        unset($query['pageToken']);
-        $dateRanges = $query['dateRanges'][0];
+        unset($query['query']['pageToken']);
+        $dateRanges = $query['query']['dateRanges'][0];
         $startDate = new \DateTime($dateRanges['startDate']);
         $endDate = new \DateTime($dateRanges['endDate']);
 
-        $reportsDataRows = [];
         while ($startDate->diff($endDate)->format('%r%a') > 0) {
             $startDateString = $startDate->format('Y-m-d');
             $startDate->modify("+1 Day");
             $endDateString = $startDate->format('Y-m-d');
 
-            $reportRequest['dateRanges'][0] = [
+            $query['query']['dateRanges'][0] = [
                 'startDate' => $startDateString,
                 'endDate' => $endDateString
             ];
-            $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$reportRequest]]);
-
-            $data = $json['reports'][0]['data'];
-            if (!empty($data['rows'])) {
-                foreach ($json['reports'][0]['data']['rows'] as $row) {
-                    $reportsDataRows[] = $row;
-                }
-            }
+            $report = $this->client->getBatch($query);
+            $this->paginator->paginate($query, $report);
 
             $startDate->modify("+1 Day");
         }
-
-        $report['data']['rows'] = $reportsDataRows;
-        return $report;
     }
 
     public function adaptive($query, $report)
     {
         $dateRangeBuckets = $this->getDateRangeBuckets($query, $report['data']);
-        $reportsDataRows = [];
         foreach ($dateRangeBuckets as $dateRange) {
-            $reportRequest['dateRanges'][0] = $dateRange;
-            $json = $this->client->request('POST', Client::DATA_URL, ['reportRequests' => [$reportRequest]]);
-            $data = $json['reports'][0]['data'];
-            if (!empty($data['rows'])) {
-                foreach ($data['rows'] as $row) {
-                    $reportsDataRows[] = $row;
-                }
-            }
+            $query['query']['dateRanges'][0] = $dateRange;
+            $report = $this->client->getBatch($query);
+            $this->paginator->paginate($query, $report);
         }
-
-        $reports['reports'][0]['data']['rows'] = $reportsDataRows;
-        return $reports;
     }
 }
