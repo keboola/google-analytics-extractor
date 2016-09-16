@@ -13,8 +13,34 @@ parameters:
     -
       id: 0
       name: 'Antisampling'
-      outputTable: 'antisampling'
+      outputTable: 'antisampling_dailyWalk'
       antisampling: 'dailyWalk'
+      enabled: true
+      query:
+        viewId: '26550866'
+        metrics:
+          -
+            expression: 'ga:pageviews'
+
+        dimensions:
+          -
+            name: 'ga:date'
+          -
+            name: 'ga:sourceMedium'
+          -
+            name: 'ga:landingPagePath'
+
+        filtersExpression: ''
+        segments:
+        dateRanges:
+          -
+            startDate: '-2 days'
+            endDate: '-1 day'
+    -
+      id: 1
+      name: 'AntisamplingAdaptive'
+      outputTable: 'antisampling_adaptive'
+      antisampling: 'adaptive'
       enabled: true
       query:
         viewId: '26550866'

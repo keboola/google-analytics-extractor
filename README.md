@@ -24,34 +24,37 @@ parameters:
   queries:
     -
       id: 0
-      name: query
-      metrics: [ga:users]
-      dimensions: [ga:date]
-      filters: []
-      profileId: #optional
-      date_ranges:
-        -
-          since:
-          until:
-    -
-      id: 1
-      name: query-sfsdfs
-      metrics: [ga:users]
-      dimensions: [ga:date]
-      filters: []
-      date_ranges:
-        -
-          since:
-          until:
-    -
-      id: 2
-      name: something
-      metrics: [ga:users]
-      dimensions: [ga:date]
-      filters: []
+      name: 'Pageviews'
+      outputTable: 'pageviews'
+      antisampling: 'dailyWalk'
+      enabled: true
+      query:        
+        metrics:
+          -
+            expression: 'ga:pageviews'
+
+        dimensions:
+          -
+            name: 'ga:date'
+          -
+            name: 'ga:sourceMedium'
+          -
+            name: 'ga:landingPagePath'
+
+        filtersExpression: ''
+        segments:
+        dateRanges:
+          -
+            startDate: '-2 days'
+            endDate: '-1 day'
+
 ```
 
-Note that this extractor is using [Keboola OAuth Bundle](https://github.com/keboola/oauth-v2-bundle) to store OAuth credentials. 
+Note that this extractor is using [Keboola OAuth Bundle](https://github.com/keboola/oauth-v2-bundle) to store OAuth credentials.
+ 
+## Sampling
+
+Two algorithms are implemented to fight sampling - `dailyWalk` and `adaptive`.
 
 ## Development
 

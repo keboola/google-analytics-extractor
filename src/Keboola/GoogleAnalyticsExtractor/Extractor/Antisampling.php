@@ -107,7 +107,7 @@ class Antisampling
 
     public function adaptive($query, $report)
     {
-        $dateRangeBuckets = $this->getDateRangeBuckets($query, $report['data']);
+        $dateRangeBuckets = $this->getDateRangeBuckets($query, $report);
         $isFirstRun = true;
         foreach ($dateRangeBuckets as $dateRange) {
             $query['query']['dateRanges'][0] = $dateRange;
