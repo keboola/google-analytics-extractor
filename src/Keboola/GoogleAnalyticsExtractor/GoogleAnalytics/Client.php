@@ -82,7 +82,13 @@ class Client
     public function getBatch($query)
     {
         $reportRequest = $this->getReportRequest($query['query']);
-        $reports = $this->request('POST', self::DATA_URL, ['reportRequests' => [$reportRequest]]);
+        $reports = $this->request(
+            'POST',
+            self::DATA_URL . '?quotaUser=' . $query['query']['viewId'],
+            [
+                'reportRequests' => [$reportRequest]
+            ]
+        );
 
         return $this->processResponse($reports, $query);
     }

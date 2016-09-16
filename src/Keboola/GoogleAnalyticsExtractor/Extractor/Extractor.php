@@ -36,29 +36,26 @@ class Extractor
 
     public function getBackoffCallback403()
     {
-        return function ($response) {
+        $falseReasons = [
+            'insufficientPermissions',
+            'dailyLimitExceeded',
+            'usageLimits.userRateLimitExceededUnreg'
+        ];
+
+        return function ($response) use ($falseReasons) {
             /** @var ResponseInterface $response */
             $reason = $response->getReasonPhrase();
 
-            if ($reason == 'insufficientPermissions'
-                || $reason == 'dailyLimitExceeded'
-                || $reason == 'usageLimits.userRateLimitExceededUnreg'
-            ) {
-                return false;
-            }
-
-            return true;
+            return !in_array($reason, $falseReasons);
         };
     }
 
     public function run(array $queries, array $profiles)
     {
         $status = [];
-
         $paginator = new Paginator($this->output, $this->gaApi);
 
         foreach ($queries as $query) {
-
             $outputCsv = $this->output->createReport($query['outputTable']);
 
             foreach ($profiles as $profile) {
@@ -75,27 +72,30 @@ class Extractor
 
                 if (!empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes'])) {
                     $this->logger->warning("Report contains sampled data");
+
                     if (!empty($query['antisampling'])) {
                         $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
+
                         $antisampling = new Antisampling($paginator, $outputCsv);
                         $algorithm = $query['antisampling'];
                         $antisampling->$algorithm($query, $report);
 
-                        $status[$query['name'][$profile['id']]] = 'ok';
-
+                        $status[$query['name']][$profile['id']] = 'ok';
                         continue;
                     }
                 }
 
                 $this->output->writeReport($outputCsv, $report, $profile['id']);
-
                 $paginator->paginate($query, $report, $outputCsv);
 
                 $status[$query['name']][$profile['id']] = 'ok';
             }
         }
 
-        return $status;
+        return [
+            'status' => 'success',
+            'queries' => $status
+        ];
     }
 
     private function getReport($query)
@@ -119,6 +119,10 @@ class Extractor
 
             $data = file_get_contents($csvFile);
             $rowCount = $report['rowCount'];
+
+            // remove created output files, so they won't be uploaded to Storage
+            unlink($csvFile->getPathname());
+            unlink($csvFile->getPathname() . '.manifest');
         }
 
         return [

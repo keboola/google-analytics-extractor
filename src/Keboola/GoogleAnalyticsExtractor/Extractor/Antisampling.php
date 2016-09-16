@@ -9,7 +9,6 @@
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
-use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Antisampling
 {
