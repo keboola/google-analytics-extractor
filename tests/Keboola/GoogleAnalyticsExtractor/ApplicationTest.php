@@ -102,6 +102,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->config = $this->getConfig('_antisampling');
         $this->application = new Application($this->config);
         $this->application->run();
+
+        $dailyWalk = $this->getOutputFiles('dailyWalk');
+        $this->assertEquals(1, count($dailyWalk));
+
+        $adaptive = $this->getOutputFiles('adaptive');
+        $this->assertEquals(1, count($adaptive));
     }
 
     public function testAppSample()

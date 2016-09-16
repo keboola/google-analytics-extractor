@@ -12,8 +12,8 @@ parameters:
   queries:
     -
       id: 0
-      name: 'Antisampling'
-      outputTable: 'antisampling_dailyWalk'
+      name: 'dailyWalk'
+      outputTable: 'dailyWalk'
       antisampling: 'dailyWalk'
       enabled: true
       query:
@@ -38,8 +38,8 @@ parameters:
             endDate: '-1 day'
     -
       id: 1
-      name: 'AntisamplingAdaptive'
-      outputTable: 'antisampling_adaptive'
+      name: 'adaptive'
+      outputTable: 'adaptive'
       antisampling: 'adaptive'
       enabled: true
       query:

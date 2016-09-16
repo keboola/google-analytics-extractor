@@ -49,7 +49,7 @@ class Antisampling
             }, $report['data'])
         );
 
-        $bucketSize = $cumulative % $readCount;
+        $bucketSize = floor($cumulative/$readCount);
 
         // only first date range
         $dateRanges = $query['query']['dateRanges'][0];
