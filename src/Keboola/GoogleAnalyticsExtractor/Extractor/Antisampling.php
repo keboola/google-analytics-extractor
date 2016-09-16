@@ -60,7 +60,11 @@ class Antisampling
         while ($startDate->diff($endDate)->format('%r%a') > 0) {
             $startDateString = $startDate->format('Y-m-d');
             $startDate->modify("+{$bucketSize} Days");
+
             $endDateString = $startDate->format('Y-m-d');
+            if ($startDate->diff($endDate)->format('%r%a') <= 0) {
+                $endDateString = $endDate->format('Y-m-d');
+            }
 
             $dateRangeBuckets[] = [
                 'startDate' => $startDateString,
