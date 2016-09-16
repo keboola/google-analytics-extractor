@@ -9,6 +9,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
+use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
 class Antisampling
 {
@@ -40,13 +41,12 @@ class Antisampling
 
         // get all sessions from full date range
         $report = $this->client->getBatch($sessionQuery);
-        $data = $report['data'];
 
         // cumulative sum of sessions
         $cumulative = array_sum(
-            array_map(function ($row) {
-                return $row['metrics'][0]['values'][0];
-            }, $data['rows'])
+            array_map(function (Result $result) {
+                return intval($result->getMetrics()['ga:sessions']);
+            }, $report['data'])
         );
 
         $bucketSize = $cumulative % $readCount;

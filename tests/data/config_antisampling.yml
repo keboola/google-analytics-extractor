@@ -34,7 +34,7 @@ parameters:
         segments:
         dateRanges:
           -
-            startDate: '-2 days'
+            startDate: '-3 days'
             endDate: '-1 day'
     -
       id: 1
@@ -60,5 +60,5 @@ parameters:
         segments:
         dateRanges:
           -
-            startDate: '-2 days'
+            startDate: '-3 days'
             endDate: '-1 day'
