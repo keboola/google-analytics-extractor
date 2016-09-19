@@ -139,6 +139,20 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $adaptive = $this->getOutputFiles('adaptive');
         $this->assertEquals(1, count($adaptive));
+
+        foreach ([$dailyWalk, $adaptive] as $outputFiles) {
+            foreach ($outputFiles as $file) {
+                /** @var $file SplFileInfo */
+                $this->testHeader($file->getPathname(), [
+                    'id',
+                    'idProfile',
+                    'date',
+                    'sourceMedium',
+                    'landingPagePath',
+                    'pageviews'
+                ]);
+            }
+        }
     }
 
     public function testAppSample()
@@ -352,5 +366,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             ->in(ROOT_PATH . '/tests/data/out/tables')
             ->name('/^' . $queryName . '.*\.manifest$/i')
         ;
+    }
+
+    private function testHeader($pathname, array $expected)
+    {
+        $csv = new CsvFile($pathname);
+        $csv->next();
+        $header = $csv->current();
+
+        foreach ($expected as $key => $value) {
+            $this->assertEquals($value, $header[$key]);
+        }
     }
 }

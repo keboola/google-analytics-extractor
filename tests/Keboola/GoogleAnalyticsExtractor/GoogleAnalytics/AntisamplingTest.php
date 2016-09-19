@@ -40,22 +40,11 @@ class AntisamplingTest extends ClientTest
         $query['samplingLevel'] = 'SMALL';
         $report = $this->client->getBatch($query);
 
-        // pagination
-        do {
-            $this->arrayHasKey($report['data']);
-            $this->assertNotEmpty($report['data']);
-            $this->arrayHasKey($report['query']);
-            $this->assertNotEmpty($report['query']);
-            $this->arrayHasKey($report['rowCount']);
-
-            $nextQuery = null;
-            if (isset($report['nextPageToken'])) {
-                $query['query']['pageToken'] = $report['nextPageToken'];
-                $nextQuery = $query;
-                $report = $this->client->getBatch($nextQuery);
-            }
-            $query = $nextQuery;
-        } while ($nextQuery);
+        $this->arrayHasKey($report['data']);
+        $this->assertNotEmpty($report['data']);
+        $this->arrayHasKey($report['query']);
+        $this->assertNotEmpty($report['query']);
+        $this->arrayHasKey($report['rowCount']);
     }
 
     public function testAdaptive()
@@ -65,21 +54,10 @@ class AntisamplingTest extends ClientTest
         $query['samplingLevel'] = 'SMALL';
         $report = $this->client->getBatch($query);
 
-        // pagination
-        do {
-            $this->arrayHasKey($report['data']);
-            $this->assertNotEmpty($report['data']);
-            $this->arrayHasKey($report['query']);
-            $this->assertNotEmpty($report['query']);
-            $this->arrayHasKey($report['rowCount']);
-
-            $nextQuery = null;
-            if (isset($report['nextPageToken'])) {
-                $query['query']['pageToken'] = $report['nextPageToken'];
-                $nextQuery = $query;
-                $report = $this->client->getBatch($nextQuery);
-            }
-            $query = $nextQuery;
-        } while ($nextQuery);
+        $this->arrayHasKey($report['data']);
+        $this->assertNotEmpty($report['data']);
+        $this->arrayHasKey($report['query']);
+        $this->assertNotEmpty($report['query']);
+        $this->arrayHasKey($report['rowCount']);
     }
 }

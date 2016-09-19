@@ -130,6 +130,9 @@ class Antisampling
 
             if ($isFirstRun) {
                 $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
+                $this->paginator->getOutput()->createManifest(
+                    $this->outputCsv->getFilename(), $query['outputTable'], ['id'], true
+                );
                 $isFirstRun = false;
             }
 
@@ -148,6 +151,9 @@ class Antisampling
             $report = $this->client->getBatch($query);
             if ($isFirstRun) {
                 $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
+                $this->paginator->getOutput()->createManifest(
+                    $this->outputCsv->getFilename(), $query['outputTable'], ['id'], true
+                );
                 $isFirstRun = false;
             }
             $this->paginator->paginate($query, $report, $this->outputCsv);

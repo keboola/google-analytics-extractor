@@ -88,9 +88,11 @@ class Extractor
                 }
 
                 $this->output->writeReport($outputCsv, $report, $profile['id'], $withHeader);
+                if ($withHeader) {
+                    $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+                }
                 $withHeader = false;
                 $paginator->paginate($apiQuery, $report, $outputCsv);
-
 
                 $status[$query['name']][$profile['id']] = 'ok';
             }
@@ -116,17 +118,14 @@ class Extractor
         if (!empty($report['data'])) {
             $report['data'] = array_slice($report['data'], 0, 20);
 
-            $csvFile = $this->output->createReport(
-                $query['outputTable']
-            );
-            $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+            $csvFile = $this->output->createReport($query['outputTable']);
+            $this->output->writeReport($csvFile, $report, $query['query']['viewId'], true);
 
             $data = file_get_contents($csvFile);
             $rowCount = $report['rowCount'];
 
             // remove created output files, so they won't be uploaded to Storage
             unlink($csvFile->getPathname());
-            unlink($csvFile->getPathname() . '.manifest');
         }
 
         return [
