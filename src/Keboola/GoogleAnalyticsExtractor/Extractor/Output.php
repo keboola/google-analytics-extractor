@@ -54,10 +54,11 @@ class Output
      * @param CsvFile $csv
      * @param array $report
      * @param $profileId
+     * @param bool $withHeader
      * @return CsvFile
      * @throws \Keboola\Csv\Exception
      */
-    public function writeReport(CsvFile $csv, array $report, $profileId)
+    public function writeReport(CsvFile $csv, array $report, $profileId, $withHeader = false)
     {
         $cnt = 0;
         /** @var Result $result */
@@ -66,7 +67,7 @@ class Output
             $dimensions = $this->formatResultKeys($result->getDimensions());
 
             // CSV Header
-            if ($cnt == 0) {
+            if ($cnt == 0 && $withHeader) {
                 $headerRow = array_merge(
                     ['id', 'idProfile'],
                     array_keys($dimensions),

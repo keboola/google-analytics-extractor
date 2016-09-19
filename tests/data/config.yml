@@ -44,7 +44,7 @@ parameters:
         filtersExpression: ''
         dateRanges:
           -
-            startDate: '-12 months'
+            startDate: '-3 months'
             endDate: '-1 day'
 
     -
@@ -78,3 +78,29 @@ parameters:
           -
             startDate: '-3 months'
             endDate: '-1 day'
+
+    -
+      id: 2
+      name: 'Totals'
+      outputTable: 'totals'
+      enabled: true
+      query:
+        metrics:
+          -
+            expression: 'ga:users'
+          -
+            expression: 'ga:sessions'
+          -
+            expression: 'ga:pageviews'
+          -
+            expression: 'ga:bounces'
+
+        dimensions:
+          -
+            name: 'ga:year'
+        filtersExpression: ''
+        segments:
+        dateRanges:
+          -
+            startDate: 'first day of January'
+            endDate: 'today'

@@ -57,15 +57,17 @@ class Extractor
 
         foreach ($queries as $query) {
             $outputCsv = $this->output->createReport($query['outputTable']);
+            $withHeader = true;
 
             foreach ($profiles as $profile) {
+                $apiQuery = $query;
                 if (empty($query['query']['viewId'])) {
-                    $query['query']['viewId'] = (string) $profile['id'];
+                    $apiQuery['query']['viewId'] = (string) $profile['id'];
                 } elseif ($query['query']['viewId'] != $profile['id']) {
                     continue;
                 }
 
-                $report = $this->getReport($query);
+                $report = $this->getReport($apiQuery);
                 if (empty($report['data'])) {
                     continue;
                 }
@@ -78,15 +80,17 @@ class Extractor
 
                         $antisampling = new Antisampling($paginator, $outputCsv);
                         $algorithm = $query['antisampling'];
-                        $antisampling->$algorithm($query, $report);
+                        $antisampling->$algorithm($apiQuery, $report);
 
                         $status[$query['name']][$profile['id']] = 'ok';
                         continue;
                     }
                 }
 
-                $this->output->writeReport($outputCsv, $report, $profile['id']);
-                $paginator->paginate($query, $report, $outputCsv);
+                $this->output->writeReport($outputCsv, $report, $profile['id'], $withHeader);
+                $withHeader = false;
+                $paginator->paginate($apiQuery, $report, $outputCsv);
+
 
                 $status[$query['name']][$profile['id']] = 'ok';
             }

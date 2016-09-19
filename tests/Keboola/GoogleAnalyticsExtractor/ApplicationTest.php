@@ -8,6 +8,7 @@
  */
 namespace Keboola\GoogleAnalyticsExtractor\Test;
 
+use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -61,6 +62,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $organic = $this->getOutputFiles('organic');
         $organicManifests = $this->getManifestFiles('organic');
 
+        $totals = $this->getOutputFiles('totals');
+        $totalsManifest = $this->getManifestFiles('totals');
+
         $manifests = $this->getManifestFiles('');
 
         $this->assertEquals(1, count($profiles));
@@ -71,6 +75,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, count($organic));
         $this->assertEquals(1, count($organicManifests));
+
+        $this->assertEquals(1, count($totals));
+        $this->assertEquals(1, count($totalsManifest));
 
         foreach ($profilesManifests as $profilesManifestFile) {
             $profilesManifest = Yaml::parse(file_get_contents($profilesManifestFile));
@@ -95,6 +102,30 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             $this->assertArrayHasKey('primary_key', $manifest);
             $this->assertEquals('id', $manifest['primary_key'][0]);
         }
+
+        $totalsDataArr = [];
+        foreach ($totals as $file) {
+            $totalsData = new CsvFile($file->getPathname());
+            $totalsData->next();
+
+            while ($totalsData->current()) {
+                $totalsDataArr[] = $totalsData->current();
+                $totalsData->next();
+            }
+        }
+
+        $this->assertCount(3, $totalsDataArr);
+        $profileId1 = $this->config['parameters']['profiles'][0]['id'];
+        $profileId2 = $this->config['parameters']['profiles'][1]['id'];
+        $this->assertEquals($profileId1, $totalsDataArr[1][1]);
+        $this->assertEquals($profileId2, $totalsDataArr[2][1]);
+        $this->assertEquals('id', $totalsDataArr[0][0]);
+        $this->assertEquals('idProfile', $totalsDataArr[0][1]);
+        $this->assertEquals('year', $totalsDataArr[0][2]);
+        $this->assertEquals('users', $totalsDataArr[0][3]);
+        $this->assertEquals('sessions', $totalsDataArr[0][4]);
+        $this->assertEquals('pageviews', $totalsDataArr[0][5]);
+        $this->assertEquals('bounces', $totalsDataArr[0][6]);
     }
 
     public function testAppRunAntisampling()
