@@ -60,5 +60,5 @@ parameters:
         segments:
         dateRanges:
           -
-            startDate: '-30 days'
+            startDate: '-3 days'
             endDate: '-1 day'
