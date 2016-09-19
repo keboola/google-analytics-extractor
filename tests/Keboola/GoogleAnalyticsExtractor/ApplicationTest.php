@@ -143,7 +143,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         foreach ([$dailyWalk, $adaptive] as $outputFiles) {
             foreach ($outputFiles as $file) {
                 /** @var $file SplFileInfo */
-                $this->testHeader($file->getPathname(), [
+                $this->assertHeader($file->getPathname(), [
                     'id',
                     'idProfile',
                     'date',
@@ -368,7 +368,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    private function testHeader($pathname, array $expected)
+    private function assertHeader($pathname, array $expected)
     {
         $csv = new CsvFile($pathname);
         $csv->next();
