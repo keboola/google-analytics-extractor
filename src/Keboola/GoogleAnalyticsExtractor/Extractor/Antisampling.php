@@ -129,7 +129,7 @@ class Antisampling
             $report = $this->client->getBatch($query);
 
             if ($isFirstRun) {
-                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
+                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
                 $isFirstRun = false;
             }
 
@@ -147,7 +147,7 @@ class Antisampling
             $query['query']['dateRanges'][0] = $dateRange;
             $report = $this->client->getBatch($query);
             if ($isFirstRun) {
-                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
+                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
                 $isFirstRun = false;
             }
             $this->paginator->paginate($query, $report, $this->outputCsv);
