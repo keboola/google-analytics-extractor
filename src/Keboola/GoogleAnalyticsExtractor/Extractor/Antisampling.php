@@ -56,7 +56,7 @@ class Antisampling
 
 
         // divide date range to buckets
-        $sampleBucket = array_map(function($item) use ($readCount) {
+        $sampleBucket = array_map(function ($item) use ($readCount) {
             return floor($item/$readCount) + 1;
         }, $cumulative);
 
@@ -95,8 +95,9 @@ class Antisampling
         ];
     }
 
-    private function getRunningTotal(array $array) {
-        $generator = function(array $array) {
+    private function getRunningTotal(array $array)
+    {
+        $generator = function (array $array) {
             $total = 0;
             foreach ($array as $key => $value) {
                 $total += $value;
