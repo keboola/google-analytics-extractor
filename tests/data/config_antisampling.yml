@@ -10,32 +10,32 @@ parameters:
       accountName: 'Keboola Website'
 
   queries:
-    -
-      id: 0
-      name: 'dailyWalk'
-      outputTable: 'dailyWalk'
-      antisampling: 'dailyWalk'
-      enabled: true
-      query:
-        viewId: '26550866'
-        metrics:
-          -
-            expression: 'ga:pageviews'
-
-        dimensions:
-          -
-            name: 'ga:date'
-          -
-            name: 'ga:sourceMedium'
-          -
-            name: 'ga:landingPagePath'
-
-        filtersExpression: ''
-        segments:
-        dateRanges:
-          -
-            startDate: '-3 days'
-            endDate: '-1 day'
+#    -
+#      id: 0
+#      name: 'dailyWalk'
+#      outputTable: 'dailyWalk'
+#      antisampling: 'dailyWalk'
+#      enabled: true
+#      query:
+#        viewId: '26550866'
+#        metrics:
+#          -
+#            expression: 'ga:pageviews'
+#
+#        dimensions:
+#          -
+#            name: 'ga:date'
+#          -
+#            name: 'ga:sourceMedium'
+#          -
+#            name: 'ga:landingPagePath'
+#
+#        filtersExpression: ''
+#        segments:
+#        dateRanges:
+#          -
+#            startDate: '-3 days'
+#            endDate: '-1 day'
     -
       id: 1
       name: 'adaptive'
@@ -60,5 +60,5 @@ parameters:
         segments:
         dateRanges:
           -
-            startDate: '-3 days'
+            startDate: '-30 days'
             endDate: '-1 day'

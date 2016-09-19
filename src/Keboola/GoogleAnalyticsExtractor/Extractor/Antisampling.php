@@ -28,7 +28,7 @@ class Antisampling
 
     private function getDateRangeBuckets($query, $report)
     {
-        $readCount = intval($report['samplesReadCounts'][0]) * 0.8;
+        $readCount = intval($report['samplesReadCounts'][0]) * 0.9;
 
         $sessionQuery = $query;
         $sessionQuery['query']['metrics'] = [
@@ -43,38 +43,67 @@ class Antisampling
         $report = $this->client->getBatch($sessionQuery);
 
         // cumulative sum of sessions
-        $cumulative = array_sum(
+        $cumulative = $this->getRunningTotal(
             array_map(function (Result $result) {
                 return intval($result->getMetrics()['ga:sessions']);
             }, $report['data'])
         );
 
-        $bucketSize = floor($cumulative/$readCount);
+        $dates = array_map(function (Result $result) {
+            $date = $result->getDimensions()['ga:date'];
+            return substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
+        }, $report['data']);
 
-        // only first date range
-        $dateRanges = $query['query']['dateRanges'][0];
+
+        // divide date range to buckets
+        $sampleBucket = array_map(function($item) use ($readCount) {
+            return floor($item/$readCount) + 1;
+        }, $cumulative);
+
+        $buckets = $this->split($dates, $sampleBucket);
+
+        // get the new date ranges
         $dateRangeBuckets = [];
-        $startDate = new \DateTime($dateRanges['startDate']);
-        $endDate = new \DateTime($dateRanges['endDate']);
-
-        while ($startDate->diff($endDate)->format('%r%a') > 0) {
-            $startDateString = $startDate->format('Y-m-d');
-            $startDate->modify("+{$bucketSize} Days");
-
-            $endDateString = $startDate->format('Y-m-d');
-            if ($startDate->diff($endDate)->format('%r%a') <= 0) {
-                $endDateString = $endDate->format('Y-m-d');
-            }
-
-            $dateRangeBuckets[] = [
-                'startDate' => $startDateString,
-                'endDate' => $endDateString
-            ];
-
-            $startDate->modify("+1 Day");
+        foreach ($buckets as $bucket) {
+            $dateRangeBuckets[] = $this->getDateRange($bucket);
         }
 
         return $dateRangeBuckets;
+    }
+
+    private function split($vector, $factor)
+    {
+        $buckets = [];
+        foreach ($factor as $key => $bucketId) {
+            $buckets[$bucketId][] = $vector[$key];
+        }
+
+        return $buckets;
+    }
+
+    private function getDateRange($dates)
+    {
+        $startDate = array_shift($dates);
+        $endDate = array_pop($dates);
+        if ($endDate == null) {
+            $endDate = $startDate;
+        }
+
+        return [
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ];
+    }
+
+    private function getRunningTotal(array $array) {
+        $generator = function(array $array) {
+            $total = 0;
+            foreach ($array as $key => $value) {
+                $total += $value;
+                yield $key => $total;
+            }
+        };
+        return iterator_to_array($generator($array));
     }
 
 

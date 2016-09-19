@@ -119,7 +119,7 @@ class Result
      */
     public function getDateFormatted()
     {
-        $dateKey = self::arrayKeyExistsNc('date', $this->dimensions);
+        $dateKey = self::arrayKeyExistsNc('ga:date', $this->dimensions);
         $date = $this->dimensions[$dateKey];
 
         if ($date == '00000000') {
@@ -127,7 +127,7 @@ class Result
         }
 
         $hour = '00';
-        if ($hourKey = self::arrayKeyExistsNc('hour', $this->dimensions)) {
+        if ($hourKey = self::arrayKeyExistsNc('ga:hour', $this->dimensions)) {
             $hour = $this->dimensions[$hourKey];
         }
         $result = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2) . ' ' . $hour . ':00:00';
