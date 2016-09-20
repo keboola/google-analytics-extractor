@@ -128,7 +128,7 @@ class ConfigDefinition implements ConfigurationInterface
                                 ->defaultValue(true)
                             ->end()
                             ->enumNode('antisampling')
-                                ->values(array('none', 'dailyWalk', 'adaptive'))
+                                ->values(array(null, 'none', 'dailyWalk', 'adaptive'))
                             ->end()
                         ->end()
                     ->end()
