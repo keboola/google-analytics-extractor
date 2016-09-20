@@ -116,26 +116,18 @@ class Antisampling
         $endDate = new \DateTime($dateRanges['endDate']);
 
         $isFirstRun = true;
-        while ($startDate->diff($endDate)->format('%r%a') > 0) {
+        while ($startDate->diff($endDate)->format('%r%a') >= 0) {
             $startDateString = $startDate->format('Y-m-d');
-            $startDate->modify("+1 Day");
-            $endDateString = $startDate->format('Y-m-d');
 
             $query['query']['dateRanges'][0] = [
                 'startDate' => $startDateString,
-                'endDate' => $endDateString
+                'endDate' => $startDateString
             ];
 
             $report = $this->client->getBatch($query);
 
-            if ($isFirstRun) {
-                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
-                $this->paginator->getOutput()
-                    ->createManifest($this->outputCsv->getFilename(), $query['outputTable'], ['id'], true);
-                $isFirstRun = false;
-            }
-
-            $this->paginator->paginate($query, $report, $this->outputCsv);
+            $this->writeReport($query, $report, $isFirstRun);
+            $isFirstRun = false;
 
             $startDate->modify("+1 Day");
         }
@@ -148,13 +140,20 @@ class Antisampling
         foreach ($dateRangeBuckets as $dateRange) {
             $query['query']['dateRanges'][0] = $dateRange;
             $report = $this->client->getBatch($query);
-            if ($isFirstRun) {
-                $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
-                $this->paginator->getOutput()
-                    ->createManifest($this->outputCsv->getFilename(), $query['outputTable'], ['id'], true);
-                $isFirstRun = false;
-            }
-            $this->paginator->paginate($query, $report, $this->outputCsv);
+            $this->writeReport($query, $report, $isFirstRun);
+            $isFirstRun = false;
         }
+    }
+
+    private function writeReport($query, $report, $isFirstRun)
+    {
+        if ($isFirstRun) {
+            $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
+            $this->paginator->getOutput()
+                ->createManifest($this->outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+        } else {
+            $this->paginator->getOutput()->appendReport($this->outputCsv, $report, $query['query']['viewId']);
+        }
+        $this->paginator->paginate($query, $report, $this->outputCsv);
     }
 }
