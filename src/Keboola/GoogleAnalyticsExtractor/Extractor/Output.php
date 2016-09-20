@@ -138,7 +138,7 @@ class Output
 
     public function createManifest($name, $destination, $primaryKey = null, $incremental = false)
     {
-        $outFilename = $this->dataDir . '/out/tables/' . $name . '.csv.manifest';
+        $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
 
         $manifestData = [
             'destination' => sprintf('%s.%s', $this->outputBucket, $destination),
