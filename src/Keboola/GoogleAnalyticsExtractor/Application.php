@@ -125,6 +125,9 @@ class Application
 
     private function sampleAction()
     {
+        if (empty($this->container['parameters']['profiles'])) {
+            throw new UserException("No profiles configured. You have to register at least one profile.");
+        }
         $profile = $this->container['parameters']['profiles'][0];
         $query = $this->container['parameters']['queries'][0];
 
