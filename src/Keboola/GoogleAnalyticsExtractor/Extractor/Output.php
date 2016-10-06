@@ -57,7 +57,6 @@ class Output
             ['id', 'idProfile'],
             $dimensions,
             $metrics
-
         );
         $csv->writeRow($headerRow);
 

@@ -122,7 +122,7 @@ class Antisampling
                 'startDate' => $startDateString,
                 'endDate' => $startDateString
             ];
-            
+
             $report = $this->client->getBatch($query);
 
             $this->writeReport($query, $report);
