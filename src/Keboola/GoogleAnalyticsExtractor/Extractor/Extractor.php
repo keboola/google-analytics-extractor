@@ -56,8 +56,8 @@ class Extractor
         $paginator = new Paginator($this->output, $this->gaApi);
 
         foreach ($queries as $query) {
-            $outputCsv = $this->output->createReport($query['outputTable']);
-            $withHeader = true;
+            $outputCsv = $this->output->createReport($query);
+            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
 
             foreach ($profiles as $profile) {
                 $apiQuery = $query;
@@ -87,11 +87,7 @@ class Extractor
                     }
                 }
 
-                $this->output->writeReport($outputCsv, $report, $profile['id'], $withHeader);
-                if ($withHeader) {
-                    $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
-                }
-                $withHeader = false;
+                $this->output->writeReport($outputCsv, $report, $profile['id']);
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
                 $status[$query['name']][$profile['id']] = 'ok';
@@ -118,8 +114,8 @@ class Extractor
         if (!empty($report['data'])) {
             $report['data'] = array_slice($report['data'], 0, 20);
 
-            $csvFile = $this->output->createReport($query['outputTable']);
-            $this->output->writeReport($csvFile, $report, $query['query']['viewId'], true);
+            $csvFile = $this->output->createReport($query);
+            $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
 
             $data = file_get_contents($csvFile);
             $rowCount = $report['rowCount'];

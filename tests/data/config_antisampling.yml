@@ -8,6 +8,13 @@ parameters:
       webPropertyName: 'Keboola Website'
       accountId: 38521826
       accountName: 'Keboola Website'
+    -
+      id: 69127714
+      name: 'All Web Site Data'
+      webPropertyId: 'UA-38521826-2'
+      webPropertyName: 'Keboola meetup group'
+      accountId: 38521826
+      accountName: 'Keboola Website'
 
   queries:
     -
@@ -17,7 +24,6 @@ parameters:
       antisampling: 'dailyWalk'
       enabled: true
       query:
-        viewId: '26550866'
         metrics:
           -
             expression: 'ga:pageviews'
@@ -43,7 +49,6 @@ parameters:
       antisampling: 'adaptive'
       enabled: true
       query:
-        viewId: '26550866'
         metrics:
           -
             expression: 'ga:pageviews'

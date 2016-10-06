@@ -115,7 +115,6 @@ class Antisampling
         $startDate = new \DateTime($dateRanges['startDate']);
         $endDate = new \DateTime($dateRanges['endDate']);
 
-        $isFirstRun = true;
         while ($startDate->diff($endDate)->format('%r%a') >= 0) {
             $startDateString = $startDate->format('Y-m-d');
 
@@ -123,11 +122,10 @@ class Antisampling
                 'startDate' => $startDateString,
                 'endDate' => $startDateString
             ];
-
+            
             $report = $this->client->getBatch($query);
 
-            $this->writeReport($query, $report, $isFirstRun);
-            $isFirstRun = false;
+            $this->writeReport($query, $report);
 
             $startDate->modify("+1 Day");
         }
@@ -136,24 +134,16 @@ class Antisampling
     public function adaptive($query, $report)
     {
         $dateRangeBuckets = $this->getDateRangeBuckets($query, $report);
-        $isFirstRun = true;
         foreach ($dateRangeBuckets as $dateRange) {
             $query['query']['dateRanges'][0] = $dateRange;
             $report = $this->client->getBatch($query);
-            $this->writeReport($query, $report, $isFirstRun);
-            $isFirstRun = false;
+            $this->writeReport($query, $report);
         }
     }
 
-    private function writeReport($query, $report, $isFirstRun)
+    private function writeReport($query, $report)
     {
-        if ($isFirstRun) {
-            $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId'], true);
-            $this->paginator->getOutput()
-                ->createManifest($this->outputCsv->getFilename(), $query['outputTable'], ['id'], true);
-        } else {
-            $this->paginator->getOutput()->appendReport($this->outputCsv, $report, $query['query']['viewId']);
-        }
+        $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
         $this->paginator->paginate($query, $report, $this->outputCsv);
     }
 }

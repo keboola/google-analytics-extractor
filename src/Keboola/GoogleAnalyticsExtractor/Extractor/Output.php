@@ -41,9 +41,27 @@ class Output
         return $csv;
     }
 
-    public function createReport($destination)
+    public function createReport($query)
     {
-        return $this->createCsvFile(sprintf('%s_%s', $destination, uniqid()));
+        $csv = $this->createCsvFile(sprintf('%s_%s', $query['outputTable'], uniqid()));
+
+        $dimensions = array_map(function ($item) {
+            return str_replace('ga:', '', $item['name']);
+        }, $query['query']['dimensions']);
+
+        $metrics = array_map(function ($item) {
+            return str_replace('ga:', '', $item['expression']);
+        }, $query['query']['metrics']);
+
+        $headerRow = array_merge(
+            ['id', 'idProfile'],
+            $dimensions,
+            $metrics
+
+        );
+        $csv->writeRow($headerRow);
+
+        return $csv;
     }
 
     /**
@@ -52,27 +70,15 @@ class Output
      * @param CsvFile $csv
      * @param array $report
      * @param $profileId
-     * @param bool $withHeader
      * @return CsvFile
      * @throws \Keboola\Csv\Exception
      */
-    public function writeReport(CsvFile $csv, array $report, $profileId, $withHeader = false)
+    public function writeReport(CsvFile $csv, array $report, $profileId)
     {
-        $cnt = 0;
         /** @var Result $result */
         foreach ($report['data'] as $result) {
             $metrics = $this->formatResultKeys($result->getMetrics());
             $dimensions = $this->formatResultKeys($result->getDimensions());
-
-            // CSV Header
-            if ($cnt == 0 && $withHeader) {
-                $headerRow = array_merge(
-                    ['id', 'idProfile'],
-                    array_keys($dimensions),
-                    array_keys($metrics)
-                );
-                $csv->writeRow($headerRow);
-            }
 
             if (isset($dimensions['date'])) {
                 $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
@@ -84,38 +90,9 @@ class Output
                 $row
             );
             $csv->writeRow($outRow);
-            $cnt++;
         }
 
         return $csv;
-    }
-
-    /**
-     * Append existing output csv file (write data without header)
-     *
-     * @param CsvFile $csv
-     * @param array $report
-     * @param $profileId
-     * @throws \Keboola\Csv\Exception
-     */
-    public function appendReport(CsvFile $csv, array $report, $profileId)
-    {
-        /** @var Result $result */
-        foreach ($report['data'] as $result) {
-            $metrics = $this->formatResultKeys($result->getMetrics());
-            $dimensions = $this->formatResultKeys($result->getDimensions());
-
-            if (isset($dimensions['date'])) {
-                $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
-            }
-
-            $row = array_merge(array_values($dimensions), array_values($metrics));
-            $outRow = array_merge(
-                [sha1($profileId . implode('', $dimensions)), $profileId],
-                $row
-            );
-            $csv->writeRow($outRow);
-        }
     }
 
     private function formatResultKeys($metricsOrDimensions)

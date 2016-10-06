@@ -377,5 +377,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         foreach ($expected as $key => $value) {
             $this->assertEquals($value, $header[$key]);
         }
+
+        // test that header is not elsewhere in the output file
+        $csv->next();
+        while ($row = $csv->current()) {
+            foreach ($expected as $key => $value) {
+                $this->assertNotEquals($value, $row[$key]);
+            }
+
+            $csv->next();
+        }
     }
 }
