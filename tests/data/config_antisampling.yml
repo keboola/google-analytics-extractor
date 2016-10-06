@@ -49,6 +49,7 @@ parameters:
       antisampling: 'adaptive'
       enabled: true
       query:
+        viewId: '26550866'
         metrics:
           -
             expression: 'ga:pageviews'
