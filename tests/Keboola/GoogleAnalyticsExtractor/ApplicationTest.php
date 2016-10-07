@@ -128,30 +128,49 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bounces', $totalsDataArr[0][6]);
     }
 
-    public function testAppRunAntisampling()
+    public function testAppRunDailyWalk()
     {
         $this->config = $this->getConfig('_antisampling');
+        unset($this->config['parameters']['queries'][1]);
         $this->application = new Application($this->config);
         $this->application->run();
 
         $dailyWalk = $this->getOutputFiles('dailyWalk');
         $this->assertEquals(1, count($dailyWalk));
 
+        foreach ($dailyWalk as $file) {
+            /** @var $file SplFileInfo */
+            $this->assertHeader($file->getPathname(), [
+                'id',
+                'idProfile',
+                'date',
+                'sourceMedium',
+                'landingPagePath',
+                'pageviews'
+            ]);
+        }
+    }
+
+    public function testAppRunAdaptive()
+    {
+        $this->config = $this->getConfig('_antisampling');
+        unset($this->config['parameters']['queries'][0]);
+        $this->application = new Application($this->config);
+        $this->application->run();
+
         $adaptive = $this->getOutputFiles('adaptive');
         $this->assertEquals(1, count($adaptive));
 
-        foreach ([$dailyWalk, $adaptive] as $outputFiles) {
-            foreach ($outputFiles as $file) {
-                /** @var $file SplFileInfo */
-                $this->assertHeader($file->getPathname(), [
-                    'id',
-                    'idProfile',
-                    'date',
-                    'sourceMedium',
-                    'landingPagePath',
-                    'pageviews'
-                ]);
-            }
+        foreach ($adaptive as $file) {
+            /** @var $file SplFileInfo */
+            $this->assertHeader($file->getPathname(), [
+                'id',
+                'idProfile',
+                'date',
+                'sourceMedium',
+                'landingPagePath',
+                'pageviews'
+            ]);
         }
     }
 
