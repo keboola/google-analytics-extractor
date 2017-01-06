@@ -72,12 +72,18 @@ class Extractor
                     continue;
                 }
 
-                if (!empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes'])) {
-                    $this->logger->warning("Report contains sampled data");
+                if (!empty($query['antisampling'])) {
+                    $isSampled = !empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes']);
 
-                    if (!empty($query['antisampling'])) {
+                    if ($isSampled) {
+                        $this->logger->warning(sprintf(
+                            "Report contains sampled data. Sampling rate is %s%.",
+                            $report['samplesReadCounts'] / $report['samplingSpaceSizes']
+                        ));
+                    }
+
+                    if ($isSampled || $query['antisampling'] == 'dailyWalk') {
                         $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
-
                         $antisampling = new Antisampling($paginator, $outputCsv);
                         $algorithm = $query['antisampling'];
                         $antisampling->$algorithm($apiQuery, $report);
