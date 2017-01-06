@@ -1,14 +1,29 @@
-language: php
+sudo: required
 
-php:
-- '5.6'
-- '7'
+language: bash
 
-before_script:
-  - composer self-update
-  - composer install --dev
+services:
+  - docker
+
+install:
+  - docker-compose run --rm app composer install -n
+  - docker-compose build app
 
 script:
-  - ./vendor/bin/phpcs --standard=psr2 -n --ignore=vendor --extensions=php .
-  - ./vendor/bin/phpunit
-  - ./vendor/bin/test-reporter
+  - docker-compose run --rm app
+
+after_success:
+  - docker images
+
+after_error:
+  - docker-compose logs
+
+after_failure:
+  - docker-compose logs
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./deploy.sh
+  on:
+    tags: true

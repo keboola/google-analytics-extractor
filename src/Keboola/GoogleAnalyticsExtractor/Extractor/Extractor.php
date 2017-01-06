@@ -77,8 +77,8 @@ class Extractor
 
                     if ($isSampled) {
                         $this->logger->warning(sprintf(
-                            "Report contains sampled data. Sampling rate is %s%.",
-                            $report['samplesReadCounts'] / $report['samplingSpaceSizes']
+                            "Report contains sampled data. Sampling rate is %d%%.",
+                            intval($report['samplesReadCounts']) / intval($report['samplingSpaceSizes'])
                         ));
                     }
 
