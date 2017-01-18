@@ -79,8 +79,8 @@ class Extractor
                         $this->logger->warning(sprintf(
                             "Report contains sampled data. Sampling rate is %d%%.",
                             intval(100 * (
-                                intval(array_shift($report['samplesReadCounts']))
-                                / intval(array_shift($report['samplingSpaceSizes']))
+                                intval($report['samplesReadCounts'][0])
+                                / intval($report['samplingSpaceSizes'][0])
                             ))
                         ));
                     }
