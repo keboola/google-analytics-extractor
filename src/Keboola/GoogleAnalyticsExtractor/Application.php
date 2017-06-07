@@ -78,6 +78,9 @@ class Application
         try {
             return $this->$actionMethod();
         } catch (RequestException $e) {
+            if ($e->getCode() == 400) {
+                throw new UserException($e->getMessage());
+            }
             if ($e->getCode() == 401) {
                 throw new UserException("Expired or wrong credentials, please reauthorize.", 401, $e);
             }
@@ -89,11 +92,11 @@ class Application
                     throw new UserException("Reason: " . $e->getResponse()->getReasonPhrase(), 403, $e);
                 }
             }
-            if ($e->getCode() == 400) {
-                throw new UserException($e->getMessage());
-            }
             if ($e->getCode() == 503) {
                 throw new UserException("Google API error: " . $e->getMessage(), 503, $e);
+            }
+            if ($e->getCode() == 429) {
+                throw new UserException($e->getMessage());
             }
             throw new ApplicationException($e->getResponse()->getBody(), 500, $e);
         }
