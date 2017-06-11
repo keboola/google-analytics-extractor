@@ -103,6 +103,10 @@ class Extractor
             }
         }
 
+        $usage = $this->output->getUsage();
+        $usage->setApiCalls($this->gaApi->getApiCallsCount());
+        $usage->write();
+
         return [
             'status' => 'success',
             'queries' => $status

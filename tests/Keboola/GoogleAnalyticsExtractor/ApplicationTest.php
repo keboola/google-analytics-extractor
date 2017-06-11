@@ -126,6 +126,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('sessions', $totalsDataArr[0][4]);
         $this->assertEquals('pageviews', $totalsDataArr[0][5]);
         $this->assertEquals('bounces', $totalsDataArr[0][6]);
+
+        $this->assertFileExists(ROOT_PATH . '/tests/data/out/usage.json');
+        $usage = json_decode(file_get_contents(ROOT_PATH . '/tests/data/out/usage.json'), true);
+        $this->assertArrayHasKey('metric', $usage[0]);
+        $this->assertArrayHasKey('value', $usage[0]);
+        $this->assertGreaterThan(0, $usage[0]['value']);
+        $this->assertEquals('API Calls', $usage[0]['metric']);
     }
 
     public function testAppRunDailyWalk()

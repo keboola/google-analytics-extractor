@@ -18,10 +18,19 @@ class Output
 
     private $outputBucket;
 
+    /** @var Usage */
+    private $usage;
+
     public function __construct($dataDir, $outputBucket)
     {
         $this->dataDir = $dataDir;
         $this->outputBucket = $outputBucket;
+        $this->usage = new Usage($dataDir);
+    }
+
+    public function getUsage()
+    {
+        return $this->usage;
     }
 
     public function writeProfiles(CsvFile $csv, array $profiles)

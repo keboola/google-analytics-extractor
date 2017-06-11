@@ -24,6 +24,8 @@ class Client
     /** @var Logger */
     protected $logger;
 
+    protected $apiCallsCount = 0;
+
     public function __construct(GoogleApi $api, Logger $logger)
     {
         $this->api = $api;
@@ -60,6 +62,8 @@ class Client
             ['Accept' => 'application/json'],
             ['json' => $body]
         );
+
+        $this->apiCallsCount++;
 
         return json_decode($response->getBody()->getContents(), true);
     }
@@ -177,5 +181,10 @@ class Client
         }
 
         return $processed;
+    }
+
+    public function getApiCallsCount()
+    {
+        return $this->apiCallsCount;
     }
 }
