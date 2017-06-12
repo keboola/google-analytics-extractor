@@ -131,7 +131,7 @@ class Client
      * Parse JSON response to array of Result rows
      * @param $response
      * @param $query
-     * @return array
+     * @return mixed
      * @internal param array $result json decoded response
      */
     private function processResponse($response, $query)

@@ -16,6 +16,7 @@ try {
     }
     $config = json_decode(file_get_contents($arguments["data"] . "/config.json"), true);
     $config['parameters']['data_dir'] = $arguments['data'];
+    $config['app_name'] = APP_NAME;
 
     $app = new Application($config);
     $result = $app->run();

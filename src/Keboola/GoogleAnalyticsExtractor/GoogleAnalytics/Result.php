@@ -38,7 +38,7 @@ class Result
      * Get an associative array of the dimesions
      * and the matching values for the current result
      *
-     * @return Array
+     * @return array
      */
     public function getDimensions()
     {
@@ -49,7 +49,7 @@ class Result
      * Get an array of the metrics and the matchning
      * values for the current result
      *
-     * @return Array
+     * @return array
      */
     public function getMetrics()
     {
@@ -88,9 +88,9 @@ class Result
      * Case insensitive array_key_exists function, also returns
      * matching key.
      *
-     * @param String $key
-     * @param Array $search
-     * @return String Matching array key
+     * @param string $key
+     * @param array $search
+     * @return mixed Matching array key or false
      */
     public static function arrayKeyExistsNc($key, $search)
     {

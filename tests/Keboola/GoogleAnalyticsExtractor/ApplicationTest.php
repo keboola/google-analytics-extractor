@@ -6,10 +6,9 @@
  * Date: 19/04/16
  * Time: 10:59
  */
-namespace Keboola\GoogleAnalyticsExtractor\Test;
+namespace Keboola\GoogleAnalyticsExtractor;
 
 use Keboola\Csv\CsvFile;
-use Keboola\GoogleAnalyticsExtractor\Application;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -22,20 +21,24 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     private $config;
 
+    private $dataDir;
+
     public function setUp()
     {
+        $this->dataDir = __DIR__ . '/../../../tests/data';
         $this->config = $this->getConfig();
         $this->application = new Application($this->config);
 
         $filesystem = new Filesystem();
-        $filesystem->remove(ROOT_PATH . '/tests/data/out/tables');
-        $filesystem->mkdir(ROOT_PATH . '/tests/data/out/tables');
+        $filesystem->remove($this->dataDir . '/out/tables');
+        $filesystem->mkdir($this->dataDir . '/out/tables');
     }
 
     private function getConfig($suffix = '')
     {
-        $config = json_decode(file_get_contents(ROOT_PATH . '/tests/data/config' . $suffix . '.json'), true);
-        $config['parameters']['data_dir'] = ROOT_PATH . '/tests/data/';
+        $config = json_decode(file_get_contents($this->dataDir . '/config' . $suffix . '.json'), true);
+        $config['app_name'] = 'ex-google-analytics';
+        $config['parameters']['data_dir'] = $this->dataDir;
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
             '#appSecret' => getenv('CLIENT_SECRET'),
@@ -126,8 +129,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('pageviews', $totalsDataArr[0][5]);
         $this->assertEquals('bounces', $totalsDataArr[0][6]);
 
-        $this->assertFileExists(ROOT_PATH . '/tests/data/out/usage.json');
-        $usage = json_decode(file_get_contents(ROOT_PATH . '/tests/data/out/usage.json'), true);
+        $this->assertFileExists($this->dataDir . '/out/usage.json');
+        $usage = json_decode(file_get_contents($this->dataDir . '/out/usage.json'), true);
         $this->assertArrayHasKey('metric', $usage[0]);
         $this->assertArrayHasKey('value', $usage[0]);
         $this->assertGreaterThan(0, $usage[0]['value']);
@@ -377,7 +380,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $finder = new Finder();
 
         return $finder->files()
-            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.csv$/i')
         ;
     }
@@ -387,7 +390,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $finder = new Finder();
 
         return $finder->files()
-            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.manifest$/i')
         ;
     }

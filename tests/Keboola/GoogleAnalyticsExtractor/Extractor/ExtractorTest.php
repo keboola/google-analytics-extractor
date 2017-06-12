@@ -21,10 +21,13 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     private $config;
 
+    private $dataDir;
+
     public function setUp()
     {
+        $this->dataDir = __DIR__ . '/../../../../tests/data';
         $this->config = $this->getConfig();
-        $logger = new Logger(APP_NAME);
+        $logger = new Logger('ex-google-analytics');
         $client = new Client(
             new RestApi(
                 getenv('CLIENT_ID'),
@@ -34,13 +37,13 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
             ),
             $logger
         );
-        $output = new Output(ROOT_PATH . '/tests/data', $this->config['parameters']['outputBucket']);
+        $output = new Output($this->dataDir, $this->config['parameters']['outputBucket']);
         $this->extractor = new Extractor($client, $output, $logger);
     }
 
     private function getConfig()
     {
-        return json_decode(file_get_contents(ROOT_PATH . '/tests/data/config.json'), true);
+        return json_decode(file_get_contents($this->dataDir . '/config.json'), true);
     }
 
     public function testRun()
@@ -91,7 +94,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $finder = new Finder();
 
         return $finder->files()
-            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.csv$/i')
             ;
     }
@@ -101,7 +104,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
         $finder = new Finder();
 
         return $finder->files()
-            ->in(ROOT_PATH . '/tests/data/out/tables')
+            ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.manifest$/i')
             ;
     }

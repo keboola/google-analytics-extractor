@@ -13,3 +13,20 @@ services:
       REFRESH_TOKEN: $REFRESH_TOKEN
       VIEW_ID: $VIEW_ID
       CODECLIMATE_REPO_TOKEN: $CODECLIMATE_REPO_TOKEN
+
+  tests:
+    build: .
+    image: keboola/google-analytics-extractor
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/code
+    working_dir: /code
+    command: ./phpunit.sh
+    environment:
+      CLIENT_ID: $CLIENT_ID
+      CLIENT_SECRET: $CLIENT_SECRET
+      ACCESS_TOKEN: $ACCESS_TOKEN
+      REFRESH_TOKEN: $REFRESH_TOKEN
+      VIEW_ID: $VIEW_ID
+      CODECLIMATE_REPO_TOKEN: $CODECLIMATE_REPO_TOKEN

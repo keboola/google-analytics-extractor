@@ -26,7 +26,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                 getenv('ACCESS_TOKEN'),
                 getenv('REFRESH_TOKEN')
             ),
-            new Logger(APP_NAME)
+            new Logger('ex-google-analytics')
         );
     }
 

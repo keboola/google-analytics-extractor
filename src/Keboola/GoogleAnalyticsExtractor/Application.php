@@ -31,8 +31,8 @@ class Application
         $container = new Container();
         $container['action'] = isset($config['action'])?$config['action']:'run';
         $container['parameters'] = $this->validateParamteters($config['parameters']);
-        $container['logger'] = function ($c) {
-            $logger = new Logger(APP_NAME);
+        $container['logger'] = function ($c) use ($config) {
+            $logger = new Logger($config['app_name']);
             if ($c['action'] !== 'run') {
                 $logger->setHandlers([new NullHandler(Logger::INFO)]);
             }
