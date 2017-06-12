@@ -14,7 +14,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Yaml;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +34,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     private function getConfig($suffix = '')
     {
-        $config = Yaml::parse(file_get_contents(ROOT_PATH . '/tests/data/config' . $suffix . '.yml'));
+        $config = json_decode(file_get_contents(ROOT_PATH . '/tests/data/config' . $suffix . '.json'), true);
         $config['parameters']['data_dir'] = ROOT_PATH . '/tests/data/';
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
@@ -80,22 +79,22 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($totalsManifest));
 
         foreach ($profilesManifests as $profilesManifestFile) {
-            $profilesManifest = Yaml::parse(file_get_contents($profilesManifestFile));
+            $profilesManifest = json_decode(file_get_contents($profilesManifestFile), true);
             $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles', $profilesManifest['destination']);
         }
 
         foreach ($usersManifests as $usersManifestFile) {
-            $usersManifest = Yaml::parse(file_get_contents($usersManifestFile));
+            $usersManifest = json_decode(file_get_contents($usersManifestFile), true);
             $this->assertEquals($this->config['parameters']['outputBucket'] . '.users', $usersManifest['destination']);
         }
 
         foreach ($organicManifests as $organicManifestFile) {
-            $organicManifest = Yaml::parse(file_get_contents($organicManifestFile));
+            $organicManifest = json_decode(file_get_contents($organicManifestFile), true);
             $this->assertEquals($this->config['parameters']['outputBucket'] . '.organicTraffic', $organicManifest['destination']);
         }
 
         foreach ($manifests as $manifestFile) {
-            $manifest = Yaml::parse(file_get_contents($manifestFile));
+            $manifest = json_decode(file_get_contents($manifestFile), true);
             $this->assertArrayHasKey('destination', $manifest);
             $this->assertArrayHasKey('incremental', $manifest);
             $this->assertTrue($manifest['incremental']);
@@ -364,8 +363,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $fs->mkdir($dataPath);
         $fs->mkdir($dataPath . '/out/tables');
 
-        $yaml = new Yaml();
-        file_put_contents($dataPath . '/config.yml', $yaml->dump($this->config));
+        file_put_contents($dataPath . '/config.json', json_encode($this->config));
 
         $process = new Process(sprintf('php run.php --data=%s', $dataPath));
         $process->setTimeout(180);

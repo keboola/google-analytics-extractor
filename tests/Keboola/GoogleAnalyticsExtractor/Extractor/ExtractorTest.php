@@ -13,7 +13,6 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\Logger;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Yaml;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +40,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     private function getConfig()
     {
-        return Yaml::parse(file_get_contents(ROOT_PATH . '/tests/data/config.yml'));
+        return json_decode(file_get_contents(ROOT_PATH . '/tests/data/config.json'), true);
     }
 
     public function testRun()

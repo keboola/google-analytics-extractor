@@ -4,7 +4,6 @@ use Keboola\GoogleAnalyticsExtractor\Application;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Logger;
-use Symfony\Component\Yaml\Yaml;
 
 require_once(dirname(__FILE__) . "/bootstrap.php");
 
@@ -15,7 +14,7 @@ try {
     if (!isset($arguments["data"])) {
         throw new UserException('Data folder not set.');
     }
-    $config = Yaml::parse(file_get_contents($arguments["data"] . "/config.yml"));
+    $config = json_decode(file_get_contents($arguments["data"] . "/config.json"), true);
     $config['parameters']['data_dir'] = $arguments['data'];
 
     $app = new Application($config);

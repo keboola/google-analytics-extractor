@@ -10,7 +10,6 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
-use Symfony\Component\Yaml\Yaml;
 
 class Output
 {
@@ -134,6 +133,6 @@ class Output
             $manifestData['primary_key'] = $primaryKey;
         }
 
-        return file_put_contents($outFilename, Yaml::dump($manifestData));
+        return file_put_contents($outFilename, json_encode($manifestData));
     }
 }
