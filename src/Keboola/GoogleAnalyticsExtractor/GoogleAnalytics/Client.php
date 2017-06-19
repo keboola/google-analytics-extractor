@@ -57,10 +57,9 @@ class Client
     public function request($method, $url, $body = null)
     {
         $this->apiCallsCount++;
-
         $response = $this->api->request(
-            self::DATA_URL,
-            'POST',
+            $url,
+            $method,
             ['Accept' => 'application/json'],
             ['json' => $body]
         );
