@@ -74,7 +74,11 @@ class Extractor
                 } catch (RequestException $e) {
                     if ($e->getCode() == 403) {
                         if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
-                            $this->logger->warning("You don't have access to Google Analytics resource. Probably you don't have access to profile, or profile doesn't exists anymore.");
+                            $this->logger->warning(sprintf(
+                                "You don't have access to Google Analytics resource. 
+                                Probably you don't have access to profile (%s), or it doesn't exists anymore.",
+                                $profile['id']
+                            ));
                             continue;
                         }
                     }
