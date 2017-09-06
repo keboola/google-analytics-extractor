@@ -8,6 +8,8 @@
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use GuzzleHttp\Exception\RequestException;
+use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
@@ -67,7 +69,19 @@ class Extractor
                     continue;
                 }
 
-                $report = $this->getReport($apiQuery);
+                try {
+                    $report = $this->getReport($apiQuery);
+                } catch (RequestException $e) {
+                    if ($e->getCode() == 403) {
+                        if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
+                            $this->logger->warning("You don't have access to Google Analytics resource. Probably you don't have access to profile, or profile doesn't exists anymore.");
+                            continue;
+                        } else {
+                            throw new UserException("Reason: " . $e->getResponse()->getReasonPhrase(), 403, $e);
+                        }
+                    }
+                }
+
                 if (empty($report['data'])) {
                     continue;
                 }
