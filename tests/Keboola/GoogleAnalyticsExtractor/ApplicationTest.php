@@ -369,7 +369,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         file_put_contents($dataPath . '/config.json', json_encode($this->config));
 
         $process = new Process(sprintf('php run.php --data=%s', $dataPath));
-        $process->setTimeout(180);
+        $process->setTimeout(600);
         $process->run();
 
         return $process;
