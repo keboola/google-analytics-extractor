@@ -217,17 +217,17 @@
         },
         {
             "name": "keboola/google-client-bundle",
-            "version": "4.1.2",
+            "version": "4.2.0",
             "target-dir": "Keboola/Google/ClientBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/google-client-bundle.git",
-                "reference": "56dd0ce2519cfe5e8260e58bd2c77048a5571106"
+                "reference": "4afc58127bbf50cee8024946c193cff31e66c229"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/56dd0ce2519cfe5e8260e58bd2c77048a5571106",
-                "reference": "56dd0ce2519cfe5e8260e58bd2c77048a5571106",
+                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/4afc58127bbf50cee8024946c193cff31e66c229",
+                "reference": "4afc58127bbf50cee8024946c193cff31e66c229",
                 "shasum": ""
             },
             "require": {
@@ -257,7 +257,7 @@
                 "keboola",
                 "rest"
             ],
-            "time": "2017-01-16T14:00:28+00:00"
+            "time": "2017-11-14T10:56:16+00:00"
         },
         {
             "name": "keboola/php-temp",
