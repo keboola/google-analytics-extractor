@@ -5,6 +5,9 @@ MAINTAINER Miro Cillik <miro@keboola.com>
 RUN apt-get update
 RUN apt-get install -y wget curl make git bzip2 time libzip-dev zip unzip libssl1.0.0 openssl vim
 
+# PHP
+RUN docker-php-ext-install sockets
+
 # Composer
 WORKDIR /root
 RUN cd \
