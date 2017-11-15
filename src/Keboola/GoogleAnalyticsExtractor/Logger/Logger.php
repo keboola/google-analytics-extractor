@@ -16,7 +16,7 @@ class Logger extends \Monolog\Logger
 {
     public function __construct($name = '')
     {
-        $debugHandler = new SyslogUdpHandler("logs.papertrailapp.com", 49730);
+        $debugHandler = new SyslogUdpHandler("logs6.papertrailapp.com", 40897);
         $debugHandler->setFormatter(new LineFormatter());
 
         $errHandler = new StreamHandler('php://stderr', Logger::NOTICE, false);
