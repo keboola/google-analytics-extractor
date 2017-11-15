@@ -53,7 +53,7 @@ class AntisamplingTest extends ClientTest
         $query['samplingLevel'] = 'SMALL';
         $report = $this->client->getBatch($query);
 
-        $output = new Output('/tmp/ga-test', 'in.c-ex-google-analytics-test');
+        $output = new Output('/tmp/ga-test', uniqid('in.c-ex-google-analytics-test'));
         $paginator = new Paginator($output, $this->client);
         $outputCsv = $output->createReport($query);
         (new Antisampling($paginator, $outputCsv))->dailyWalk($query, $report);
@@ -70,7 +70,7 @@ class AntisamplingTest extends ClientTest
 
         $query2 = $this->buildQuery();
         $query2['outputTable'] = 'antisampling-expected';
-        $output = new Output('/tmp/ga-test', 'in.c-ex-google-analytics-test');
+        $output = new Output('/tmp/ga-test', uniqid('in.c-ex-google-analytics-test'));
         $paginator = new Paginator($output, $this->client);
         $outputCsv = $output->createReport($query2);
 

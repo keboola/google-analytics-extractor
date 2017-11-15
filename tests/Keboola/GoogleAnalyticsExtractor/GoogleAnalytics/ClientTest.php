@@ -10,7 +10,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi;
-use Keboola\GoogleAnalyticsExtractor\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {

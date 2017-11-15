@@ -251,7 +251,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testRun()
     {
         $process = $this->runProcess();
-        $this->assertEquals(0, $process->getExitCode());
+        $this->assertEquals(0, $process->getExitCode(), $process->getErrorOutput());
     }
 
     public function testRunSampleAction()

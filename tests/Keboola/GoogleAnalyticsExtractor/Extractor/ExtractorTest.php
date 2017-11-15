@@ -11,7 +11,7 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 use Keboola\Csv\CsvFile;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Keboola\GoogleAnalyticsExtractor\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Symfony\Component\Finder\Finder;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase
