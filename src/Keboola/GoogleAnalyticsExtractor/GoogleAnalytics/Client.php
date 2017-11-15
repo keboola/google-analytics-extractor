@@ -9,7 +9,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
-use Keboola\GoogleAnalyticsExtractor\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 
 class Client
 {
@@ -57,6 +57,11 @@ class Client
     public function request($method, $url, $body = null)
     {
         $this->apiCallsCount++;
+        $this->logger->debug(sprintf("Sending request"), [
+            'url' => $url,
+            'method' => $method,
+            'body' => $body
+        ]);
         $response = $this->api->request(
             $url,
             $method,

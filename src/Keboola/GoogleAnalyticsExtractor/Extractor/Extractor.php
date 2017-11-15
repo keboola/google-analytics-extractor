@@ -9,9 +9,8 @@
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
-use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Monolog\Logger;
+use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class Extractor
@@ -60,6 +59,7 @@ class Extractor
         foreach ($queries as $query) {
             $outputCsv = $this->output->createReport($query);
             $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $this->logger->info(sprintf("Running query '%s'", $query['name']));
 
             foreach ($profiles as $profile) {
                 $apiQuery = $query;
