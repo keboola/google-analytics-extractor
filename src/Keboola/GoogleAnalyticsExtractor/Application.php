@@ -43,12 +43,13 @@ class Application
             throw new UserException('Missing authorization data');
         }
         $tokenData = json_decode($config['authorization']['oauth_api']['credentials']['#data'], true);
-        $container['google_client'] = function () use ($config, $tokenData) {
+        $container['google_client'] = function ($c) use ($config, $tokenData) {
             return new RestApi(
                 $config['authorization']['oauth_api']['credentials']['appKey'],
                 $config['authorization']['oauth_api']['credentials']['#appSecret'],
                 $tokenData['access_token'],
-                $tokenData['refresh_token']
+                $tokenData['refresh_token'],
+                $c['logger']
             );
         };
         $container['google_analytics_client'] = function ($c) {
