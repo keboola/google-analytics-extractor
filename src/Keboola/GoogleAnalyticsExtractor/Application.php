@@ -17,6 +17,7 @@ use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
+use Keboola\GoogleAnalyticsExtractor\Logger\KbcInfoProcessor;
 use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Monolog\Handler\NullHandler;
 use Pimple\Container;
@@ -34,6 +35,7 @@ class Application
         $container['parameters'] = $this->validateParamteters($config['parameters']);
         $container['logger'] = function ($c) use ($config) {
             $logger = new Logger($config['app_name']);
+            $logger->pushProcessor(new KbcInfoProcessor());
             if ($c['action'] !== 'run') {
                 $logger->setHandlers([new NullHandler(Logger::INFO)]);
             }
@@ -80,6 +82,15 @@ class Application
         try {
             return $this->$actionMethod();
         } catch (RequestException $e) {
+            $this->container['logger']->debug("Request failed", [
+                'code' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'response' => [
+                    'statusCode' => $e->getResponse()->getStatusCode(),
+                    'reasonPhrase' => $e->getResponse()->getReasonPhrase(),
+                    'body' => $e->getResponse()->getBody()
+                ]
+            ]);
             if ($e->getCode() == 400) {
                 throw new UserException($e->getMessage());
             }

@@ -88,10 +88,6 @@ class Client
             'reportRequests' => $this->getReportRequest($query['query'])
         ];
         $this->logger->debug(sprintf("Sending request"), [
-            'kbc_run_id' => getenv('KBC_RUNID'),
-            'kbc_project_id' => getenv('KBC_PROJECTID'),
-            'kbc_config_id' => getenv('KBC_CONFIGID'),
-            'kbc_component_id' => getenv('KBC_COMPONENTID'),
             'ga_profile' => $query['query']['viewId'],
             'request' => [
                 'method' => 'POST',
