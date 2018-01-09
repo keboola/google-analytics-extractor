@@ -31,7 +31,6 @@ class Extractor
         $this->logger = $logger;
         $this->output = $output;
 
-        $this->gaApi->getApi()->setBackoffsCount(9);
         $this->gaApi->getApi()->setBackoffCallback403($this->getBackoffCallback403());
         $this->gaApi->getApi()->setRefreshTokenCallback([$this, 'refreshTokenCallback']);
     }

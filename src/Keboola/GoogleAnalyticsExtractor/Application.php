@@ -46,13 +46,19 @@ class Application
         }
         $tokenData = json_decode($config['authorization']['oauth_api']['credentials']['#data'], true);
         $container['google_client'] = function ($c) use ($config, $tokenData) {
-            return new RestApi(
+            $client = new RestApi(
                 $config['authorization']['oauth_api']['credentials']['appKey'],
                 $config['authorization']['oauth_api']['credentials']['#appSecret'],
                 $tokenData['access_token'],
                 $tokenData['refresh_token'],
                 $c['logger']
             );
+            $retries = 9;
+            if ($c['action'] !== 'run') {
+                $retries = 2;
+            }
+            $client->setBackoffsCount($retries);
+            return $client;
         };
         $container['google_analytics_client'] = function ($c) {
             return new Client($c['google_client'], $c['logger']);
