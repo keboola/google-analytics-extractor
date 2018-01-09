@@ -9,6 +9,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
+use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
@@ -90,6 +91,10 @@ class Extractor
                 }
 
                 if (!empty($query['antisampling'])) {
+                    if (!$this->hasDimension($query, 'ga:date')) {
+                        throw new UserException('\'ga:date\' dimension must be set in order to use anti-sampling');
+                    }
+
                     $isSampled = !empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes']);
 
                     if ($isSampled) {
@@ -184,5 +189,15 @@ class Extractor
 
     public function refreshTokenCallback($accessToken, $refreshToken)
     {
+    }
+
+    private function hasDimension($query, $name)
+    {
+        foreach ($query['query']['dimensions'] as $dimension) {
+            if ($dimension['name'] == $name) {
+                return true;
+            }
+        }
+        return false;
     }
 }

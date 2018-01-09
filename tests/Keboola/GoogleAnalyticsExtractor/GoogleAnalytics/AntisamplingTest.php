@@ -9,8 +9,10 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator;
+use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Symfony\Component\Filesystem\Filesystem;
 
 class AntisamplingTest extends ClientTest
@@ -101,5 +103,30 @@ class AntisamplingTest extends ClientTest
         $this->arrayHasKey($report['query']);
         $this->assertNotEmpty($report['query']);
         $this->arrayHasKey($report['rowCount']);
+    }
+
+    public function testGaDateError()
+    {
+        $this->expectException('Keboola\\GoogleAnalyticsExtractor\\Exception\\UserException');
+        $query = $this->buildQuery();
+        $query['antisampling'] = 'dailyWalk';
+        $query['samplingLevel'] = 'SMALL';
+        $profile = ['id' => getenv('VIEW_ID')];
+        $query['query']['dimensions'] = [
+            ['name' => 'ga:week'],
+            ['name' => 'ga:source'],
+            ['name' => 'ga:medium'],
+            ['name' => 'ga:landingPagePath'],
+            ['name' => 'ga:pagePath'],
+        ];
+        $query['query']['dateRanges'] = [[
+            'startDate' => date('Y-m-d', strtotime('-4 days')),
+            'endDate' => date('Y-m-d', strtotime('-1 day'))
+        ]];
+
+        $output = new Output('/tmp/ga-test', uniqid('in.c-ex-google-analytics-test'));
+        $logger = new Logger('ex-google-analytics-test');
+        $extractor = new Extractor($this->client, $output, $logger);
+        $extractor->run([$query], [$profile]);
     }
 }
