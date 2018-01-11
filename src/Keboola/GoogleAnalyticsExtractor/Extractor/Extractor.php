@@ -90,8 +90,14 @@ class Extractor
                 }
 
                 if (!empty($query['antisampling'])) {
-                    if (!$this->hasDimension($query, 'ga:date')) {
-                        throw new UserException('\'ga:date\' dimension must be set in order to use anti-sampling');
+                    if (!$this->hasDimension($query, 'ga:date')
+                        && !$this->hasDimension($query, 'ga:dateHour')
+                        && !$this->hasDimension($query, 'ga:dateHourMinute')
+                    ) {
+                        throw new UserException(sprintf(
+                            'At least one of these dimensions must be set in order to use anti-sampling: %s',
+                            implode(' | ', ['ga:date', 'ga:dateHour', 'ga:dateHourMinute'])
+                        ));
                     }
 
                     $isSampled = !empty($report['samplesReadCounts']) && !empty($report['samplingSpaceSizes']);
