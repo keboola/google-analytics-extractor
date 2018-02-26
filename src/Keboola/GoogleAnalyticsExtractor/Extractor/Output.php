@@ -93,7 +93,7 @@ class Output
 
             $row = array_merge(array_values($dimensions), array_values($metrics));
             $outRow = array_merge(
-                [sha1($profileId . implode('', $dimensions)), $profileId],
+                [sha1($profileId . implode('-', $dimensions)), $profileId],
                 $row
             );
             $csv->writeRow($outRow);
