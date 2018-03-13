@@ -64,7 +64,8 @@ class Application
             return new Client($c['google_client'], $c['logger']);
         };
         $container['output'] = function ($c) {
-            return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket']);
+            $version = isset($c['parameters']['version']) ? $c['parameters']['version'] : 4;
+            return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket'], $version);
         };
         $container['extractor'] = function ($c) {
             return new Extractor(

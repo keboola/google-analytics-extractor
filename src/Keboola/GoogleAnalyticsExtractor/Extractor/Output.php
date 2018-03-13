@@ -20,11 +20,14 @@ class Output
     /** @var Usage */
     private $usage;
 
-    public function __construct($dataDir, $outputBucket)
+    private $version;
+
+    public function __construct($dataDir, $outputBucket, $version = '4')
     {
         $this->dataDir = $dataDir;
         $this->outputBucket = $outputBucket;
         $this->usage = new Usage($dataDir);
+        $this->version = $version;
     }
 
     public function getUsage()
@@ -91,7 +94,7 @@ class Output
                 $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
             }
 
-            $pKey = sha1($profileId . implode('-', $dimensions));
+            $pKey = $this->getPrimaryKey($profileId, $dimensions);
 
             $csv->writeRow(array_merge(
                 [$pKey, $profileId],
@@ -101,6 +104,17 @@ class Output
         }
 
         return $csv;
+    }
+
+    private function getPrimaryKey($profileId, $dimensions)
+    {
+        // Backward compatibility with data with old (buggy) PKs
+        if (isset($dimensions['date'])) {
+            if ($this->version < 5 && strtotime($dimensions['date']) < strtotime('2018-03-20')) {
+                return sha1($profileId . implode('', $dimensions));
+            }
+        }
+        return sha1($profileId . implode('-', $dimensions));
     }
 
     private function formatResultKeys($metricsOrDimensions)
