@@ -123,7 +123,6 @@ class Extractor
                     }
                 }
 
-                $this->output->writeReport($outputCsv, $report, $profile['id']);
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
                 $status[$query['name']][$profile['id']] = 'ok';

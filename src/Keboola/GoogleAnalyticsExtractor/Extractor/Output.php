@@ -91,12 +91,13 @@ class Output
                 $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
             }
 
-            $row = array_merge(array_values($dimensions), array_values($metrics));
-            $outRow = array_merge(
-                [sha1($profileId . implode('-', $dimensions)), $profileId],
-                $row
-            );
-            $csv->writeRow($outRow);
+            $pKey = sha1($profileId . implode('-', $dimensions));
+
+            $csv->writeRow(array_merge(
+                [$pKey, $profileId],
+                array_values($dimensions),
+                array_values($metrics)
+            ));
         }
 
         return $csv;
