@@ -20,14 +20,14 @@ class Output
     /** @var Usage */
     private $usage;
 
-    private $version;
+    private $options;
 
-    public function __construct($dataDir, $outputBucket, $version = '4')
+    public function __construct($dataDir, $outputBucket, $options = [])
     {
         $this->dataDir = $dataDir;
         $this->outputBucket = $outputBucket;
         $this->usage = new Usage($dataDir);
-        $this->version = $version;
+        $this->options = $options;
     }
 
     public function getUsage()
@@ -110,11 +110,16 @@ class Output
     {
         // Backward compatibility with data with old (buggy) PKs
         if (isset($dimensions['date'])) {
-            if ($this->version < 5 && strtotime($dimensions['date']) < strtotime('2018-03-20')) {
+            if ($this->isConflictingPrimaryKey() && strtotime($dimensions['date']) < strtotime('2018-03-20')) {
                 return sha1($profileId . implode('', $dimensions));
             }
         }
         return sha1($profileId . implode('-', $dimensions));
+    }
+
+    private function isConflictingPrimaryKey()
+    {
+        return !isset($this->options['nonConflictPrimaryKey']) || $this->options['nonConflictPrimaryKey'] === false;
     }
 
     private function formatResultKeys($metricsOrDimensions)

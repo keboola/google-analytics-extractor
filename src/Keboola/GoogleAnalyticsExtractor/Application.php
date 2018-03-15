@@ -64,8 +64,11 @@ class Application
             return new Client($c['google_client'], $c['logger']);
         };
         $container['output'] = function ($c) {
-            $version = isset($c['parameters']['version']) ? $c['parameters']['version'] : 4;
-            return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket'], $version);
+            $options = [];
+            if (isset($c['parameters']['nonConflictPrimaryKey'])) {
+                $options['nonConflictPrimaryKey'] = boolval($c['parameters']['nonConflictPrimaryKey']);
+            }
+            return new Output($c['parameters']['data_dir'], $c['parameters']['outputBucket'], $options);
         };
         $container['extractor'] = function ($c) {
             return new Extractor(
