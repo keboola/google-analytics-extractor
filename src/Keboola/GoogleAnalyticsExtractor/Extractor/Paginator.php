@@ -35,12 +35,15 @@ class Paginator
     public function paginate($query, $report, $csvFile = null)
     {
         do {
+            // writer first result
+            $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+
+            // get next page if there's any
             $nextQuery = null;
             if (isset($report['nextPageToken'])) {
-                $query['query']['pageToken'] = $report['nextPageToken'];
                 $nextQuery = $query;
-                $report = $this->client->getBatch($query);
-                $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+                $nextQuery['query']['pageToken'] = $report['nextPageToken'];
+                $report = $this->client->getBatch($nextQuery);
             }
             $query = $nextQuery;
         } while ($nextQuery);

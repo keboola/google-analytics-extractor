@@ -143,7 +143,6 @@ class Antisampling
 
     private function writeReport($query, $report)
     {
-        $this->paginator->getOutput()->writeReport($this->outputCsv, $report, $query['query']['viewId']);
         $this->paginator->paginate($query, $report, $this->outputCsv);
     }
 }

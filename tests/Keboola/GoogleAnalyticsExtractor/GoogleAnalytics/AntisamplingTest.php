@@ -140,7 +140,6 @@ class AntisamplingTest extends ClientTest
                 'endDate' => $date
             ]];
             $rep = $this->client->getBatch($query2);
-            $output->writeReport($outputCsv, $rep, $query2['query']['viewId']);
             $paginator->paginate($query2, $rep, $outputCsv);
         }
 
