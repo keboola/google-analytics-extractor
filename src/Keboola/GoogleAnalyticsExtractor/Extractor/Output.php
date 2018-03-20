@@ -110,7 +110,7 @@ class Output
     {
         // Backward compatibility with data with old (buggy) PKs
         if (isset($dimensions['date'])) {
-            if ($this->isConflictingPrimaryKey() && strtotime($dimensions['date']) < strtotime('2018-03-20')) {
+            if ($this->isConflictingPrimaryKey() && strtotime($dimensions['date']) < strtotime('2018-03-27')) {
                 return sha1($profileId . implode('', $dimensions));
             }
         }
