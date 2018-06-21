@@ -1,9 +1,9 @@
-FROM php:7.1
+FROM php:7-cli
 MAINTAINER Miro Cillik <miro@keboola.com>
 
 # Deps
 RUN apt-get update
-RUN apt-get install -y wget curl make git bzip2 time libzip-dev zip unzip libssl1.0.0 openssl vim
+RUN apt-get install -y wget curl make git bzip2 time libzip-dev zip unzip openssl vim
 
 # PHP
 RUN docker-php-ext-install sockets
