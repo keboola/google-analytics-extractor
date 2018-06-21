@@ -1,29 +1,46 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 10/12/15
- * Time: 12:45
- */
-
 namespace Keboola\GoogleAnalyticsExtractor\Logger;
 
+use \Monolog\Logger as MonologLogger;
 use Monolog\Handler\StreamHandler;
-use Monolog\Handler\SyslogUdpHandler;
 
-class Logger extends \Monolog\Logger
+class Logger extends MonologLogger
 {
     public function __construct($name = '')
     {
-        $debugHandler = new SyslogUdpHandler("logs6.papertrailapp.com", 40897);
-        $debugHandler->setFormatter(new LineFormatter());
+        parent::__construct(
+            $name,
+            [
+                self::getCriticalHandler(),
+                self::getErrorHandler(),
+                self::getInfoHandler(),
+            ]
+        );
+    }
 
-        $errHandler = new StreamHandler('php://stderr', Logger::NOTICE, false);
-
-        $infoHandler = new StreamHandler('php://stdout', Logger::INFO, false);
-        $infoHandler->setFormatter(new LineFormatter("%message%\n"));
-
-        parent::__construct($name, [$debugHandler, $errHandler, $infoHandler]);
+    public static function getErrorHandler()
+    {
+        $errorHandler = new StreamHandler('php://stderr');
+        $errorHandler->setBubble(false);
+        $errorHandler->setLevel(MonologLogger::WARNING);
+        $errorHandler->setFormatter(new LineFormatter("%message%\n"));
+        return $errorHandler;
+    }
+    public static function getInfoHandler()
+    {
+        $logHandler = new StreamHandler('php://stdout');
+        $logHandler->setBubble(false);
+        $logHandler->setLevel(MonologLogger::INFO);
+        $logHandler->setFormatter(new LineFormatter("%message%\n"));
+        return $logHandler;
+    }
+    public static function getCriticalHandler()
+    {
+        $handler = new StreamHandler('php://stderr');
+        $handler->setBubble(false);
+        $handler->setLevel(MonologLogger::CRITICAL);
+        $handler->setFormatter(new LineFormatter("[%datetime%] %level_name%: %message% %context% %extra%\n"));
+        return $handler;
     }
 }
