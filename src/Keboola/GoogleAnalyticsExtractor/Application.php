@@ -53,7 +53,7 @@ class Application
                 $tokenData['refresh_token'],
                 $c['logger']
             );
-            $retries = 9;
+            $retries = 10;
             if ($c['action'] !== 'run') {
                 $retries = 2;
             }
