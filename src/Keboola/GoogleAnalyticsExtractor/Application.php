@@ -53,10 +53,7 @@ class Application
                 $tokenData['refresh_token'],
                 $c['logger']
             );
-            $retries = 10;
-            if ($c['action'] !== 'run') {
-                $retries = 2;
-            }
+            $retries = ($c['action'] === 'run') ? $c['parameters']['retriesCount'] : 2;
             $client->setBackoffsCount($retries);
             return $client;
         };
@@ -79,6 +76,11 @@ class Application
         };
 
         $this->container = $container;
+    }
+
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     public function run()
