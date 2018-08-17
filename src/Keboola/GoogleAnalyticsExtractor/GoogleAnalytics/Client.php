@@ -30,6 +30,10 @@ class Client
     {
         $this->api = $api;
         $this->logger = $logger;
+        // don't retry on 403 error
+        $this->api->setBackoffCallback403(function () {
+            return false;
+        });
     }
 
     /**
