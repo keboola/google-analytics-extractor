@@ -226,7 +226,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
 
         $this->config = $this->getConfig();
-        $this->config['parameters']['retryCount'] = 0;
+        $this->config['parameters']['retriesCount'] = 0;
         // unset segment dimension to trigger API error
         unset($this->config['parameters']['queries'][1]['query']['dimensions'][1]);
         $this->application = new Application($this->config);
@@ -237,7 +237,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
         $this->config = $this->getConfig();
-        $this->config['parameters']['retryCount'] = 0;
+        $this->config['parameters']['retriesCount'] = 0;
         $this->config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
             '#appSecret' => getenv('CLIENT_SECRET'),
