@@ -1,5 +1,6 @@
 {
   "parameters": {
+    "retriesCount": 1,
     "outputBucket": "in.c-ex-google-analytics-cfg1",
     "profiles": [
       {

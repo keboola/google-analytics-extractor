@@ -34,6 +34,7 @@ class Client
         $this->api->setBackoffCallback403(function () {
             return false;
         });
+        $this->api->setDelayFn(Client::getDelayFn());
     }
 
     /**
@@ -197,5 +198,12 @@ class Client
     public function getApiCallsCount()
     {
         return $this->apiCallsCount;
+    }
+
+    public static function getDelayFn($base = 3000)
+    {
+        return function ($retries) use ($base) {
+            return (int) ($base * pow(2, $retries - 1) + rand(0, 500));
+        };
     }
 }

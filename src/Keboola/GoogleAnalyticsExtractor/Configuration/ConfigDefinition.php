@@ -1,10 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 06/04/16
- * Time: 15:50
- */
+
 namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -36,7 +31,8 @@ class ConfigDefinition implements ConfigurationInterface
                     ->defaultValue(false)
                 ->end()
                 ->integerNode('retriesCount')
-                    ->defaultValue(10)
+                    ->min(1)
+                    ->defaultValue(8)
                 ->end()
                 ->arrayNode('profiles')
                     ->isRequired()

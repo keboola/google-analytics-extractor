@@ -17,8 +17,9 @@ class ConfigDefinitionTest extends \PHPUnit_Framework_TestCase
 
     public function testDefaultValues()
     {
+        unset($this->config['parameters']['retriesCount']);
         $parameters = $this->processConfiguration($this->config['parameters']);
-        $this->assertEquals(10, $parameters['retriesCount']);
+        $this->assertEquals(8, $parameters['retriesCount']);
         $this->assertEquals(false, $parameters['nonConflictPrimaryKey']);
     }
 
