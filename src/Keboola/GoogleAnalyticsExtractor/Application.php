@@ -78,11 +78,6 @@ class Application
         $this->container = $container;
     }
 
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
     public function run()
     {
         $actionMethod = $this->container['action'] . 'Action';
