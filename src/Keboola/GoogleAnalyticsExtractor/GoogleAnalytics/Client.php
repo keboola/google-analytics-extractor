@@ -200,7 +200,7 @@ class Client
         return $this->apiCallsCount;
     }
 
-    public static function getDelayFn($base = 3000)
+    public static function getDelayFn($base = 5000)
     {
         return function ($retries) use ($base) {
             return (int) ($base * pow(2, $retries - 1) + rand(0, 500));
