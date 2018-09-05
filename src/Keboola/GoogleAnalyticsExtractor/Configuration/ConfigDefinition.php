@@ -31,7 +31,7 @@ class ConfigDefinition implements ConfigurationInterface
                     ->defaultValue(false)
                 ->end()
                 ->integerNode('retriesCount')
-                    ->min(1)
+                    ->min(0)
                     ->defaultValue(8)
                 ->end()
                 ->arrayNode('profiles')
