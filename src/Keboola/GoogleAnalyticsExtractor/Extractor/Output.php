@@ -52,10 +52,8 @@ class Output
         return $csv;
     }
 
-    public function createReport($query)
+    private function createHeaderRowFromQuery($query)
     {
-        $csv = $this->createCsvFile(sprintf('%s_%s', $query['outputTable'], uniqid()));
-
         $dimensions = array_map(function ($item) {
             return str_replace('ga:', '', $item['name']);
         }, $query['query']['dimensions']);
@@ -64,14 +62,50 @@ class Output
             return str_replace('ga:', '', $item['expression']);
         }, $query['query']['metrics']);
 
-        $headerRow = array_merge(
+        return array_merge(
             ['id', 'idProfile'],
             $dimensions,
             $metrics
         );
-        $csv->writeRow($headerRow);
+    }
 
+    public function createReport($query)
+    {
+        $csv = $this->createCsvFile(sprintf('%s_%s', $query['outputTable'], uniqid()));
+        $csv->writeRow($this->createHeaderRowFromQuery($query));
         return $csv;
+    }
+
+    public function createSampleReportJson($query, $report)
+    {
+        $columns = $this->createHeaderRowFromQuery($query);
+        $rows = [];
+
+        $profileId = $query['query']['viewId'];
+
+        foreach ($report['data'] as $result) {
+            $rows[] = array_combine($columns, $this->createReportRow($result, $profileId));
+        }
+
+        return $rows;
+    }
+
+    private function createReportRow($reportDataItem, $profileId)
+    {
+        $metrics = $this->formatResultKeys($reportDataItem->getMetrics());
+        $dimensions = $this->formatResultKeys($reportDataItem->getDimensions());
+
+        if (isset($dimensions['date'])) {
+            $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
+        }
+
+        $pKey = $this->getPrimaryKey($profileId, $dimensions);
+
+        return array_merge(
+            [$pKey, $profileId],
+            array_values($dimensions),
+            array_values($metrics)
+        );
     }
 
     /**
@@ -87,20 +121,7 @@ class Output
     {
         /** @var Result $result */
         foreach ($report['data'] as $result) {
-            $metrics = $this->formatResultKeys($result->getMetrics());
-            $dimensions = $this->formatResultKeys($result->getDimensions());
-
-            if (isset($dimensions['date'])) {
-                $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
-            }
-
-            $pKey = $this->getPrimaryKey($profileId, $dimensions);
-
-            $csv->writeRow(array_merge(
-                [$pKey, $profileId],
-                array_values($dimensions),
-                array_values($metrics)
-            ));
+            $csv->writeRow($this->createReportRow($result, $profileId));
         }
 
         return $csv;

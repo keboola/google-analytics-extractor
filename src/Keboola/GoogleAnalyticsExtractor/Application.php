@@ -163,6 +163,23 @@ class Application
         return $extractor->getSampleReport($query);
     }
 
+    private function sampleJsonAction()
+    {
+        if (empty($this->container['parameters']['profiles'])) {
+            throw new UserException("No profiles configured. You have to register at least one profile.");
+        }
+        $profile = $this->container['parameters']['profiles'][0];
+        $query = $this->container['parameters']['queries'][0];
+
+        if (empty($query['query']['viewId'])) {
+            $query['query']['viewId'] = (string) $profile['id'];
+        }
+
+        /** @var Extractor $extractor */
+        $extractor = $this->container['extractor'];
+        return $extractor->getSampleReportJson($query);
+    }
+
     private function segmentsAction()
     {
         /** @var Extractor $extractor */

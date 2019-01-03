@@ -171,6 +171,26 @@ class Extractor
         ];
     }
 
+    public function getSampleReportJson($query)
+    {
+        $report = $this->getReport($query);
+
+        $data = [];
+        $rowCount = 0;
+        if (!empty($report['data'])) {
+            $report['data'] = array_slice($report['data'], 0, 20);
+            $data = $this->output->createSampleReportJson($query, $report);
+            $rowCount = $report['rowCount'];
+        }
+
+        return [
+            'status' => 'success',
+            'viewId' => $query['query']['viewId'],
+            'data' => $data,
+            'rowCount' => $rowCount
+        ];
+    }
+
     public function getSegments()
     {
         $segments = $this->gaApi->getSegments();
