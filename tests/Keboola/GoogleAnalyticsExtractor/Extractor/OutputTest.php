@@ -20,7 +20,7 @@ class OutputTest extends \PHPUnit_Framework_TestCase
             'data' => []
         ];
 
-        $this->assertEquals([], $output->createJsonSampleReport($query, $report));
+        $this->assertEquals([], $output->createSampleReportJson($query, $report));
     }
 
     public function testCreateJsonSampleReport()
@@ -61,7 +61,7 @@ class OutputTest extends \PHPUnit_Framework_TestCase
                 'exp1' => 'met-val2',
                 'dim1' => 'dim-val2',
             ]
-        ], $output->createJsonSampleReport($query, $report));
+        ], $output->createSampleReportJson($query, $report));
     }
 
     public function testCreateJsonSampleReportWithDateDimension()
@@ -107,6 +107,6 @@ class OutputTest extends \PHPUnit_Framework_TestCase
                 'dim1' => 'dim-val2',
                 'date' => '2019-01-02'
             ]
-        ], $output->createJsonSampleReport($query, $report));
+        ], $output->createSampleReportJson($query, $report));
     }
 }

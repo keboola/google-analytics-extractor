@@ -177,7 +177,7 @@ class Application
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
-        return $extractor->getJsonSampleReport($query);
+        return $extractor->getSampleReportJson($query);
     }
 
     private function segmentsAction()

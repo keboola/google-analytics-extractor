@@ -76,7 +76,7 @@ class Output
         return $csv;
     }
 
-    public function createJsonSampleReport($query, $report)
+    public function createSampleReportJson($query, $report)
     {
         $columns = $this->createHeaderRowFromQuery($query);
         $rows = [];

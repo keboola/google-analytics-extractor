@@ -171,7 +171,7 @@ class Extractor
         ];
     }
 
-    public function getJsonSampleReport($query)
+    public function getSampleReportJson($query)
     {
         $report = $this->getReport($query);
 
@@ -179,7 +179,7 @@ class Extractor
         $rowCount = 0;
         if (!empty($report['data'])) {
             $report['data'] = array_slice($report['data'], 0, 20);
-            $data = $this->output->createJsonSampleReport($query, $report);
+            $data = $this->output->createSampleReportJson($query, $report);
             $rowCount = $report['rowCount'];
         }
 
