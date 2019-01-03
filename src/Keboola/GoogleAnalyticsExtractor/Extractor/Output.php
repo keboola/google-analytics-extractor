@@ -76,6 +76,20 @@ class Output
         return $csv;
     }
 
+    public function createJsonSampleReport($query, $report)
+    {
+        $columns = $this->createHeaderRowFromQuery($query);
+        $rows = [];
+
+        $profileId = $query['query']['viewId'];
+
+        foreach ($report['data'] as $result) {
+            $rows[] = array_combine($columns, $this->createReportRow($result, $profileId));
+        }
+
+        return $rows;
+    }
+
     private function createReportRow($reportDataItem, $profileId)
     {
         $metrics = $this->formatResultKeys($reportDataItem->getMetrics());
