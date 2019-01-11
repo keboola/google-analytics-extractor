@@ -3,8 +3,6 @@ services:
   app:
     build: .
     image: keboola/google-analytics-extractor
-    tty: true
-    stdin_open: true
     command: ./phpunit.sh
     environment:
       CLIENT_ID: $CLIENT_ID
@@ -13,11 +11,9 @@ services:
       REFRESH_TOKEN: $REFRESH_TOKEN
       VIEW_ID: $VIEW_ID
 
-  tests:
+  dev:
     build: .
     image: keboola/google-analytics-extractor
-    tty: true
-    stdin_open: true
     volumes:
       - .:/code
     working_dir: /code

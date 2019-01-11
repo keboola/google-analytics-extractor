@@ -5,21 +5,8 @@ language: bash
 services:
   - docker
 
-install:
-  - docker-compose run --rm app composer install -n
-  - docker-compose build app
-
 script:
   - docker-compose run --rm app
-
-after_success:
-  - docker images
-
-after_error:
-  - docker-compose logs
-
-after_failure:
-  - docker-compose logs
 
 deploy:
   provider: script
