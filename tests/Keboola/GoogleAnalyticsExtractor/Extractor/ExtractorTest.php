@@ -108,7 +108,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
             ->name('/^' . $queryName . '.*\.manifest$/i');
     }
 
-    private function validateParameters($parameters) {
+    private function validateParameters($parameters)
+    {
         return (new Processor())->processConfiguration(new ConfigDefinition(), [$parameters]);
     }
 }
