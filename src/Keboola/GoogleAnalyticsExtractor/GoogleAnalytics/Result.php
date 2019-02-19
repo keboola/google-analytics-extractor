@@ -21,7 +21,7 @@ class Result
 
     /**
      * toString function to return the name of the result
-     * this is a concatented string of the dimesions chosen
+     * this is a concatenated string of the dimensions chosen
      *
      * @return String
      */
@@ -35,7 +35,7 @@ class Result
     }
 
     /**
-     * Get an associative array of the dimesions
+     * Get an associative array of the dimensions
      * and the matching values for the current result
      *
      * @return array
@@ -46,7 +46,7 @@ class Result
     }
 
     /**
-     * Get an array of the metrics and the matchning
+     * Get an array of the metrics and the matching
      * values for the current result
      *
      * @return array
@@ -81,7 +81,7 @@ class Result
             return $this->dimensions[$dimensionKey];
         }
 
-        throw new \Exception('No valid metric or dimesion called "' . $name . '"');
+        throw new \Exception('No valid metric or dimension called "' . $name . '"');
     }
 
     /**
@@ -119,7 +119,7 @@ class Result
      */
     public function getDateFormatted()
     {
-        $dateKey = self::arrayKeyExistsNc('ga:date', $this->dimensions);
+        $dateKey = $this->getDateKey($this->dimensions);
         $date = $this->dimensions[$dateKey];
 
         if ($date == '00000000') {
@@ -133,5 +133,11 @@ class Result
         $result = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2) . ' ' . $hour . ':00:00';
 
         return $result;
+    }
+
+    private function getDateKey($dimensions)
+    {
+        return self::arrayKeyExistsNc('ga:date', $dimensions)
+            || self::arrayKeyExistsNc('mcf:conversionDate', $dimensions);
     }
 }

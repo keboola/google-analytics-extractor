@@ -1,17 +1,13 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 18/04/16
- * Time: 18:38
- */
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
 use Keboola\Google\ClientBundle\Google\RestApi;
+use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Finder\Finder;
 
 class ExtractorTest extends \PHPUnit_Framework_TestCase
@@ -43,18 +39,23 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     private function getConfig()
     {
-        return json_decode(file_get_contents($this->dataDir . '/config.json'), true);
+        $config = json_decode(file_get_contents($this->dataDir . '/config.json'), true);
+        $config['parameters']['data_dir'] = $this->dataDir;
+        return $config;
     }
 
     public function testRun()
     {
-        $queries = $this->config['parameters']['queries'];
-        $profiles = $this->config['parameters']['profiles'];
+        $parameters = $this->validateParameters($this->config['parameters']);
+        $queries = $parameters['queries'];
+        $profiles = $parameters['profiles'];
 
         $this->extractor->run($queries, [$profiles[0]]);
 
         $outputFiles = $this->getOutputFiles($queries[0]['outputTable']);
         $this->assertNotEmpty($outputFiles);
+
+        /** @var \SplFileInfo $outputFile */
         foreach ($outputFiles as $outputFile) {
             $this->assertFileExists($outputFile->getRealPath());
             $this->assertNotEmpty(file_get_contents($outputFile->getRealPath()));
@@ -83,10 +84,10 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
     public function testRunEmptyResult()
     {
-        $queries = [];
-        $profiles = $this->config['parameters']['profiles'];
+        $parameters = $this->validateParameters($this->config['parameters']);
+        $profiles = $parameters['profiles'];
 
-        $this->extractor->run($queries, $profiles[0]);
+        $this->extractor->run([], $profiles[0]);
     }
 
     private function getOutputFiles($queryName)
@@ -95,8 +96,7 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         return $finder->files()
             ->in($this->dataDir . '/out/tables')
-            ->name('/^' . $queryName . '.*\.csv$/i')
-            ;
+            ->name('/^' . $queryName . '.*\.csv$/i');
     }
 
     private function getManifestFiles($queryName)
@@ -105,7 +105,10 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
 
         return $finder->files()
             ->in($this->dataDir . '/out/tables')
-            ->name('/^' . $queryName . '.*\.manifest$/i')
-            ;
+            ->name('/^' . $queryName . '.*\.manifest$/i');
+    }
+
+    private function validateParameters($parameters) {
+        return (new Processor())->processConfiguration(new ConfigDefinition(), [$parameters]);
     }
 }

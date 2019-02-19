@@ -35,6 +35,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $queries = [
             [
                 'name' => 'users',
+                'endpoint' => Client::REPORTS_URL,
                 'query' => [
                     'viewId' => getenv('VIEW_ID'),
                     'metrics' => [
@@ -57,6 +58,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'name' => 'sessions',
+                'endpoint' => Client::REPORTS_URL,
                 'query' => [
                     'viewId' => getenv('VIEW_ID'),
                     'metrics' => [
@@ -79,7 +81,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $reports = [];
         foreach ($queries as $query) {
-            $reports[] = $this->client->getBatch($query);
+            $reports[] = $this->client->getReport($query);
         }
 
         $this->assertNotEmpty($reports[0]['data']);

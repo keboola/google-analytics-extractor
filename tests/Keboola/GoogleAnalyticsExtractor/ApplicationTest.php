@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 19/04/16
- * Time: 10:59
- */
 namespace Keboola\GoogleAnalyticsExtractor;
 
 use Keboola\Csv\CsvFile;
@@ -179,6 +173,28 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 'sourceMedium',
                 'landingPagePath',
                 'pageviews'
+            ]);
+        }
+    }
+
+    public function testAppRunMCF()
+    {
+        $this->config = $this->getConfig('_mcf');
+
+        $this->application = new Application($this->config);
+        $this->application->run();
+
+        $funnelFiles = $this->getOutputFiles('funnel');
+        $this->assertEquals(1, count($funnelFiles));
+
+        foreach ($funnelFiles as $file) {
+            /** @var $file SplFileInfo */
+            $this->assertHeader($file->getPathname(), [
+                'id',
+                'idProfile',
+                'mcf:conversionDate',
+                'mcf:totalConversions',
+                'mcf:assistedConversions'
             ]);
         }
     }

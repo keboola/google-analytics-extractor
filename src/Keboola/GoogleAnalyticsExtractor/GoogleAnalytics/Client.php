@@ -14,7 +14,8 @@ use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 class Client
 {
     const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
-    const DATA_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
     const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
 
@@ -59,54 +60,94 @@ class Client
         return $body['items'];
     }
 
-    public function request($method, $url, $body = null)
+    public function request($method, $url, $body = null, $query = null)
     {
         $this->apiCallsCount++;
-        $response = $this->api->request(
-            $url,
-            $method,
-            ['Accept' => 'application/json'],
-            ['json' => $body]
-        );
+
+        $options = !is_null($body) ? ['json' => $body] : ['query' => $query];
+
+        try {
+            $response = $this->api->request(
+                $url,
+                $method,
+                ['Accept' => 'application/json'],
+                $options
+            );
+        } catch (\Exception $e) {
+            /** @var GuzzleHttp\Psr7\Response $response */
+            $response = $e->getResponse();
+            var_dump($e->getMessage());
+            var_dump($response->getBody()->getContents());
+            var_dump($response->getReasonPhrase());
+            die;
+        }
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * @param $query
-     *
-     * array of arrays
-     *   - viewId - profile / view ID,
-     *   - metrics - array of metrics
-     *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filtersExpression - filter expression [OPTIONAL]
-     *   - segments - segment ID [OPTIONAL]
-     *   - dateRanges - array of Date ranges
-     *   - orderBy - dimension or metric to order by
-     *
-     * @return array
-     * @throws \Keboola\Google\ClientBundle\Exception\RestApiException
-     */
+    public function getReport($query)
+    {
+        return ($query['endpoint'] === 'mcf')
+            ? $this->getMCF($query)
+            : $this->getBatch($query);
+    }
+
     public function getBatch($query)
     {
         $body = [
             'reportRequests' => $this->getReportRequest($query['query'])
         ];
-        $this->logger->debug(sprintf("Sending request"), [
+        $this->logger->debug(sprintf("Sending Report request"), [
             'ga_profile' => $query['query']['viewId'],
             'request' => [
                 'method' => 'POST',
-                'url' => self::DATA_URL,
+                'url' => self::REPORTS_URL,
                 'body' => $body
             ]
         ]);
-        $reports = $this->request(
-            'POST',
-            self::DATA_URL,
-            $body
-        );
+        $reports = $this->request('POST', self::REPORTS_URL, $body);
 
         return $this->processResponse($reports, $query);
+    }
+
+    public function getMCF($query)
+    {
+        $metrics = array_map(function ($item) {
+            return $item['expression'];
+        }, $query['query']['metrics']);
+
+        $dimensions = array_map(function ($item) {
+            return $item['name'];
+        }, $query['query']['dimensions']);
+
+        $params = [
+            'ids' => sprintf('ga:%s', $query['query']['viewId']),
+            'start-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['startDate'])),
+            'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
+            'metrics' => implode(',', $metrics),
+            'dimensions' => implode(',', $dimensions),
+            'samplingLevel' => 'HIGHER_PRECISION',
+            'start-index' => 1,
+            'max-results' => 5000
+        ];
+
+        if (!empty($query['query']['filtersExpression'])) {
+            $params['filters'] = $query['query']['filtersExpression'];
+        }
+
+        $this->logger->debug(sprintf("Sending MCF request"), [
+            'request' => [
+                'ids' => $query['query']['viewId'],
+                'method' => 'GET',
+                'url' => self::MCF_URL,
+                'params' => $params
+            ]
+        ]);
+        $reports = $this->request('GET', self::MCF_URL, null, $params);
+
+        var_dump($reports);
+
+        return $this->processResponseMCF($reports, $query);
     }
 
     /**
@@ -190,6 +231,58 @@ class Client
 
         if (isset($report['nextPageToken'])) {
             $processed['nextPageToken'] = $report['nextPageToken'];
+        }
+
+        return $processed;
+    }
+
+    private function processResponseMCF($response, $query)
+    {
+        if (empty($response['rows'])) {
+            return null;
+        }
+        $rows = $response['rows'];
+
+        $dataSet = [];
+        $dimensions = [];
+        $metrics = [];
+        $dimensionNames = is_array($response['query']['dimensions'])
+            ? $response['query']['dimensions']
+            : [$response['query']['dimensions']];
+        $metricNames = is_array($response['query']['metrics'])
+            ? $response['query']['metrics']
+            : [$response['query']['metrics']];
+
+        foreach ($rows as $row) {
+            foreach ($dimensionNames as $key => $dimensionName) {
+                $dimensions[$dimensionName] = $row[$key]['primitiveValue'];
+            }
+
+            $offset = count($dimensionNames);
+            foreach ($metricNames as $key => $metricName) {
+                $metrics[$metricName] = $row[$key + $offset]['primitiveValue'];
+            }
+
+            $dataSet[] = new Result($metrics, $dimensions);
+        }
+
+        $processed = [
+            'data' => $dataSet,
+            'query' => $query,
+            'totals' => $response['totalsForAllResults'],
+            'rowCount' => isset($response['totalResults'])?$response['totalResults']:0
+        ];
+
+        if (isset($response['samplesReadCounts'])) {
+            $processed['samplesReadCounts'] = $response['samplesReadCounts'];
+        }
+
+        if (isset($report['data']['samplingSpaceSizes'])) {
+            $processed['samplingSpaceSizes'] = $response['samplingSpaceSizes'];
+        }
+
+        if (isset($report['nextPageToken'])) {
+            $processed['nextPageToken'] = $response['nextPageToken'];
         }
 
         return $processed;
