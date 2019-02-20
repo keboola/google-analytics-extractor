@@ -66,21 +66,12 @@ class Client
 
         $options = !is_null($body) ? ['json' => $body] : ['query' => $query];
 
-        try {
-            $response = $this->api->request(
-                $url,
-                $method,
-                ['Accept' => 'application/json'],
-                $options
-            );
-        } catch (\Exception $e) {
-            /** @var GuzzleHttp\Psr7\Response $response */
-            $response = $e->getResponse();
-            var_dump($e->getMessage());
-            var_dump($response->getBody()->getContents());
-            var_dump($response->getReasonPhrase());
-            die;
-        }
+        $response = $this->api->request(
+            $url,
+            $method,
+            ['Accept' => 'application/json'],
+            $options
+        );
 
         return json_decode($response->getBody()->getContents(), true);
     }
