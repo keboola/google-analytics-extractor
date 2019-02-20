@@ -136,8 +136,6 @@ class Client
         ]);
         $reports = $this->request('GET', self::MCF_URL, null, $params);
 
-        var_dump($reports);
-
         return $this->processResponseMCF($reports, $query);
     }
 
