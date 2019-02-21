@@ -1,0 +1,47 @@
+{
+  "parameters": {
+    "retriesCount": 1,
+    "outputBucket": "in.c-ex-google-analytics-mcf",
+    "profiles": [
+      {
+        "id": 69127714,
+        "name": "All Web Site Data",
+        "webPropertyId": "UA-38521826-1",
+        "webPropertyName": "Keboola Website",
+        "accountId": 38521826,
+        "accountName": "Keboola Website"
+      }
+    ],
+    "queries": [
+      {
+        "id": 0,
+        "name": "funnel",
+        "outputTable": "funnel",
+        "enabled": true,
+        "endpoint": "mcf",
+        "query": {
+          "metrics": [
+            {
+              "expression": "mcf:totalConversions"
+            },
+            {
+              "expression": "mcf:assistedConversions"
+            }
+          ],
+          "dimensions": [
+            {
+              "name": "mcf:conversionDate"
+            }
+          ],
+          "filtersExpression": "",
+          "dateRanges": [
+            {
+              "startDate": "-1 month",
+              "endDate": "-1 day"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

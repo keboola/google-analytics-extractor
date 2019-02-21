@@ -14,7 +14,8 @@ use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 class Client
 {
     const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
-    const DATA_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
     const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
 
@@ -59,54 +60,83 @@ class Client
         return $body['items'];
     }
 
-    public function request($method, $url, $body = null)
+    public function request($method, $url, $body = null, $query = null)
     {
         $this->apiCallsCount++;
+
+        $options = !is_null($body) ? ['json' => $body] : ['query' => $query];
+
         $response = $this->api->request(
             $url,
             $method,
             ['Accept' => 'application/json'],
-            ['json' => $body]
+            $options
         );
 
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * @param $query
-     *
-     * array of arrays
-     *   - viewId - profile / view ID,
-     *   - metrics - array of metrics
-     *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filtersExpression - filter expression [OPTIONAL]
-     *   - segments - segment ID [OPTIONAL]
-     *   - dateRanges - array of Date ranges
-     *   - orderBy - dimension or metric to order by
-     *
-     * @return array
-     * @throws \Keboola\Google\ClientBundle\Exception\RestApiException
-     */
     public function getBatch($query)
+    {
+        return ($query['endpoint'] === 'mcf')
+            ? $this->getMCFReports($query)
+            : $this->getReports($query);
+    }
+
+    public function getReports($query)
     {
         $body = [
             'reportRequests' => $this->getReportRequest($query['query'])
         ];
-        $this->logger->debug(sprintf("Sending request"), [
+        $this->logger->debug(sprintf("Sending Report request"), [
             'ga_profile' => $query['query']['viewId'],
             'request' => [
                 'method' => 'POST',
-                'url' => self::DATA_URL,
+                'url' => self::REPORTS_URL,
                 'body' => $body
             ]
         ]);
-        $reports = $this->request(
-            'POST',
-            self::DATA_URL,
-            $body
-        );
+        $reports = $this->request('POST', self::REPORTS_URL, $body);
 
         return $this->processResponse($reports, $query);
+    }
+
+    public function getMCFReports($query)
+    {
+        $metrics = array_map(function ($item) {
+            return $item['expression'];
+        }, $query['query']['metrics']);
+
+        $dimensions = array_map(function ($item) {
+            return $item['name'];
+        }, $query['query']['dimensions']);
+
+        $params = [
+            'ids' => sprintf('ga:%s', $query['query']['viewId']),
+            'start-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['startDate'])),
+            'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
+            'metrics' => implode(',', $metrics),
+            'dimensions' => implode(',', $dimensions),
+            'samplingLevel' => 'HIGHER_PRECISION',
+            'start-index' => 1,
+            'max-results' => 5000
+        ];
+
+        if (!empty($query['query']['filtersExpression'])) {
+            $params['filters'] = $query['query']['filtersExpression'];
+        }
+
+        $this->logger->debug(sprintf("Sending MCF request"), [
+            'request' => [
+                'ids' => $query['query']['viewId'],
+                'method' => 'GET',
+                'url' => self::MCF_URL,
+                'params' => $params
+            ]
+        ]);
+        $reports = $this->request('GET', self::MCF_URL, null, $params);
+
+        return $this->processResponseMCF($reports, $query);
     }
 
     /**
@@ -134,7 +164,7 @@ class Client
         $query['includeEmptyRows'] = true;
         $query['hideTotals'] = false;
         $query['hideValueRanges'] = true;
-        $query['samplingLevel'] = empty($query['samplingLevel'])?'LARGE':$query['samplingLevel'];
+        $query['samplingLevel'] = empty($query['samplingLevel']) ? 'LARGE' : $query['samplingLevel'];
 
         return $query;
     }
@@ -149,7 +179,7 @@ class Client
     private function processResponse($response, $query)
     {
         if (empty($response['reports'])) {
-            return null;
+            return [];
         }
         $report = $response['reports'][0];
 
@@ -177,7 +207,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $report['data']['totals'],
-            'rowCount' => isset($report['data']['rowCount'])?$report['data']['rowCount']:0
+            'rowCount' => isset($report['data']['rowCount']) ? $report['data']['rowCount'] : 0
         ];
 
         if (isset($report['data']['samplesReadCounts'])) {
@@ -190,6 +220,58 @@ class Client
 
         if (isset($report['nextPageToken'])) {
             $processed['nextPageToken'] = $report['nextPageToken'];
+        }
+
+        return $processed;
+    }
+
+    private function processResponseMCF($response, $query)
+    {
+        if (empty($response['rows'])) {
+            return [];
+        }
+        $rows = $response['rows'];
+
+        $dataSet = [];
+        $dimensions = [];
+        $metrics = [];
+        $dimensionNames = is_array($response['query']['dimensions'])
+            ? $response['query']['dimensions']
+            : [$response['query']['dimensions']];
+        $metricNames = is_array($response['query']['metrics'])
+            ? $response['query']['metrics']
+            : [$response['query']['metrics']];
+
+        foreach ($rows as $row) {
+            foreach ($dimensionNames as $key => $dimensionName) {
+                $dimensions[$dimensionName] = $row[$key]['primitiveValue'];
+            }
+
+            $offset = count($dimensionNames);
+            foreach ($metricNames as $key => $metricName) {
+                $metrics[$metricName] = $row[$key + $offset]['primitiveValue'];
+            }
+
+            $dataSet[] = new Result($metrics, $dimensions);
+        }
+
+        $processed = [
+            'data' => $dataSet,
+            'query' => $query,
+            'totals' => $response['totalsForAllResults'],
+            'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0
+        ];
+
+        if (isset($response['samplesReadCounts'])) {
+            $processed['samplesReadCounts'] = $response['samplesReadCounts'];
+        }
+
+        if (isset($report['data']['samplingSpaceSizes'])) {
+            $processed['samplingSpaceSizes'] = $response['samplingSpaceSizes'];
+        }
+
+        if (isset($report['nextPageToken'])) {
+            $processed['nextPageToken'] = $response['nextPageToken'];
         }
 
         return $processed;

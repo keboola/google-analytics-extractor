@@ -24,6 +24,7 @@ class AntisamplingTest extends ClientTest
             'outputTable' => 'antisampling-test',
             'samplingLevel' => 'SMALL',
             'antisampling' => $algorithm,
+            'endpoint' => Client::REPORTS_URL,
             'query' => [
                 'viewId' => getenv('VIEW_ID'),
                 'metrics' => [
