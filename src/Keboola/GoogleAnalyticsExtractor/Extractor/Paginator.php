@@ -43,7 +43,7 @@ class Paginator
             if (isset($report['nextPageToken'])) {
                 $nextQuery = $query;
                 $nextQuery['query']['pageToken'] = $report['nextPageToken'];
-                $report = $this->client->getReport($nextQuery);
+                $report = $this->client->getBatch($nextQuery);
             }
             $query = $nextQuery;
         } while ($nextQuery);

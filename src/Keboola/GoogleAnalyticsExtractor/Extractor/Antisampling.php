@@ -40,7 +40,7 @@ class Antisampling
         unset($sessionQuery['query']['pageToken']);
 
         // get all sessions from full date range
-        $report = $this->client->getReport($sessionQuery);
+        $report = $this->client->getBatch($sessionQuery);
 
         // cumulative sum of sessions
         $cumulative = $this->getRunningTotal(
@@ -123,7 +123,7 @@ class Antisampling
                 'endDate' => $startDateString
             ];
 
-            $report = $this->client->getReport($query);
+            $report = $this->client->getBatch($query);
 
             $this->writeReport($query, $report);
 
@@ -136,7 +136,7 @@ class Antisampling
         $dateRangeBuckets = $this->getDateRangeBuckets($query, $report);
         foreach ($dateRangeBuckets as $dateRange) {
             $query['query']['dateRanges'][0] = $dateRange;
-            $report = $this->client->getReport($query);
+            $report = $this->client->getBatch($query);
             $this->writeReport($query, $report);
         }
     }

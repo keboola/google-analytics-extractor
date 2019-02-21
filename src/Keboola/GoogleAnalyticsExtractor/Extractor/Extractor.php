@@ -141,7 +141,7 @@ class Extractor
 
     private function getReport($query)
     {
-        return $this->gaApi->getReport($query);
+        return $this->gaApi->getBatch($query);
     }
 
     public function getSampleReport($query)

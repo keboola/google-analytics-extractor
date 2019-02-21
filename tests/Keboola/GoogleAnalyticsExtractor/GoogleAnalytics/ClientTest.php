@@ -81,7 +81,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $reports = [];
         foreach ($queries as $query) {
-            $reports[] = $this->client->getReport($query);
+            $reports[] = $this->client->getBatch($query);
         }
 
         $this->assertNotEmpty($reports[0]['data']);

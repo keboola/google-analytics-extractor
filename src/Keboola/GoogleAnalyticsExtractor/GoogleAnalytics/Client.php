@@ -76,14 +76,14 @@ class Client
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getReport($query)
+    public function getBatch($query)
     {
         return ($query['endpoint'] === 'mcf')
-            ? $this->getMCF($query)
-            : $this->getBatch($query);
+            ? $this->getMCFReports($query)
+            : $this->getReports($query);
     }
 
-    public function getBatch($query)
+    public function getReports($query)
     {
         $body = [
             'reportRequests' => $this->getReportRequest($query['query'])
@@ -101,7 +101,7 @@ class Client
         return $this->processResponse($reports, $query);
     }
 
-    public function getMCF($query)
+    public function getMCFReports($query)
     {
         $metrics = array_map(function ($item) {
             return $item['expression'];
@@ -164,7 +164,7 @@ class Client
         $query['includeEmptyRows'] = true;
         $query['hideTotals'] = false;
         $query['hideValueRanges'] = true;
-        $query['samplingLevel'] = empty($query['samplingLevel'])?'LARGE':$query['samplingLevel'];
+        $query['samplingLevel'] = empty($query['samplingLevel']) ? 'LARGE' : $query['samplingLevel'];
 
         return $query;
     }
@@ -179,7 +179,7 @@ class Client
     private function processResponse($response, $query)
     {
         if (empty($response['reports'])) {
-            return null;
+            return [];
         }
         $report = $response['reports'][0];
 
@@ -207,7 +207,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $report['data']['totals'],
-            'rowCount' => isset($report['data']['rowCount'])?$report['data']['rowCount']:0
+            'rowCount' => isset($report['data']['rowCount']) ? $report['data']['rowCount'] : 0
         ];
 
         if (isset($report['data']['samplesReadCounts'])) {
@@ -228,7 +228,7 @@ class Client
     private function processResponseMCF($response, $query)
     {
         if (empty($response['rows'])) {
-            return null;
+            return [];
         }
         $rows = $response['rows'];
 
@@ -259,7 +259,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $response['totalsForAllResults'],
-            'rowCount' => isset($response['totalResults'])?$response['totalResults']:0
+            'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0
         ];
 
         if (isset($response['samplesReadCounts'])) {
