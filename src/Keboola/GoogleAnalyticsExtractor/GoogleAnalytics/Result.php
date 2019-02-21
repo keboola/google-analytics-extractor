@@ -135,7 +135,7 @@ class Result
         return $result;
     }
 
-    private function getDateKey($dimensions)
+    private static function getDateKey($dimensions)
     {
         return self::arrayKeyExistsNc('ga:date', $dimensions)
             || self::arrayKeyExistsNc('mcf:conversionDate', $dimensions);
