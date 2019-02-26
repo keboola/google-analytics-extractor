@@ -10,6 +10,14 @@
         "webPropertyName": "Keboola Website",
         "accountId": 38521826,
         "accountName": "Keboola Website"
+      },
+      {
+        "accountId": "128209249",
+        "webPropertyId": "UA-128209249-1",
+        "webPropertyName": "Website",
+        "accountName": "Keboola 2018",
+        "name": "All Web Site Data",
+        "id": "184062725"
       }
     ],
     "queries": [
@@ -31,6 +39,9 @@
           "dimensions": [
             {
               "name": "mcf:conversionDate"
+            },
+            {
+              "name": "mcf:sourcePath"
             }
           ],
           "filtersExpression": "",

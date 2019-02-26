@@ -193,6 +193,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 'id',
                 'idProfile',
                 'mcf:conversionDate',
+                'mcf:sourcePath',
                 'mcf:totalConversions',
                 'mcf:assistedConversions'
             ]);
