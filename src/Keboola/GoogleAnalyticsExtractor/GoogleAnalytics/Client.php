@@ -9,6 +9,7 @@
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
+use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 
 class Client
@@ -233,26 +234,16 @@ class Client
         $rows = $response['rows'];
 
         $dataSet = [];
-        $dimensions = [];
-        $metrics = [];
-        $dimensionNames = is_array($response['query']['dimensions'])
-            ? $response['query']['dimensions']
-            : [$response['query']['dimensions']];
-        $metricNames = is_array($response['query']['metrics'])
-            ? $response['query']['metrics']
-            : [$response['query']['metrics']];
+        $columnHeaders = $response['columnHeaders'];
 
         foreach ($rows as $row) {
-            foreach ($dimensionNames as $key => $dimensionName) {
-                $dimensions[$dimensionName] = $row[$key]['primitiveValue'];
+            $results = [];
+            foreach ($columnHeaders as $key => $columnData) {
+                $columnType = strtolower($columnData['columnType']);
+                $dataType = strtolower($columnData['dataType']);
+                $results[$columnType][$columnData['name']] = $this->parseMCFValue($row[$key], $dataType);
             }
-
-            $offset = count($dimensionNames);
-            foreach ($metricNames as $key => $metricName) {
-                $metrics[$metricName] = $row[$key + $offset]['primitiveValue'];
-            }
-
-            $dataSet[] = new Result($metrics, $dimensions);
+            $dataSet[] = new Result($results['metric'], $results['dimension']);
         }
 
         $processed = [
@@ -275,6 +266,29 @@ class Client
         }
 
         return $processed;
+    }
+
+    private function parseMCFValue($data, $dataType)
+    {
+        if ($dataType !== 'mcf_sequence') {
+            return $data['primitiveValue'];
+        }
+
+        if (isset($data['conversionPathValue'])) {
+            $path = [];
+            foreach ($data['conversionPathValue'] as $node) {
+                $path[] = $node['nodeValue'];
+            }
+
+            return implode('>', $path);
+        }
+
+        throw new ApplicationException(
+            sprintf(
+                'Error parsing MCF response rows: one of the keys "%s" is not supported',
+                implode(',', array_keys($data))
+            )
+        );
     }
 
     public function getApiCallsCount()
