@@ -280,7 +280,7 @@ class Client
                 $path[] = $node['nodeValue'];
             }
 
-            return implode('>', $path);
+            return implode(' > ', $path);
         }
 
         throw new ApplicationException(
