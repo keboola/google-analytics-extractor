@@ -28,6 +28,7 @@
         "enabled": true,
         "endpoint": "mcf",
         "query": {
+          "maxResults": 100,
           "metrics": [
             {
               "expression": "mcf:totalConversions"
@@ -47,7 +48,7 @@
           "filtersExpression": "",
           "dateRanges": [
             {
-              "startDate": "-1 month",
+              "startDate": "-1 year",
               "endDate": "-1 day"
             }
           ]

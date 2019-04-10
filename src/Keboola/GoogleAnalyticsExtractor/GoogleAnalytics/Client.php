@@ -119,8 +119,8 @@ class Client
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
             'samplingLevel' => 'HIGHER_PRECISION',
-            'start-index' => 1,
-            'max-results' => 5000
+            'start-index' => empty($query['query']['startIndex']) ? 1 : $query['query']['startIndex'],
+            'max-results' => empty($query['query']['maxResults']) ? 5000 : $query['query']['maxResults'],
         ];
 
         if (!empty($query['query']['filtersExpression'])) {
@@ -253,16 +253,16 @@ class Client
             'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0
         ];
 
-        if (isset($response['samplesReadCounts'])) {
-            $processed['samplesReadCounts'] = $response['samplesReadCounts'];
+        if (isset($response['sampleSize'])) {
+            $processed['samplesReadCounts'] = $response['sampleSize'];
         }
 
-        if (isset($report['data']['samplingSpaceSizes'])) {
-            $processed['samplingSpaceSizes'] = $response['samplingSpaceSizes'];
+        if (isset($response['sampleSpace'])) {
+            $processed['samplingSpaceSizes'] = $response['sampleSpace'];
         }
 
-        if (isset($report['nextPageToken'])) {
-            $processed['nextPageToken'] = $response['nextPageToken'];
+        if (isset($response['nextLink'])) {
+            $processed['nextLink'] = $response['nextLink'];
         }
 
         return $processed;

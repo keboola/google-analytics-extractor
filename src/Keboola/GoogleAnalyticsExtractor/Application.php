@@ -31,7 +31,7 @@ class Application
     public function __construct($config)
     {
         $container = new Container();
-        $container['action'] = isset($config['action'])?$config['action']:'run';
+        $container['action'] = isset($config['action']) ? $config['action'] : 'run';
         $container['parameters'] = $this->validateParamteters($config['parameters']);
         $container['logger'] = function ($c) use ($config) {
             $logger = new Logger($config['app_name']);
