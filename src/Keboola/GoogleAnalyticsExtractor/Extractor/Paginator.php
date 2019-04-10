@@ -56,7 +56,8 @@ class Paginator
         } while ($nextQuery);
     }
 
-    private function getStartIndex($link) {
+    private function getStartIndex($link)
+    {
         $url = explode('?', $link);
         parse_str($url[1], $params);
 
