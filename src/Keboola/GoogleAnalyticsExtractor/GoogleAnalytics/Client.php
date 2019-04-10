@@ -118,7 +118,7 @@ class Client
             'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
-            'samplingLevel' => 'HIGHER_PRECISION',
+            'samplingLevel' => empty($query['query']['samplingLevel']) ? 'HIGHER_PRECISION' : $query['query']['samplingLevel'],
             'start-index' => empty($query['query']['startIndex']) ? 1 : $query['query']['startIndex'],
             'max-results' => empty($query['query']['maxResults']) ? 5000 : $query['query']['maxResults'],
         ];
@@ -228,10 +228,7 @@ class Client
 
     private function processResponseMCF($response, $query)
     {
-        if (empty($response['rows'])) {
-            return [];
-        }
-        $rows = $response['rows'];
+        $rows = empty($response['rows']) ? [] : $response['rows'];
 
         $dataSet = [];
         $columnHeaders = $response['columnHeaders'];
@@ -254,11 +251,11 @@ class Client
         ];
 
         if (isset($response['sampleSize'])) {
-            $processed['samplesReadCounts'] = $response['sampleSize'];
+            $processed['samplingSpaceSizes'] = $response['sampleSize'];
         }
 
         if (isset($response['sampleSpace'])) {
-            $processed['samplingSpaceSizes'] = $response['sampleSpace'];
+            $processed['samplesReadCounts'] = $response['sampleSpace'];
         }
 
         if (isset($response['nextLink'])) {

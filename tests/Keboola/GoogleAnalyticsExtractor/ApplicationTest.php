@@ -194,8 +194,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 'idProfile',
                 'mcf:conversionDate',
                 'mcf:sourcePath',
+                'mcf:mediumPath',
+                'mcf:sourceMedium',
                 'mcf:totalConversions',
-                'mcf:assistedConversions'
+                'mcf:totalConversionValue',
+                'mcf:assistedConversions',
             ]);
         }
     }

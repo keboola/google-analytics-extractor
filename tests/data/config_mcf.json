@@ -27,11 +27,16 @@
         "outputTable": "funnel",
         "enabled": true,
         "endpoint": "mcf",
+        "antisampling": "dailyWalk",
         "query": {
+          "samplingLevel": "FASTER",
           "maxResults": 100,
           "metrics": [
             {
               "expression": "mcf:totalConversions"
+            },
+            {
+              "expression": "mcf:totalConversionValue"
             },
             {
               "expression": "mcf:assistedConversions"
@@ -43,12 +48,18 @@
             },
             {
               "name": "mcf:sourcePath"
+            },
+            {
+              "name": "mcf:mediumPath"
+            },
+            {
+              "name": "mcf:sourceMedium"
             }
           ],
           "filtersExpression": "",
           "dateRanges": [
             {
-              "startDate": "-1 year",
+              "startDate": "-3 months",
               "endDate": "-1 day"
             }
           ]

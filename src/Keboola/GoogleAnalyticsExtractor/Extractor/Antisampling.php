@@ -107,7 +107,6 @@ class Antisampling
         return iterator_to_array($generator($array));
     }
 
-
     public function dailyWalk($query, $report)
     {
         unset($query['query']['pageToken']);
