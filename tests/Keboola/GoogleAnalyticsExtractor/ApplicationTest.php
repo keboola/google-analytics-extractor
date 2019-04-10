@@ -210,6 +210,24 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('status', $result);
         $this->assertArrayHasKey('viewId', $result);
         $this->assertArrayHasKey('data', $result);
+        $this->assertNotEmpty($result['data']);
+        $this->assertArrayHasKey('rowCount', $result);
+        $this->assertEquals('success', $result['status']);
+    }
+
+    public function testAppSampleMCF()
+    {
+        $this->config = $this->getConfig('_mcf');
+        $this->config['action'] = 'sample';
+
+        $this->application = new Application($this->config);
+
+        $result = $this->application->run();
+
+        $this->assertArrayHasKey('status', $result);
+        $this->assertArrayHasKey('viewId', $result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertNotEmpty($result['data']);
         $this->assertArrayHasKey('rowCount', $result);
         $this->assertEquals('success', $result['status']);
     }
