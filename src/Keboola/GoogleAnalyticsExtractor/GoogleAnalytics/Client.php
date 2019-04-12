@@ -118,9 +118,9 @@ class Client
             'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
-            'samplingLevel' => 'HIGHER_PRECISION',
-            'start-index' => 1,
-            'max-results' => 5000
+            'samplingLevel' => empty($query['query']['samplingLevel']) ? 'HIGHER_PRECISION' : $query['query']['samplingLevel'],
+            'start-index' => empty($query['query']['startIndex']) ? 1 : $query['query']['startIndex'],
+            'max-results' => empty($query['query']['maxResults']) ? 5000 : $query['query']['maxResults'],
         ];
 
         if (!empty($query['query']['filtersExpression'])) {
@@ -228,10 +228,7 @@ class Client
 
     private function processResponseMCF($response, $query)
     {
-        if (empty($response['rows'])) {
-            return [];
-        }
-        $rows = $response['rows'];
+        $rows = empty($response['rows']) ? [] : $response['rows'];
 
         $dataSet = [];
         $columnHeaders = $response['columnHeaders'];
@@ -253,16 +250,16 @@ class Client
             'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0
         ];
 
-        if (isset($response['samplesReadCounts'])) {
-            $processed['samplesReadCounts'] = $response['samplesReadCounts'];
+        if (isset($response['sampleSize'])) {
+            $processed['samplingSpaceSizes'] = $response['sampleSize'];
         }
 
-        if (isset($report['data']['samplingSpaceSizes'])) {
-            $processed['samplingSpaceSizes'] = $response['samplingSpaceSizes'];
+        if (isset($response['sampleSpace'])) {
+            $processed['samplesReadCounts'] = $response['sampleSpace'];
         }
 
-        if (isset($report['nextPageToken'])) {
-            $processed['nextPageToken'] = $response['nextPageToken'];
+        if (isset($response['nextLink'])) {
+            $processed['nextLink'] = $response['nextLink'];
         }
 
         return $processed;

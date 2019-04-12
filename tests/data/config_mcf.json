@@ -4,20 +4,20 @@
     "outputBucket": "in.c-ex-google-analytics-mcf",
     "profiles": [
       {
-        "id": 69127714,
+        "id": "184062725",
         "name": "All Web Site Data",
-        "webPropertyId": "UA-38521826-1",
-        "webPropertyName": "Keboola Website",
-        "accountId": 38521826,
-        "accountName": "Keboola Website"
+        "accountId": "128209249",
+        "accountName": "Keboola 2018",
+        "webPropertyId": "UA-128209249-1",
+        "webPropertyName": "Website"
       },
       {
-        "accountId": "128209249",
-        "webPropertyId": "UA-128209249-1",
-        "webPropertyName": "Website",
-        "accountName": "Keboola 2018",
+        "id": "69127714",
         "name": "All Web Site Data",
-        "id": "184062725"
+        "accountId": "38521826",
+        "accountName": "Keboola Website",
+        "webPropertyId": "UA-38521826-1",
+        "webPropertyName": "Keboola Website"
       }
     ],
     "queries": [
@@ -27,10 +27,16 @@
         "outputTable": "funnel",
         "enabled": true,
         "endpoint": "mcf",
+        "antisampling": "dailyWalk",
         "query": {
+          "samplingLevel": "FASTER",
+          "maxResults": 100,
           "metrics": [
             {
               "expression": "mcf:totalConversions"
+            },
+            {
+              "expression": "mcf:totalConversionValue"
             },
             {
               "expression": "mcf:assistedConversions"
@@ -42,12 +48,18 @@
             },
             {
               "name": "mcf:sourcePath"
+            },
+            {
+              "name": "mcf:mediumPath"
+            },
+            {
+              "name": "mcf:sourceMedium"
             }
           ],
           "filtersExpression": "",
           "dateRanges": [
             {
-              "startDate": "-1 month",
+              "startDate": "-3 months",
               "endDate": "-1 day"
             }
           ]

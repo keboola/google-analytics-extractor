@@ -45,7 +45,22 @@ class Paginator
                 $nextQuery['query']['pageToken'] = $report['nextPageToken'];
                 $report = $this->client->getBatch($nextQuery);
             }
+
+            // paging for MCF
+            if (isset($report['nextLink'])) {
+                $nextQuery = $query;
+                $nextQuery['query']['startIndex'] = $this->getStartIndex($report['nextLink']);
+                $report = $this->client->getBatch($nextQuery);
+            }
             $query = $nextQuery;
         } while ($nextQuery);
+    }
+
+    private function getStartIndex($link)
+    {
+        $url = explode('?', $link);
+        parse_str($url[1], $params);
+
+        return $params['start-index'];
     }
 }

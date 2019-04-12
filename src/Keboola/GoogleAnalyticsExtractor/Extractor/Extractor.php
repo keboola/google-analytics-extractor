@@ -93,10 +93,11 @@ class Extractor
                     if (!$this->hasDimension($query, 'ga:date')
                         && !$this->hasDimension($query, 'ga:dateHour')
                         && !$this->hasDimension($query, 'ga:dateHourMinute')
+                        && !$this->hasDimension($query, 'mcf:conversionDate')
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
-                            implode(' | ', ['ga:date', 'ga:dateHour', 'ga:dateHourMinute'])
+                            implode(' | ', ['ga:date', 'ga:dateHour', 'ga:dateHourMinute', 'mcf:conversionDate'])
                         ));
                     }
 
