@@ -120,7 +120,7 @@ class Client
             'dimensions' => implode(',', $dimensions),
             'samplingLevel' => empty($query['query']['samplingLevel']) ? 'HIGHER_PRECISION' : $query['query']['samplingLevel'],
             'start-index' => empty($query['query']['startIndex']) ? 1 : $query['query']['startIndex'],
-            'max-results' => empty($query['query']['maxResults']) ? 2000 : $query['query']['maxResults'],
+            'max-results' => empty($query['query']['maxResults']) ? 1000 : $query['query']['maxResults'],
         ];
 
         if (!empty($query['query']['filtersExpression'])) {
