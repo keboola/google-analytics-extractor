@@ -4,20 +4,20 @@
     "outputBucket": "in.c-ex-google-analytics-mcf",
     "profiles": [
       {
-        "id": "184062725",
+        "id": 184062725,
         "name": "All Web Site Data",
-        "accountId": "128209249",
-        "accountName": "Keboola 2018",
         "webPropertyId": "UA-128209249-1",
-        "webPropertyName": "Website"
+        "webPropertyName": "Keboola Website",
+        "accountId": 128209249,
+        "accountName": "Keboola Website"
       },
       {
-        "id": "69127714",
+        "id": 88156763,
         "name": "All Web Site Data",
-        "accountId": "38521826",
-        "accountName": "Keboola Website",
-        "webPropertyId": "UA-38521826-1",
-        "webPropertyName": "Keboola Website"
+        "webPropertyId": "UA-128209249-1",
+        "webPropertyName": "status.keboola.com",
+        "accountId": 128209249,
+        "accountName": "Keboola Status"
       }
     ],
     "queries": [

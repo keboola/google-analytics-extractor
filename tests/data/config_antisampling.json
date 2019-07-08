@@ -4,20 +4,20 @@
     "outputBucket": "in.c-ex-google-analytics-cfg1",
     "profiles": [
       {
-        "id": 26550866,
+        "id": 184062725,
         "name": "All Web Site Data",
-        "webPropertyId": "UA-38521826-1",
+        "webPropertyId": "UA-128209249-1",
         "webPropertyName": "Keboola Website",
-        "accountId": 38521826,
+        "accountId": 128209249,
         "accountName": "Keboola Website"
       },
       {
-        "id": 69127714,
+        "id": 88156763,
         "name": "All Web Site Data",
-        "webPropertyId": "UA-38521826-2",
-        "webPropertyName": "Keboola meetup group",
-        "accountId": 38521826,
-        "accountName": "Keboola Website"
+        "webPropertyId": "UA-128209249-1",
+        "webPropertyName": "status.keboola.com",
+        "accountId": 128209249,
+        "accountName": "Keboola Status"
       }
     ],
     "queries": [
