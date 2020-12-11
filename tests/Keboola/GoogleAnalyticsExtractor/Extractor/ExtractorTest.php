@@ -47,12 +47,11 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     public function testRun()
     {
         $parameters = $this->validateParameters($this->config['parameters']);
-        $queries = $parameters['queries'];
         $profiles = $parameters['profiles'];
 
-        $this->extractor->run($queries, [$profiles[0]]);
+        $this->extractor->run($parameters, [$profiles[0]]);
 
-        $outputFiles = $this->getOutputFiles($queries[0]['outputTable']);
+        $outputFiles = $this->getOutputFiles($parameters['outputTable']);
         $this->assertNotEmpty($outputFiles);
 
         /** @var \SplFileInfo $outputFile */
@@ -65,8 +64,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
             $header = $csv->current();
 
             // check CSV header
-            $dimensions = $queries[0]['query']['dimensions'];
-            $metrics = $queries[0]['query']['metrics'];
+            $dimensions = $parameters['query']['dimensions'];
+            $metrics = $parameters['query']['metrics'];
             foreach ($dimensions as $dimension) {
                 $this->assertContains(str_replace('ga:', '', $dimension['name']), $header);
             }
@@ -86,8 +85,8 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
     {
         $parameters = $this->validateParameters($this->config['parameters']);
         $profiles = $parameters['profiles'];
-
-        $this->extractor->run([], $profiles[0]);
+        unset($parameters['query']);
+        $this->extractor->run($parameters, $profiles[0]);
     }
 
     private function getOutputFiles($queryName)
