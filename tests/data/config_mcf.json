@@ -55,7 +55,7 @@
       "filtersExpression": "",
       "dateRanges": [
         {
-          "startDate": "-1 month",
+          "startDate": "-1 week",
           "endDate": "-1 day"
         }
       ]

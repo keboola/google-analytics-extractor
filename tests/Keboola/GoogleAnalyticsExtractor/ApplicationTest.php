@@ -178,6 +178,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testAppSampleMCF()
     {
         $this->config = $this->getConfig('_mcf');
+        $this->config['parameters']['query']['dateRanges'][0]['startDate'] = '-4 months';
         $this->config['action'] = 'sample';
 
         $this->application = new Application($this->config);
