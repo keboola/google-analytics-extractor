@@ -126,9 +126,6 @@ class Application
     {
         $extracted = [];
         $profiles = $this->container['parameters']['profiles'];
-        $queries = array_filter($this->container['parameters']['queries'], function ($query) {
-            return $query['enabled'];
-        });
 
         /** @var Output $output */
         $output = $this->container['output'];
@@ -138,7 +135,7 @@ class Application
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
-        $extracted[] = $extractor->run($queries, $profiles);
+        $extracted[] = $extractor->run($this->container['parameters'], $profiles);
 
         return [
             'status' => 'ok',
@@ -152,15 +149,15 @@ class Application
             throw new UserException("No profiles configured. You have to register at least one profile.");
         }
         $profile = $this->container['parameters']['profiles'][0];
-        $query = $this->container['parameters']['queries'][0];
+        $parameters = $this->container['parameters'];
 
-        if (empty($query['query']['viewId'])) {
-            $query['query']['viewId'] = (string) $profile['id'];
+        if (empty($parameters['query']['viewId'])) {
+            $parameters['query']['viewId'] = (string) $profile['id'];
         }
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
-        return $extractor->getSampleReport($query);
+        return $extractor->getSampleReport($parameters);
     }
 
     private function sampleJsonAction()
@@ -169,15 +166,15 @@ class Application
             throw new UserException("No profiles configured. You have to register at least one profile.");
         }
         $profile = $this->container['parameters']['profiles'][0];
-        $query = $this->container['parameters']['queries'][0];
+        $parameters = $this->container['parameters'];
 
-        if (empty($query['query']['viewId'])) {
-            $query['query']['viewId'] = (string) $profile['id'];
+        if (empty($parameters['query']['viewId'])) {
+            $parameters['query']['viewId'] = (string) $profile['id'];
         }
 
         /** @var Extractor $extractor */
         $extractor = $this->container['extractor'];
-        return $extractor->getSampleReportJson($query);
+        return $extractor->getSampleReportJson($parameters);
     }
 
     private function segmentsAction()

@@ -51,21 +51,21 @@ class Extractor
         };
     }
 
-    public function run(array $queries, array $profiles)
+    public function run(array $parameters, array $profiles)
     {
         $status = [];
         $paginator = new Paginator($this->output, $this->gaApi);
 
-        foreach ($queries as $query) {
-            $outputCsv = $this->output->createReport($query);
-            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
-            $this->logger->info(sprintf("Running query '%s'", $query['name']));
+        if (isset($parameters['query'])) {
+            $outputCsv = $this->output->createReport($parameters);
+            $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
+            $this->logger->info(sprintf("Running query '%s'", $parameters['name']));
 
             foreach ($profiles as $profile) {
-                $apiQuery = $query;
-                if (empty($query['query']['viewId'])) {
-                    $apiQuery['query']['viewId'] = (string) $profile['id'];
-                } elseif ($query['query']['viewId'] != $profile['id']) {
+                $apiQuery = $parameters;
+                if (empty($parameters['query']['viewId'])) {
+                    $apiQuery['query']['viewId'] = (string)$profile['id'];
+                } else if ($parameters['query']['viewId'] != $profile['id']) {
                     continue;
                 }
 
@@ -76,7 +76,7 @@ class Extractor
                         if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
                             $this->logger->warning(sprintf(
                                 "You don't have access to Google Analytics resource. 
-                                Probably you don't have access to profile (%s), or it doesn't exists anymore.",
+                            Probably you don't have access to profile (%s), or it doesn't exists anymore.",
                                 $profile['id']
                             ));
                             continue;
@@ -89,11 +89,11 @@ class Extractor
                     continue;
                 }
 
-                if (!empty($query['antisampling'])) {
-                    if (!$this->hasDimension($query, 'ga:date')
-                        && !$this->hasDimension($query, 'ga:dateHour')
-                        && !$this->hasDimension($query, 'ga:dateHourMinute')
-                        && !$this->hasDimension($query, 'mcf:conversionDate')
+                if (!empty($parameters['antisampling'])) {
+                    if (!$this->hasDimension($parameters, 'ga:date')
+                        && !$this->hasDimension($parameters, 'ga:dateHour')
+                        && !$this->hasDimension($parameters, 'ga:dateHourMinute')
+                        && !$this->hasDimension($parameters, 'mcf:conversionDate')
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
@@ -107,26 +107,26 @@ class Extractor
                         $this->logger->warning(sprintf(
                             "Report contains sampled data. Sampling rate is %d%%.",
                             intval(100 * (
-                                intval($report['samplesReadCounts'][0])
-                                / intval($report['samplingSpaceSizes'][0])
-                            ))
+                                    intval($report['samplesReadCounts'][0])
+                                    / intval($report['samplingSpaceSizes'][0])
+                                ))
                         ));
                     }
 
-                    if ($isSampled || $query['antisampling'] == 'dailyWalk') {
-                        $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
+                    if ($isSampled || $parameters['antisampling'] == 'dailyWalk') {
+                        $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
                         $antisampling = new Antisampling($paginator, $outputCsv);
-                        $algorithm = $query['antisampling'];
+                        $algorithm = $parameters['antisampling'];
                         $antisampling->$algorithm($apiQuery, $report);
 
-                        $status[$query['name']][$profile['id']] = 'ok';
+                        $status[$parameters['name']][$profile['id']] = 'ok';
                         continue;
                     }
                 }
 
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
-                $status[$query['name']][$profile['id']] = 'ok';
+                $status[$parameters['name']][$profile['id']] = 'ok';
             }
         }
 

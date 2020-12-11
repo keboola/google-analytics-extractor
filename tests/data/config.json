@@ -20,124 +20,41 @@
         "accountName": "Keboola Status"
       }
     ],
-    "queries": [
-      {
-        "id": 0,
-        "name": "users",
-        "outputTable": "users",
-        "enabled": true,
-        "query": {
-          "metrics": [
-            {
-              "expression": "ga:users"
-            },
-            {
-              "expression": "ga:pageviews"
-            },
-            {
-              "expression": "ga:bounces"
-            }
-          ],
-          "dimensions": [
-            {
-              "name": "ga:date"
-            },
-            {
-              "name": "ga:source"
-            },
-            {
-              "name": "ga:medium"
-            },
-            {
-              "name": "ga:country"
-            }
-          ],
-          "filtersExpression": "",
-          "dateRanges": [
-            {
-              "startDate": "-3 months",
-              "endDate": "-1 day"
-            }
-          ]
+    "name": "users",
+    "outputTable": "users",
+    "query": {
+      "metrics": [
+        {
+          "expression": "ga:users"
+        },
+        {
+          "expression": "ga:pageviews"
+        },
+        {
+          "expression": "ga:bounces"
         }
-      },
-      {
-        "id": 1,
-        "name": "Organic Traffic",
-        "outputTable": "organicTraffic",
-        "enabled": true,
-        "query": {
-          "metrics": [
-            {
-              "expression": "ga:users"
-            },
-            {
-              "expression": "ga:sessions"
-            },
-            {
-              "expression": "ga:pageviews"
-            },
-            {
-              "expression": "ga:bounces"
-            }
-          ],
-          "dimensions": [
-            {
-              "name": "ga:date"
-            },
-            {
-              "name": "ga:segment"
-            }
-          ],
-          "filtersExpression": "",
-          "segments": [
-            {
-              "segmentId": "gaid::-5"
-            }
-          ],
-          "dateRanges": [
-            {
-              "startDate": "-3 months",
-              "endDate": "-1 day"
-            }
-          ]
+      ],
+      "dimensions": [
+        {
+          "name": "ga:date"
+        },
+        {
+          "name": "ga:source"
+        },
+        {
+          "name": "ga:medium"
+        },
+        {
+          "name": "ga:country"
         }
-      },
-      {
-        "id": 2,
-        "name": "Totals",
-        "outputTable": "totals",
-        "enabled": true,
-        "query": {
-          "metrics": [
-            {
-              "expression": "ga:users"
-            },
-            {
-              "expression": "ga:sessions"
-            },
-            {
-              "expression": "ga:pageviews"
-            },
-            {
-              "expression": "ga:bounces"
-            }
-          ],
-          "dimensions": [
-            {
-              "name": "ga:year"
-            }
-          ],
-          "filtersExpression": "",
-          "segments": null,
-          "dateRanges": [
-            {
-              "startDate": "first day of January",
-              "endDate": "today"
-            }
-          ]
+      ],
+      "filtersExpression": "",
+      "dateRanges": [
+        {
+          "startDate": "-3 months",
+          "endDate": "-1 day"
         }
-      }
-    ]
+      ]
+    }
   }
 }

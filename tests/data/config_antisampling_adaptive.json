@@ -1,7 +1,7 @@
 {
   "parameters": {
     "retriesCount": 1,
-    "outputBucket": "in.c-ex-google-analytics-mcf",
+    "outputBucket": "in.c-ex-google-analytics-cfg1",
     "profiles": [
       {
         "id": 184062725,
@@ -20,42 +20,32 @@
         "accountName": "Keboola Status"
       }
     ],
-    "name": "funnel",
-    "outputTable": "funnel",
-    "endpoint": "mcf",
-    "antisampling": "dailyWalk",
+    "name": "adaptive",
+    "outputTable": "adaptive",
+    "antisampling": "adaptive",
     "query": {
-      "samplingLevel": "FASTER",
-      "maxResults": 100,
+      "viewId": "26550866",
       "metrics": [
         {
-          "expression": "mcf:totalConversions"
-        },
-        {
-          "expression": "mcf:totalConversionValue"
-        },
-        {
-          "expression": "mcf:assistedConversions"
+          "expression": "ga:pageviews"
         }
       ],
       "dimensions": [
         {
-          "name": "mcf:conversionDate"
+          "name": "ga:date"
         },
         {
-          "name": "mcf:sourcePath"
+          "name": "ga:sourceMedium"
         },
         {
-          "name": "mcf:mediumPath"
-        },
-        {
-          "name": "mcf:sourceMedium"
+          "name": "ga:landingPagePath"
         }
       ],
       "filtersExpression": "",
+      "segments": null,
       "dateRanges": [
         {
-          "startDate": "-1 month",
+          "startDate": "-3 days",
           "endDate": "-1 day"
         }
       ]
