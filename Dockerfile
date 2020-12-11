@@ -1,5 +1,7 @@
 FROM php:7-cli
-MAINTAINER Miro Cillik <miro@keboola.com>
+
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_PROCESS_TIMEOUT 3600
 
 # Deps
 RUN apt-get update
