@@ -32,7 +32,7 @@ class Application
     {
         $container = new Container();
         $container['action'] = isset($config['action']) ? $config['action'] : 'run';
-        $container['parameters'] = $this->validateParamteters($config['parameters']);
+        $container['parameters'] = $this->validateParamteters($container['action'], $config['parameters']);
         $container['logger'] = function ($c) use ($config) {
             $logger = new Logger($config['app_name']);
             $logger->pushProcessor(new KbcInfoProcessor());
@@ -196,11 +196,14 @@ class Application
         return $extractor->getCustomMetrics($profile['accountId'], $profile['webPropertyId']);
     }
 
-    private function validateParamteters($parameters)
+    private function validateParamteters($action, $parameters)
     {
         // no parameters needed for `segments` action
-        if ($this->container['action'] == 'segments') {
-            return [];
+        if ($action == 'segments') {
+            return [
+                'data_dir' => $parameters['data_dir'],
+                'outputBucket' => $parameters['outputBucket']
+            ];
         }
 
         try {
