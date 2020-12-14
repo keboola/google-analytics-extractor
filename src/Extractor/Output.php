@@ -1,10 +1,6 @@
 <?php
-/**
- * DataManager.php
- *
- * @author: Miroslav Čillík <miro@keboola.com>
- * @created: 29.7.13
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
@@ -13,29 +9,25 @@ use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
 class Output
 {
-    private $dataDir;
+    private string $dataDir;
 
-    private $outputBucket;
+    private Usage $usage;
 
-    /** @var Usage */
-    private $usage;
+    private array $options;
 
-    private $options;
-
-    public function __construct($dataDir, $outputBucket, $options = [])
+    public function __construct(string $dataDir, array $options = [])
     {
         $this->dataDir = $dataDir;
-        $this->outputBucket = $outputBucket;
         $this->usage = new Usage($dataDir);
         $this->options = $options;
     }
 
-    public function getUsage()
+    public function getUsage(): Usage
     {
         return $this->usage;
     }
 
-    public function writeProfiles(CsvFile $csv, array $profiles)
+    public function writeProfiles(CsvFile $csv, array $profiles): CsvFile
     {
         $csv->writeRow(['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName']);
         foreach ($profiles as $profile) {
@@ -45,14 +37,14 @@ class Output
                 'webPropertyId' => $profile['webPropertyId'],
                 'webPropertyName' => $profile['webPropertyName'],
                 'accountId' => $profile['accountId'],
-                'accountName' => $profile['accountName']
+                'accountName' => $profile['accountName'],
             ]);
         }
 
         return $csv;
     }
 
-    private function createHeaderRowFromQuery($query)
+    private function createHeaderRowFromQuery(array $query): array
     {
         $dimensions = array_map(function ($item) {
             return str_replace('ga:', '', $item['name']);
@@ -69,14 +61,14 @@ class Output
         );
     }
 
-    public function createReport($query)
+    public function createReport(array $query): CsvFile
     {
         $csv = $this->createCsvFile(sprintf('%s_%s', $query['outputTable'], uniqid()));
         $csv->writeRow($this->createHeaderRowFromQuery($query));
         return $csv;
     }
 
-    public function createSampleReportJson($query, $report)
+    public function createSampleReportJson(array $query, array $report): array
     {
         $columns = $this->createHeaderRowFromQuery($query);
         $rows = [];
@@ -90,7 +82,7 @@ class Output
         return $rows;
     }
 
-    private function createReportRow($reportDataItem, $profileId)
+    private function createReportRow(Result $reportDataItem, string $profileId): array
     {
         $metrics = $this->formatResultKeys($reportDataItem->getMetrics());
         $dimensions = $this->formatResultKeys($reportDataItem->getDimensions());
@@ -108,16 +100,7 @@ class Output
         );
     }
 
-    /**
-     * Write report data to output csv file (with header)
-     *
-     * @param CsvFile $csv
-     * @param array $report
-     * @param $profileId
-     * @return CsvFile
-     * @throws \Keboola\Csv\Exception
-     */
-    public function writeReport(CsvFile $csv, array $report, $profileId)
+    public function writeReport(CsvFile $csv, array $report, string $profileId): CsvFile
     {
         /** @var Result $result */
         foreach ($report['data'] as $result) {
@@ -127,7 +110,7 @@ class Output
         return $csv;
     }
 
-    private function getPrimaryKey($profileId, $dimensions)
+    private function getPrimaryKey(string $profileId, array $dimensions): string
     {
         // Backward compatibility with data with old (buggy) PKs
         if (isset($dimensions['date'])) {
@@ -138,12 +121,12 @@ class Output
         return sha1($profileId . implode('-', $dimensions));
     }
 
-    private function isConflictingPrimaryKey()
+    private function isConflictingPrimaryKey(): bool
     {
         return !isset($this->options['nonConflictPrimaryKey']) || $this->options['nonConflictPrimaryKey'] === false;
     }
 
-    private function formatResultKeys($metricsOrDimensions)
+    private function formatResultKeys(array $metricsOrDimensions): array
     {
         $res = [];
         foreach ($metricsOrDimensions as $k => $v) {
@@ -152,7 +135,7 @@ class Output
         return $res;
     }
 
-    public function createCsvFile($name)
+    public function createCsvFile(string $name): CsvFile
     {
         $outTablesDir = $this->dataDir . '/out/tables';
         if (!is_dir($outTablesDir)) {
@@ -161,19 +144,23 @@ class Output
         return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
     }
 
-    public function createManifest($name, $destination, $primaryKey = null, $incremental = false)
-    {
+    public function createManifest(
+        string $name,
+        string $destination,
+        ?array $primaryKey = null,
+        bool $incremental = false
+    ): void {
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
 
         $manifestData = [
-            'destination' => sprintf('%s.%s', $this->outputBucket, $destination),
-            'incremental' => $incremental
+            'destination' => sprintf('%s', $destination),
+            'incremental' => $incremental,
         ];
 
         if ($primaryKey !== null) {
             $manifestData['primary_key'] = $primaryKey;
         }
 
-        return file_put_contents($outFilename, json_encode($manifestData));
+        file_put_contents($outFilename, json_encode($manifestData));
     }
 }

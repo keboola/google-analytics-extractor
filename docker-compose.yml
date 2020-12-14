@@ -1,9 +1,9 @@
 version: "2"
 services:
-  app:
-    build: .
+  app: &main
     image: keboola/google-analytics-extractor
-    command: ./phpunit.sh
+    build:
+      context: .
     environment:
       CLIENT_ID: $CLIENT_ID
       CLIENT_SECRET: $CLIENT_SECRET
@@ -12,15 +12,9 @@ services:
       VIEW_ID: $VIEW_ID
 
   dev:
-    build: .
-    image: keboola/google-analytics-extractor
+    <<: *main
     volumes:
-      - .:/code
-    working_dir: /code
-    command: ./phpunit.sh
-    environment:
-      CLIENT_ID: $CLIENT_ID
-      CLIENT_SECRET: $CLIENT_SECRET
-      ACCESS_TOKEN: $ACCESS_TOKEN
-      REFRESH_TOKEN: $REFRESH_TOKEN
-      VIEW_ID: $VIEW_ID
+      - ./:/code
+      - ./data:/data
+    mem_limit: 4000m
+    mem_reservation: 4000m

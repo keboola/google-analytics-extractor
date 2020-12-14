@@ -1,34 +1,29 @@
 <?php
-/**
- * RestApi.php
- *
- * @author: Miroslav Čillík <miro@keboola.com>
- * @created: 26.7.13
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
-use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
+use Psr\Log\LoggerInterface;
 
 class Client
 {
-    const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
-    const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
-    const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
-    const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
-    const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
+    public const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
+    private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
+    /** @phpcs:disable */
+    private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
+    /** @phpcs:enable */
 
-    /** @var GoogleApi */
-    protected $api;
+    protected GoogleApi $api;
 
-    /** @var Logger */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    protected $apiCallsCount = 0;
+    protected int $apiCallsCount = 0;
 
-    public function __construct(GoogleApi $api, Logger $logger)
+    public function __construct(GoogleApi $api, LoggerInterface $logger)
     {
         $this->api = $api;
         $this->logger = $logger;
@@ -39,29 +34,26 @@ class Client
         $this->api->setDelayFn(Client::getDelayFn());
     }
 
-    /**
-     * @return GoogleApi
-     */
-    public function getApi()
+    public function getApi(): GoogleApi
     {
         return $this->api;
     }
 
-    public function getSegments()
+    public function getSegments(): array
     {
         $response = $this->api->request(self::SEGMENTS_URL);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'];
     }
 
-    public function getCustomMetrics($accountId, $webPropertyId)
+    public function getCustomMetrics(int $accountId, string $webPropertyId): array
     {
         $response = $this->api->request(sprintf(self::CUSTOM_METRICS_URL, $accountId, $webPropertyId));
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'];
     }
 
-    public function request($method, $url, $body = null, $query = null)
+    public function request(string $method, string $url, ?array $body = null, ?array $query = null): array
     {
         $this->apiCallsCount++;
 
@@ -77,32 +69,32 @@ class Client
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getBatch($query)
+    public function getBatch(array $query): array
     {
         return ($query['endpoint'] === 'mcf')
             ? $this->getMCFReports($query)
             : $this->getReports($query);
     }
 
-    public function getReports($query)
+    public function getReports(array $query): array
     {
         $body = [
-            'reportRequests' => $this->getReportRequest($query['query'])
+            'reportRequests' => $this->getReportRequest($query['query']),
         ];
-        $this->logger->debug(sprintf("Sending Report request"), [
+        $this->logger->debug(sprintf('Sending Report request'), [
             'ga_profile' => $query['query']['viewId'],
             'request' => [
                 'method' => 'POST',
                 'url' => self::REPORTS_URL,
-                'body' => $body
-            ]
+                'body' => $body,
+            ],
         ]);
         $reports = $this->request('POST', self::REPORTS_URL, $body);
 
         return $this->processResponse($reports, $query);
     }
 
-    public function getMCFReports($query)
+    public function getMCFReports(array $query): array
     {
         $metrics = array_map(function ($item) {
             return $item['expression'];
@@ -118,47 +110,34 @@ class Client
             'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
-            'samplingLevel' => empty($query['query']['samplingLevel']) ? 'HIGHER_PRECISION' : $query['query']['samplingLevel'],
-            'start-index' => empty($query['query']['startIndex']) ? 1 : $query['query']['startIndex'],
-            'max-results' => empty($query['query']['maxResults']) ? 1000 : $query['query']['maxResults'],
+            'samplingLevel' => $query['query']['samplingLevel'] ?? 'HIGHER_PRECISION',
+            'start-index' => $query['query']['startIndex'] ?? 1,
+            'max-results' => $query['query']['maxResults'] ?? 1000,
         ];
 
         if (!empty($query['query']['filtersExpression'])) {
             $params['filters'] = $query['query']['filtersExpression'];
         }
 
-        $this->logger->debug(sprintf("Sending MCF request"), [
+        $this->logger->debug(sprintf('Sending MCF request'), [
             'request' => [
                 'ids' => $query['query']['viewId'],
                 'method' => 'GET',
                 'url' => self::MCF_URL,
-                'params' => $params
-            ]
+                'params' => $params,
+            ],
         ]);
         $reports = $this->request('GET', self::MCF_URL, null, $params);
 
         return $this->processResponseMCF($reports, $query);
     }
 
-    /**
-     * Format query array to ReportRequest
-     *
-     * @param $query
-     *   - viewId - profile / view ID,
-     *   - metrics - array of metrics
-     *   - dimensions - array of dimensions [OPTIONAL]
-     *   - filtersExpression - filter expression [OPTIONAL]
-     *   - segments - segment ID [OPTIONAL]
-     *   - dateRanges - array of Date ranges
-     *   - sort - dimension to sort by
-     * @return array
-     */
-    private function getReportRequest($query)
+    private function getReportRequest(array $query): array
     {
         $query['dateRanges'] = array_map(function ($item) {
             return [
                 'startDate' => date('Y-m-d', strtotime($item['startDate'])),
-                'endDate' => date('Y-m-d', strtotime($item['endDate']))
+                'endDate' => date('Y-m-d', strtotime($item['endDate'])),
             ];
         }, $query['dateRanges']);
         $query['pageSize'] = 5000;
@@ -170,14 +149,7 @@ class Client
         return $query;
     }
 
-    /**
-     * Parse JSON response to array of Result rows
-     * @param $response
-     * @param $query
-     * @return mixed
-     * @internal param array $result json decoded response
-     */
-    private function processResponse($response, $query)
+    private function processResponse(array $response, array $query): array
     {
         if (empty($response['reports'])) {
             return [];
@@ -208,7 +180,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $report['data']['totals'],
-            'rowCount' => isset($report['data']['rowCount']) ? $report['data']['rowCount'] : 0
+            'rowCount' => isset($report['data']['rowCount']) ? $report['data']['rowCount'] : 0,
         ];
 
         if (isset($report['data']['samplesReadCounts'])) {
@@ -226,7 +198,7 @@ class Client
         return $processed;
     }
 
-    private function processResponseMCF($response, $query)
+    private function processResponseMCF(array $response, array $query): array
     {
         $rows = empty($response['rows']) ? [] : $response['rows'];
 
@@ -247,7 +219,7 @@ class Client
             'data' => $dataSet,
             'query' => $query,
             'totals' => $response['totalsForAllResults'],
-            'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0
+            'rowCount' => isset($response['totalResults']) ? $response['totalResults'] : 0,
         ];
 
         if (isset($response['sampleSize'])) {
@@ -265,7 +237,7 @@ class Client
         return $processed;
     }
 
-    private function parseMCFValue($data, $dataType)
+    private function parseMCFValue(array $data, string $dataType): string
     {
         if ($dataType !== 'mcf_sequence') {
             return $data['primitiveValue'];
@@ -288,12 +260,12 @@ class Client
         );
     }
 
-    public function getApiCallsCount()
+    public function getApiCallsCount(): int
     {
         return $this->apiCallsCount;
     }
 
-    public static function getDelayFn($base = 5000)
+    public static function getDelayFn(int $base = 5000): \Closure
     {
         return function ($retries) use ($base) {
             return (int) ($base * pow(2, $retries - 1) + rand(0, 500));

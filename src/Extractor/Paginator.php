@@ -1,20 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 15/09/16
- * Time: 14:16
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Paginator
 {
-    private $output;
+    private Output $output;
 
-    private $client;
+    private Client $client;
 
     public function __construct(Output $output, Client $client)
     {
@@ -22,17 +19,17 @@ class Paginator
         $this->client = $client;
     }
 
-    public function getOutput()
+    public function getOutput(): Output
     {
         return $this->output;
     }
 
-    public function getClient()
+    public function getClient(): Client
     {
         return $this->client;
     }
 
-    public function paginate($query, $report, $csvFile = null)
+    public function paginate(array $query, array $report, CsvFile $csvFile): void
     {
         do {
             // writer first result
@@ -53,10 +50,10 @@ class Paginator
                 $report = $this->client->getBatch($nextQuery);
             }
             $query = $nextQuery;
-        } while ($nextQuery);
+        } while ($query);
     }
 
-    private function getStartIndex($link)
+    private function getStartIndex(string $link): string
     {
         $url = explode('?', $link);
         parse_str($url[1], $params);

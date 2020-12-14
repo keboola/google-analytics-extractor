@@ -7,3 +7,4 @@ tests.sh
 tests/data/out
 .DS_Store
 .env
+.phpunit.result.cache
