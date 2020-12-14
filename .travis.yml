@@ -9,7 +9,14 @@ before_script:
   - export APP_IMAGE=keboola/google-analytics-extractor
   - docker -v
   - docker build -t $APP_IMAGE .
-  - docker run $APP_IMAGE composer ci
+  - docker run
+    -e CLIENT_ID
+    -e CLIENT_SECRET
+    -e ACCESS_TOKEN
+    -e REFRESH_TOKEN
+    -e VIEW_ID
+    $APP_IMAGE
+    composer ci
 
   # push test image to ECR
   - docker pull quay.io/keboola/developer-portal-cli-v2:latest
