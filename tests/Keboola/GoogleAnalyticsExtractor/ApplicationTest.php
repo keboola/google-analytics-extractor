@@ -340,6 +340,11 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->config['parameters']['query']['metrics'] = [
             ['expression' => 'ga:adxRevenue']
         ];
+        $this->config['parameters']['query']['dateRanges'][0] = [
+            'startDate' => '0 day',
+            'endDate' => '0 day',
+        ];
+
         $usersOutputFiles = $this->getOutputFiles('users');
         $usersManifestFiles = $this->getManifestFiles('users');
 
