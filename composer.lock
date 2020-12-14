@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4c9fecb80c377d65671ca8b5b8e4008",
+    "content-hash": "ad7ad93106d0603588980390f2761ecf",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -411,59 +411,6 @@
                 "source": "https://github.com/keboola/php-component/tree/8.1.2"
             },
             "time": "2020-04-30T11:08:47+00:00"
-        },
-        {
-            "name": "keboola/php-temp",
-            "version": "0.1.6",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/keboola/php-temp.git",
-                "reference": "ffe345e78ba0d35d970fc26fe2c1a36f7d20ca8c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-temp/zipball/ffe345e78ba0d35d970fc26fe2c1a36f7d20ca8c",
-                "reference": "ffe345e78ba0d35d970fc26fe2c1a36f7d20ca8c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "symfony/filesystem": ">2.1.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "dev-master",
-                "phpunit/phpunit": "^5.2"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Keboola\\Temp": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Miro Cillik",
-                    "email": "miro@keboola.cz"
-                },
-                {
-                    "name": "Ondrej Vana",
-                    "email": "kachna@keboola.cz"
-                }
-            ],
-            "description": "Temp service - handles application's temporary files",
-            "keywords": [
-                "filesystem",
-                "temp"
-            ],
-            "support": {
-                "issues": "https://github.com/keboola/php-temp/issues",
-                "source": "https://github.com/keboola/php-temp/tree/master"
-            },
-            "time": "2016-03-23T17:48:01+00:00"
         },
         {
             "name": "monolog/monolog",
