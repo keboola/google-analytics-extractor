@@ -1,36 +1,33 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 13/04/16
- * Time: 15:22
- */
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi;
-use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     /** @var Client */
     protected $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = new Client(
             new RestApi(
-                getenv('CLIENT_ID'),
-                getenv('CLIENT_SECRET'),
-                getenv('ACCESS_TOKEN'),
-                getenv('REFRESH_TOKEN')
+                (string) getenv('CLIENT_ID'),
+                (string) getenv('CLIENT_SECRET'),
+                (string) getenv('ACCESS_TOKEN'),
+                (string) getenv('REFRESH_TOKEN')
             ),
-            new Logger('ex-google-analytics')
+            new NullLogger()
         );
     }
 
-    public function testGetBatch()
+    public function testGetBatch(): void
     {
         $queries = [
             [
@@ -42,19 +39,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                         ['expression' => 'ga:users'],
                         ['expression' => 'ga:newUsers'],
                         ['expression' => 'ga:bounces'],
-                        ['expression' => 'ga:pageviews']
+                        ['expression' => 'ga:pageviews'],
                     ],
                     'dimensions' => [
                         ['name' => 'ga:date'],
                         ['name' => 'ga:source'],
                         ['name' => 'ga:medium'],
-                        ['name' => 'ga:pagePath']
+                        ['name' => 'ga:pagePath'],
                     ],
                     'dateRanges' => [[
                         'startDate' => date('Y-m-d', strtotime('-36 months')),
-                        'endDate' => date('Y-m-d', strtotime('now'))
-                    ]]
-                ]
+                        'endDate' => date('Y-m-d', strtotime('now')),
+                    ]],
+                ],
             ],
             [
                 'name' => 'sessions',
@@ -63,20 +60,20 @@ class ClientTest extends \PHPUnit_Framework_TestCase
                     'viewId' => getenv('VIEW_ID'),
                     'metrics' => [
                         ['expression' => 'ga:sessions'],
-                        ['expression' => 'ga:bounces']
+                        ['expression' => 'ga:bounces'],
                     ],
                     'dimensions' => [
                         ['name' => 'ga:date'],
                         ['name' => 'ga:source'],
                         ['name' => 'ga:country'],
-                        ['name' => 'ga:pagePath']
+                        ['name' => 'ga:pagePath'],
                     ],
                     'dateRanges' => [[
                         'startDate' => date('Y-m-d', strtotime('-12 months')),
-                        'endDate' => date('Y-m-d', strtotime('now'))
-                    ]]
-                ]
-            ]
+                        'endDate' => date('Y-m-d', strtotime('now')),
+                    ]],
+                ],
+            ],
         ];
 
         $reports = [];
@@ -84,9 +81,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             $reports[] = $this->client->getBatch($query);
         }
 
-        $this->assertNotEmpty($reports[0]['data']);
-        $this->assertEquals('users', $reports[0]['query']['name']);
-        $this->assertNotEmpty($reports[1]['data']);
-        $this->assertEquals('sessions', $reports[1]['query']['name']);
+        Assert::assertNotEmpty($reports[0]['data']);
+        Assert::assertEquals('users', $reports[0]['query']['name']);
+        Assert::assertNotEmpty($reports[1]['data']);
+        Assert::assertEquals('sessions', $reports[1]['query']['name']);
     }
 }

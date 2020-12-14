@@ -1,53 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\GoogleAnalyticsExtractor;
 
 use Keboola\Csv\CsvFile;
+use PHP_CodeSniffer\Reports\Csv;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
+use function _HumbugBoxf1b87ffa78eb\RingCentral\Psr7\str;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
-    /** @var Application */
-    private $application;
+    private array $config;
 
-    private $config;
+    private string $dataDir;
 
-    private $dataDir;
+    private string $configDir;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $this->dataDir = __DIR__ . '/../../../tests/data';
+        $this->dataDir = '/tmp/data-test';
+        $this->configDir = __DIR__ . '/../../../tests/data';
         $this->config = $this->getConfig();
-        $this->application = new Application($this->config);
 
         $filesystem = new Filesystem();
         $filesystem->remove($this->dataDir . '/out/tables');
         $filesystem->mkdir($this->dataDir . '/out/tables');
     }
 
-    private function getConfig($suffix = '')
+    private function getConfig(string $suffix = ''): array
     {
-        $config = json_decode(file_get_contents($this->dataDir . '/config' . $suffix . '.json'), true);
-        $config['app_name'] = 'ex-google-analytics';
-        $config['parameters']['data_dir'] = $this->dataDir;
+        $config = json_decode(
+            (string) file_get_contents($this->configDir . '/config' . $suffix . '.json'),
+            true
+        );
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
             '#appSecret' => getenv('CLIENT_SECRET'),
             '#data' => json_encode([
                 'access_token' => getenv('ACCESS_TOKEN'),
-                'refresh_token' => getenv('REFRESH_TOKEN')
-            ])
+                'refresh_token' => getenv('REFRESH_TOKEN'),
+            ]),
         ];
 
         return $config;
     }
 
-    public function testAppRun()
+    public function testAppRun(): void
     {
-        $this->application->run();
+        $this->runProcess();
 
         $profiles = $this->getOutputFiles('profiles');
         $profilesManifests = $this->getManifestFiles('profiles');
@@ -57,47 +63,35 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $manifests = $this->getManifestFiles('');
 
-        $this->assertEquals(1, count($profiles));
-        $this->assertEquals(1, count($profilesManifests));
+        Assert::assertEquals(1, count($profiles));
+        Assert::assertEquals(1, count($profilesManifests));
 
-        $this->assertEquals(1, count($users));
-        $this->assertEquals(1, count($usersManifests));
-
-        foreach ($profilesManifests as $profilesManifestFile) {
-            $profilesManifest = json_decode(file_get_contents($profilesManifestFile), true);
-            $this->assertEquals($this->config['parameters']['outputBucket'] . '.profiles', $profilesManifest['destination']);
-        }
-
-        foreach ($usersManifests as $usersManifestFile) {
-            $usersManifest = json_decode(file_get_contents($usersManifestFile), true);
-            $this->assertEquals($this->config['parameters']['outputBucket'] . '.users', $usersManifest['destination']);
-        }
+        Assert::assertEquals(1, count($users));
+        Assert::assertEquals(1, count($usersManifests));
 
         foreach ($manifests as $manifestFile) {
-            $manifest = json_decode(file_get_contents($manifestFile), true);
-            $this->assertArrayHasKey('destination', $manifest);
-            $this->assertArrayHasKey('incremental', $manifest);
-            $this->assertTrue($manifest['incremental']);
-            $this->assertArrayHasKey('primary_key', $manifest);
-            $this->assertEquals('id', $manifest['primary_key'][0]);
+            $manifest = json_decode((string) file_get_contents((string) $manifestFile), true);
+            Assert::assertArrayHasKey('incremental', $manifest);
+            Assert::assertTrue($manifest['incremental']);
+            Assert::assertArrayHasKey('primary_key', $manifest);
+            Assert::assertEquals('id', $manifest['primary_key'][0]);
         }
 
-        $this->assertFileExists($this->dataDir . '/out/usage.json');
-        $usage = json_decode(file_get_contents($this->dataDir . '/out/usage.json'), true);
-        $this->assertArrayHasKey('metric', $usage[0]);
-        $this->assertArrayHasKey('value', $usage[0]);
-        $this->assertGreaterThan(0, $usage[0]['value']);
-        $this->assertEquals('API Calls', $usage[0]['metric']);
+        Assert::assertFileExists($this->dataDir . '/out/usage.json');
+        $usage = json_decode((string) file_get_contents($this->dataDir . '/out/usage.json'), true);
+        Assert::assertArrayHasKey('metric', $usage[0]);
+        Assert::assertArrayHasKey('value', $usage[0]);
+        Assert::assertGreaterThan(0, $usage[0]['value']);
+        Assert::assertEquals('API Calls', $usage[0]['metric']);
     }
 
-    public function testAppRunDailyWalk()
+    public function testAppRunDailyWalk(): void
     {
         $this->config = $this->getConfig('_antisampling');
-        $this->application = new Application($this->config);
-        $this->application->run();
+        $this->runProcess();
 
         $dailyWalk = $this->getOutputFiles('dailyWalk');
-        $this->assertEquals(1, count($dailyWalk));
+        Assert::assertEquals(1, count($dailyWalk));
 
         foreach ($dailyWalk as $file) {
             /** @var $file SplFileInfo */
@@ -107,19 +101,18 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 'date',
                 'sourceMedium',
                 'landingPagePath',
-                'pageviews'
+                'pageviews',
             ]);
         }
     }
 
-    public function testAppRunAdaptive()
+    public function testAppRunAdaptive(): void
     {
         $this->config = $this->getConfig('_antisampling_adaptive');
-        $this->application = new Application($this->config);
-        $this->application->run();
+        $this->runProcess();
 
         $adaptive = $this->getOutputFiles('adaptive');
-        $this->assertEquals(1, count($adaptive));
+        Assert::assertEquals(1, count($adaptive));
 
         foreach ($adaptive as $file) {
             /** @var $file SplFileInfo */
@@ -129,20 +122,18 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
                 'date',
                 'sourceMedium',
                 'landingPagePath',
-                'pageviews'
+                'pageviews',
             ]);
         }
     }
 
-    public function testAppRunMCF()
+    public function testAppRunMCF(): void
     {
         $this->config = $this->getConfig('_mcf');
-
-        $this->application = new Application($this->config);
-        $this->application->run();
+        $this->runProcess();
 
         $funnelFiles = $this->getOutputFiles('funnel');
-        $this->assertEquals(1, count($funnelFiles));
+        Assert::assertEquals(1, count($funnelFiles));
 
         foreach ($funnelFiles as $file) {
             /** @var $file SplFileInfo */
@@ -160,78 +151,66 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testAppSample()
+    public function testAppSample(): void
     {
         $this->config['action'] = 'sample';
-        $this->application = new Application($this->config);
+        $result = json_decode($this->runProcess()->getOutput(), true);
 
-        $result = $this->application->run();
-
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('viewId', $result);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-        $this->assertArrayHasKey('rowCount', $result);
-        $this->assertEquals('success', $result['status']);
+        Assert::assertArrayHasKey('status', $result);
+        Assert::assertArrayHasKey('viewId', $result);
+        Assert::assertArrayHasKey('data', $result);
+        Assert::assertNotEmpty($result['data']);
+        Assert::assertArrayHasKey('rowCount', $result);
+        Assert::assertEquals('success', $result['status']);
     }
 
-    public function testAppSampleMCF()
+    public function testAppSampleMCF(): void
     {
         $this->config = $this->getConfig('_mcf');
         $this->config['parameters']['query']['dateRanges'][0]['startDate'] = '-4 months';
         $this->config['action'] = 'sample';
+        $result = json_decode($this->runProcess()->getOutput(), true);
 
-        $this->application = new Application($this->config);
-
-        $result = $this->application->run();
-
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('viewId', $result);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertNotEmpty($result['data']);
-        $this->assertArrayHasKey('rowCount', $result);
-        $this->assertEquals('success', $result['status']);
+        Assert::assertArrayHasKey('status', $result);
+        Assert::assertArrayHasKey('viewId', $result);
+        Assert::assertArrayHasKey('data', $result);
+        Assert::assertNotEmpty($result['data']);
+        Assert::assertArrayHasKey('rowCount', $result);
+        Assert::assertEquals('success', $result['status']);
     }
 
-    public function testAppSegments()
+    public function testAppSegments(): void
     {
         $this->config['action'] = 'segments';
-        $this->application = new Application($this->config);
+        $result = json_decode($this->runProcess()->getOutput(), true);
 
-        $result = $this->application->run();
-
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertEquals('success', $result['status']);
+        Assert::assertArrayHasKey('status', $result);
+        Assert::assertArrayHasKey('data', $result);
+        Assert::assertEquals('success', $result['status']);
     }
 
-    public function testAppCustomMetrics()
+    public function testAppCustomMetrics(): void
     {
         $this->config['action'] = 'customMetrics';
-        $this->application = new Application($this->config);
+        $result = json_decode($this->runProcess()->getOutput(), true);
 
-        $result = $this->application->run();
-
-        $this->assertArrayHasKey('status', $result);
-        $this->assertArrayHasKey('data', $result);
-        $this->assertEquals('success', $result['status']);
+        Assert::assertArrayHasKey('status', $result);
+        Assert::assertArrayHasKey('data', $result);
+        Assert::assertEquals('success', $result['status']);
     }
 
-    public function testAppUserException()
+    public function testAppUserException(): void
     {
-        $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
-
         $this->config = $this->getConfig();
         $this->config['parameters']['retriesCount'] = 0;
         // unset segment dimension to trigger API error
         unset($this->config['parameters']['query']['dimensions'][1]);
-        $this->application = new Application($this->config);
-        $this->application->run();
+        $errorOutput = $this->runProcess()->getErrorOutput();
+        Assert::assertEquals("Expired or wrong credentials, please reauthorize.\n", $errorOutput);
     }
 
-    public function testAppAuthException()
+    public function testAppAuthException(): void
     {
-        $this->expectException('Keboola\GoogleAnalyticsExtractor\Exception\UserException');
         $this->config = $this->getConfig();
         $this->config['parameters']['retriesCount'] = 0;
         $this->config['authorization']['oauth_api']['credentials'] = [
@@ -239,106 +218,108 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
             '#appSecret' => getenv('CLIENT_SECRET'),
             '#data' => json_encode([
                 'access_token' => 'cowshit',
-                'refresh_token' => 'bullcrap'
-            ])
+                'refresh_token' => 'bullcrap',
+            ]),
         ];
-        $this->application = new Application($this->config);
-        $this->application->run();
+        $errorOutput = $this->runProcess()->getErrorOutput();
+        Assert::assertEquals("Expired or wrong credentials, please reauthorize.\n", $errorOutput);
     }
 
-    public function testRun()
-    {
-        $process = $this->runProcess();
-        $this->assertEquals(0, $process->getExitCode(), $process->getErrorOutput());
-    }
-
-    public function testRunSampleAction()
+    public function testRunSampleAction(): void
     {
         $this->config['action'] = 'sample';
         $process = $this->runProcess();
-        $this->assertEquals(0, $process->getExitCode());
+        Assert::assertEquals(0, $process->getExitCode());
 
         $output = json_decode($process->getOutput(), true);
-        $this->assertArrayHasKey('status', $output);
-        $this->assertArrayHasKey('viewId', $output);
-        $this->assertArrayHasKey('data', $output);
-        $this->assertArrayHasKey('rowCount', $output);
-        $this->assertEquals('success', $output['status']);
-        $this->assertNotEmpty($output['viewId']);
-        $this->assertNotEmpty($output['data']);
-        $this->assertNotEmpty($output['rowCount']);
+        Assert::assertArrayHasKey('status', $output);
+        Assert::assertArrayHasKey('viewId', $output);
+        Assert::assertArrayHasKey('data', $output);
+        Assert::assertArrayHasKey('rowCount', $output);
+        Assert::assertEquals('success', $output['status']);
+        Assert::assertNotEmpty($output['viewId']);
+        Assert::assertNotEmpty($output['data']);
+        Assert::assertNotEmpty($output['rowCount']);
     }
 
-    public function testRunSegmentsAction()
+    public function testRunSegmentsAction(): void
     {
         $this->config['action'] = 'segments';
         $process = $this->runProcess();
-        $this->assertEquals(0, $process->getExitCode());
+        Assert::assertEquals(0, $process->getExitCode());
 
         $output = json_decode($process->getOutput(), true);
-        $this->assertArrayHasKey('status', $output);
-        $this->assertArrayHasKey('data', $output);
-        $this->assertEquals('success', $output['status']);
-        $this->assertNotEmpty($output['data']);
+        Assert::assertArrayHasKey('status', $output);
+        Assert::assertArrayHasKey('data', $output);
+        Assert::assertEquals('success', $output['status']);
+        Assert::assertNotEmpty($output['data']);
         $segment = $output['data'][0];
-        $this->assertArrayHasKey('id', $segment);
-        $this->assertArrayHasKey('kind', $segment);
-        $this->assertArrayHasKey('segmentId', $segment);
-        $this->assertArrayHasKey('name', $segment);
+        Assert::assertArrayHasKey('id', $segment);
+        Assert::assertArrayHasKey('kind', $segment);
+        Assert::assertArrayHasKey('segmentId', $segment);
+        Assert::assertArrayHasKey('name', $segment);
     }
 
-    public function testActionUserException()
+    public function testActionUserException(): void
     {
         $this->config['action'] = 'sample';
         $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:nonexistingmetric']
+            ['expression' => 'ga:nonexistingmetric'],
         ];
-
         $process = $this->runProcess();
 
-        $this->assertEquals(1, $process->getExitCode());
-        $output = json_decode($process->getOutput(), true);
-        $this->assertEquals('error', $output['status']);
-        $this->assertEquals('User Error', $output['error']);
-        $this->assertNotEmpty($output['message']);
+        Assert::assertEquals(1, $process->getExitCode());
+        Assert::assertStringContainsString(
+            'Unknown metric(s): ga:nonexistingmetric',
+            $process->getErrorOutput()
+        );
     }
 
-    public function testActionAuthUserException()
-    {
-        $this->config['action'] = 'sample';
-        unset($this->config['authorization']);
-
-        $process = $this->runProcess();
-
-        $this->assertEquals(1, $process->getExitCode());
-        $output = json_decode($process->getOutput(), true);
-        $this->assertEquals('error', $output['status']);
-        $this->assertEquals('User Error', $output['error']);
-        $this->assertNotEmpty($output['message']);
-    }
-
-    public function testRunEmptyResult()
+    public function testRunEmptyResult(): void
     {
         // set metric that will return no data
         $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:adxRevenue']
+            ['expression' => 'ga:adxRevenue'],
+        ];
+        $this->config['parameters']['query']['dateRanges'][0] = [
+            'startDate' => '0 day',
+            'endDate' => '0 day',
         ];
         $process = $this->runProcess();
-        $this->assertEquals(0, $process->getExitCode());
+        Assert::assertEquals(0, $process->getExitCode());
 
         $usersOutputFiles = $this->getOutputFiles('users');
         $usersManifestFiles = $this->getManifestFiles('users');
 
-        $this->assertEmpty($usersOutputFiles);
-        $this->assertEmpty($usersManifestFiles);
+        Assert::assertCount(1, $usersOutputFiles);
+        Assert::assertCount(1, $usersManifestFiles);
+
+        /** @var \SplFileInfo $usersOutputFile */
+        foreach ($usersOutputFiles as $usersOutputFile) {
+            $file = new CsvFile((string) $usersOutputFile->getRealPath());
+            $file->rewind();
+            $rowCount = 0;
+            while ($file->current()) {
+                $rowCount++;
+                $file->next();
+            }
+            Assert::assertEquals(1, $rowCount);
+        }
+
+        Assert::assertCount(1, $usersOutputFiles);
+        Assert::assertCount(1, $usersManifestFiles);
     }
 
-    public function testSampleActionEmptyResult()
+    public function testSampleActionEmptyResult(): void
     {
         $this->config['action'] = 'sample';
         // set metric that will return no data
         $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:adxRevenue']
+            ['expression' => 'ga:adxRevenue'],
+        ];
+        $this->config['parameters']['query']['dateRanges'][0] = [
+            'startDate' => '0 day',
+            'endDate' => '0 day',
         ];
         $usersOutputFiles = $this->getOutputFiles('users');
         $usersManifestFiles = $this->getManifestFiles('users');
@@ -346,32 +327,34 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $process = $this->runProcess();
         $output = json_decode($process->getOutput(), true);
 
-        $this->assertEquals(0, $process->getExitCode());
-        $this->assertEmpty($output['data']);
-        $this->assertEquals('success', $output['status']);
-        $this->assertEquals(0, $output['rowCount']);
-        $this->assertEmpty($usersOutputFiles);
-        $this->assertEmpty($usersManifestFiles);
+        Assert::assertEquals(0, $process->getExitCode());
+        Assert::assertEmpty($output['data']);
+        Assert::assertEquals('success', $output['status']);
+        Assert::assertEquals(0, $output['rowCount']);
+        Assert::assertEmpty($usersOutputFiles);
+        Assert::assertEmpty($usersManifestFiles);
     }
 
-    private function runProcess()
+    private function runProcess(): Process
     {
-        $dataPath = '/tmp/data-test';
         $fs = new Filesystem();
-        $fs->remove($dataPath);
-        $fs->mkdir($dataPath);
-        $fs->mkdir($dataPath . '/out/tables');
+        $fs->remove($this->dataDir);
+        $fs->mkdir($this->dataDir);
+        $fs->mkdir($this->dataDir . '/out/tables');
 
-        file_put_contents($dataPath . '/config.json', json_encode($this->config));
+        file_put_contents($this->dataDir . '/config.json', json_encode($this->config));
 
-        $process = new Process(sprintf('php run.php --data=%s', $dataPath));
+        $process = new Process(['php', 'src/run.php']);
+        $process->setEnv([
+            'KBC_DATADIR' => $this->dataDir,
+        ]);
         $process->setTimeout(900);
         $process->run();
 
         return $process;
     }
 
-    private function getOutputFiles($queryName)
+    private function getOutputFiles(string $queryName): Finder
     {
         $finder = new Finder();
 
@@ -381,7 +364,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    private function getManifestFiles($queryName)
+    private function getManifestFiles(string $queryName): Finder
     {
         $finder = new Finder();
 
@@ -391,21 +374,21 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    private function assertHeader($pathname, array $expected)
+    private function assertHeader(string $pathname, array $expected): void
     {
         $csv = new CsvFile($pathname);
         $csv->next();
         $header = $csv->current();
 
         foreach ($expected as $key => $value) {
-            $this->assertEquals($value, $header[$key]);
+            Assert::assertEquals($value, $header[$key]);
         }
 
         // test that header is not elsewhere in the output file
         $csv->next();
         while ($row = $csv->current()) {
             foreach ($expected as $key => $value) {
-                $this->assertNotEquals($value, $row[$key]);
+                Assert::assertNotEquals($value, $row[$key]);
             }
 
             $csv->next();
