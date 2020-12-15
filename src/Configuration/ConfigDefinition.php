@@ -1,32 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Keboola\Component\Config\BaseConfigDefinition;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-class ConfigDefinition implements ConfigurationInterface
+class ConfigDefinition extends BaseConfigDefinition
 {
-    /**
-     * Generates the configuration tree builder.
-     *
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
-     */
-    public function getConfigTreeBuilder()
+    public function getParametersDefinition(): ArrayNodeDefinition
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('parameters');
+        $parametersNode = parent::getParametersDefinition();
 
-        $rootNode
+        $parametersNode
             ->children()
-                ->scalarNode('outputBucket')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('data_dir')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
                 ->integerNode('nonConflictPrimaryKey')
                     ->defaultValue(false)
                 ->end()
@@ -140,6 +128,6 @@ class ConfigDefinition implements ConfigurationInterface
             ->end()
         ;
 
-        return $treeBuilder;
+        return $parametersNode;
     }
 }

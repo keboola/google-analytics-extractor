@@ -1,31 +1,25 @@
 <?php
-/**
- * Extractor.php
- *
- * @author: Miroslav Čillík <miro@keboola.com>
- * @created: 29.7.13
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
-use Keboola\GoogleAnalyticsExtractor\Exception\UserException;
+use Keboola\Component\UserException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use \Closure;
 
 class Extractor
 {
-    /** @var Client */
-    private $gaApi;
+    private Client $gaApi;
 
-    /** @var Output */
-    private $output;
+    private Output $output;
 
-    /** @var Logger */
-    private $logger;
+    private LoggerInterface $logger;
 
-    public function __construct(Client $gaApi, Output $output, Logger $logger)
+    public function __construct(Client $gaApi, Output $output, LoggerInterface $logger)
     {
         $this->gaApi = $gaApi;
         $this->logger = $logger;
@@ -35,12 +29,12 @@ class Extractor
         $this->gaApi->getApi()->setRefreshTokenCallback([$this, 'refreshTokenCallback']);
     }
 
-    public function getBackoffCallback403()
+    public function getBackoffCallback403(): Closure
     {
         $falseReasons = [
             'insufficientPermissions',
             'dailyLimitExceeded',
-            'usageLimits.userRateLimitExceededUnreg'
+            'usageLimits.userRateLimitExceededUnreg',
         ];
 
         return function ($response) use ($falseReasons) {
@@ -51,7 +45,7 @@ class Extractor
         };
     }
 
-    public function run(array $parameters, array $profiles)
+    public function run(array $parameters, array $profiles): array
     {
         $status = [];
         $paginator = new Paginator($this->output, $this->gaApi);
@@ -64,23 +58,24 @@ class Extractor
             foreach ($profiles as $profile) {
                 $apiQuery = $parameters;
                 if (empty($parameters['query']['viewId'])) {
-                    $apiQuery['query']['viewId'] = (string)$profile['id'];
-                } else if ($parameters['query']['viewId'] != $profile['id']) {
+                    $apiQuery['query']['viewId'] = (string) $profile['id'];
+                } else if ($parameters['query']['viewId'] !== $profile['id']) {
                     continue;
                 }
 
                 try {
                     $report = $this->getReport($apiQuery);
                 } catch (RequestException $e) {
-                    if ($e->getCode() == 403) {
-                        if (strtolower($e->getResponse()->getReasonPhrase()) == 'forbidden') {
-                            $this->logger->warning(sprintf(
-                                "You don't have access to Google Analytics resource. 
-                            Probably you don't have access to profile (%s), or it doesn't exists anymore.",
-                                $profile['id']
-                            ));
-                            continue;
-                        }
+                    if ($e->getCode() === 403 &&
+                        $e->getResponse() instanceof ResponseInterface &&
+                        strtolower($e->getResponse()->getReasonPhrase()) === 'forbidden'
+                    ) {
+                        $this->logger->warning(sprintf(
+                            "You don't have access to Google Analytics resource. 
+                        Probably you don't have access to profile (%s), or it doesn't exists anymore.",
+                            $profile['id']
+                        ));
+                        continue;
                     }
                     throw $e;
                 }
@@ -105,7 +100,7 @@ class Extractor
 
                     if ($isSampled) {
                         $this->logger->warning(sprintf(
-                            "Report contains sampled data. Sampling rate is %d%%.",
+                            'Report contains sampled data. Sampling rate is %d%%.',
                             intval(100 * (
                                     intval($report['samplesReadCounts'][0])
                                     / intval($report['samplingSpaceSizes'][0])
@@ -113,7 +108,7 @@ class Extractor
                         ));
                     }
 
-                    if ($isSampled || $parameters['antisampling'] == 'dailyWalk') {
+                    if ($isSampled || $parameters['antisampling'] === 'dailyWalk') {
                         $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
                         $antisampling = new Antisampling($paginator, $outputCsv);
                         $algorithm = $parameters['antisampling'];
@@ -136,16 +131,16 @@ class Extractor
 
         return [
             'status' => 'success',
-            'queries' => $status
+            'queries' => $status,
         ];
     }
 
-    private function getReport($query)
+    private function getReport(array $query): array
     {
         return $this->gaApi->getBatch($query);
     }
 
-    public function getSampleReport($query)
+    public function getSampleReport(array $query): array
     {
         $report = $this->getReport($query);
 
@@ -157,7 +152,7 @@ class Extractor
             $csvFile = $this->output->createReport($query);
             $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
 
-            $data = file_get_contents($csvFile);
+            $data = file_get_contents((string) $csvFile->getRealPath());
             $rowCount = $report['rowCount'];
 
             // remove created output files, so they won't be uploaded to Storage
@@ -168,11 +163,11 @@ class Extractor
             'status' => 'success',
             'viewId' => $query['query']['viewId'],
             'data' => $data,
-            'rowCount' => $rowCount
+            'rowCount' => $rowCount,
         ];
     }
 
-    public function getSampleReportJson($query)
+    public function getSampleReportJson(array $query): array
     {
         $report = $this->getReport($query);
 
@@ -188,11 +183,11 @@ class Extractor
             'status' => 'success',
             'viewId' => $query['query']['viewId'],
             'data' => $data,
-            'rowCount' => $rowCount
+            'rowCount' => $rowCount,
         ];
     }
 
-    public function getSegments()
+    public function getSegments(): array
     {
         $segments = $this->gaApi->getSegments();
 
@@ -202,7 +197,7 @@ class Extractor
         ];
     }
 
-    public function getCustomMetrics($accountId, $webPropertyId)
+    public function getCustomMetrics(int $accountId, string $webPropertyId): array
     {
         $metrics = $this->gaApi->getCustomMetrics($accountId, $webPropertyId);
 
@@ -212,14 +207,14 @@ class Extractor
         ];
     }
 
-    public function refreshTokenCallback($accessToken, $refreshToken)
+    public function refreshTokenCallback(string $accessToken, string $refreshToken): void
     {
     }
 
-    private function hasDimension($query, $name)
+    private function hasDimension(array $query, string $name): bool
     {
         foreach ($query['query']['dimensions'] as $dimension) {
-            if ($dimension['name'] == $name) {
+            if ($dimension['name'] === $name) {
                 return true;
             }
         }

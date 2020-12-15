@@ -1,65 +1,68 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
 use Keboola\Google\ClientBundle\Google\RestApi;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
-use Keboola\GoogleAnalyticsExtractor\Logger\Logger;
-use Symfony\Component\Config\Definition\Processor;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\Finder\Finder;
 
-class ExtractorTest extends \PHPUnit_Framework_TestCase
+class ExtractorTest extends TestCase
 {
-    /** @var Extractor */
-    private $extractor;
+    private Extractor $extractor;
 
-    private $config;
+    private array $config;
 
-    private $dataDir;
+    private string $dataDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->dataDir = __DIR__ . '/../../../../tests/data';
         $this->config = $this->getConfig();
-        $logger = new Logger('ex-google-analytics');
+        $logger = new NullLogger();
         $client = new Client(
             new RestApi(
-                getenv('CLIENT_ID'),
-                getenv('CLIENT_SECRET'),
-                getenv('ACCESS_TOKEN'),
-                getenv('REFRESH_TOKEN')
+                (string) getenv('CLIENT_ID'),
+                (string) getenv('CLIENT_SECRET'),
+                (string) getenv('ACCESS_TOKEN'),
+                (string) getenv('REFRESH_TOKEN')
             ),
             $logger
         );
-        $output = new Output($this->dataDir, $this->config['parameters']['outputBucket']);
+        $output = new Output($this->dataDir);
         $this->extractor = new Extractor($client, $output, $logger);
     }
 
-    private function getConfig()
+    private function getConfig(): array
     {
-        $config = json_decode(file_get_contents($this->dataDir . '/config.json'), true);
-        $config['parameters']['data_dir'] = $this->dataDir;
+        $config = json_decode((string) file_get_contents($this->dataDir . '/config.json'), true);
         return $config;
     }
 
-    public function testRun()
+    public function testRun(): void
     {
-        $parameters = $this->validateParameters($this->config['parameters']);
+        $config = new Config($this->config, new ConfigDefinition());
+        $parameters = $config->getParameters();
         $profiles = $parameters['profiles'];
 
         $this->extractor->run($parameters, [$profiles[0]]);
 
         $outputFiles = $this->getOutputFiles($parameters['outputTable']);
-        $this->assertNotEmpty($outputFiles);
+        Assert::assertNotEmpty($outputFiles);
 
         /** @var \SplFileInfo $outputFile */
         foreach ($outputFiles as $outputFile) {
-            $this->assertFileExists($outputFile->getRealPath());
-            $this->assertNotEmpty(file_get_contents($outputFile->getRealPath()));
+            Assert::assertFileExists((string) $outputFile->getRealPath());
+            Assert::assertNotEmpty((string) file_get_contents((string) $outputFile->getRealPath()));
 
-            $csv = new CsvFile($outputFile->getRealPath());
+            $csv = new CsvFile((String) $outputFile->getRealPath());
             $csv->next();
             $header = $csv->current();
 
@@ -67,48 +70,45 @@ class ExtractorTest extends \PHPUnit_Framework_TestCase
             $dimensions = $parameters['query']['dimensions'];
             $metrics = $parameters['query']['metrics'];
             foreach ($dimensions as $dimension) {
-                $this->assertContains(str_replace('ga:', '', $dimension['name']), $header);
+                Assert::assertContains(
+                    str_replace('ga:', '', $dimension['name']),
+                    $header
+                );
             }
             foreach ($metrics as $metric) {
-                $this->assertContains(str_replace('ga:', '', $metric['expression']), $header);
+                Assert::assertContains(
+                    str_replace('ga:', '', $metric['expression']),
+                    $header
+                );
             }
 
             // check date format
             $csv->next();
             $row = $csv->current();
             $dateCol = array_search('date', $header);
-            $this->assertContains('-', $row[$dateCol]);
+            Assert::assertStringContainsString('-', $row[$dateCol]);
         }
     }
 
-    public function testRunEmptyResult()
+    public function testRunEmptyResult(): void
     {
-        $parameters = $this->validateParameters($this->config['parameters']);
+        $config = new Config($this->config, new ConfigDefinition());
+        $parameters = $config->getParameters();
+
         $profiles = $parameters['profiles'];
         unset($parameters['query']);
+
         $this->extractor->run($parameters, $profiles[0]);
+
+        Assert::assertTrue(true);
     }
 
-    private function getOutputFiles($queryName)
+    private function getOutputFiles(string $queryName): Finder
     {
         $finder = new Finder();
 
         return $finder->files()
             ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.csv$/i');
-    }
-
-    private function getManifestFiles($queryName)
-    {
-        $finder = new Finder();
-
-        return $finder->files()
-            ->in($this->dataDir . '/out/tables')
-            ->name('/^' . $queryName . '.*\.manifest$/i');
-    }
-
-    private function validateParameters($parameters)
-    {
-        return (new Processor())->processConfiguration(new ConfigDefinition(), [$parameters]);
     }
 }

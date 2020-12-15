@@ -1,21 +1,21 @@
 <?php
-/**
- * Author: miro@keboola.com
- * Date: 11/06/2017
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
-class UsageTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class UsageTest extends TestCase
 {
-    public function testSetApiCalls()
+    public function testSetApiCalls(): void
     {
         $usage = new Usage('/tmp/data');
         $usage->setApiCalls(123);
         $this->assertEquals(123, $usage->getApiCalls());
     }
 
-    public function testWrite()
+    public function testWrite(): void
     {
         $usage = new Usage('/tmp/data');
         $usage->setApiCalls(123);
@@ -26,8 +26,8 @@ class UsageTest extends \PHPUnit_Framework_TestCase
             json_encode([
                 [
                     'metric' => 'API Calls',
-                    'value' => 123
-                ]
+                    'value' => 123,
+                ],
             ]),
             $usageContent
         );

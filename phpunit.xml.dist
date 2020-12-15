@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="true"
-         syntaxCheck="false"
-         bootstrap="bootstrap.php">
-
-    <php>
-        <const name="ROOT_PATH" value="./"/>
-    </php>
-
-    <testsuite name="Google Analytics Extractor Test Suite">
-        <directory>tests/Keboola</directory>
-    </testsuite>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/Keboola/GoogleAnalyticsExtractor</directory>
-        </whitelist>
-    </filter>
-
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-    </logging>
+<phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        bootstrap="tests/Keboola/bootstrap.php"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./src/Keboola/GoogleAnalyticsExtractor</directory>
+    </include>
+    <report>
+      <clover outputFile="build/logs/clover.xml"/>
+    </report>
+  </coverage>
+  <php>
+    <const name="ROOT_PATH" value="./"/>
+  </php>
+  <testsuite name="Google Analytics Extractor Test Suite">
+    <directory>tests/Keboola</directory>
+  </testsuite>
+  <logging/>
 </phpunit>

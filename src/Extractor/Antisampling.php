@@ -1,23 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 07/09/16
- * Time: 14:45
- */
+
+declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
+use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
 class Antisampling
 {
-    private $paginator;
+    private Paginator $paginator;
 
-    private $client;
+    private Client $client;
 
-    private $outputCsv;
+    private CsvFile $outputCsv;
 
     public function __construct(Paginator $paginator, CsvFile $outputCsv)
     {
@@ -26,16 +23,16 @@ class Antisampling
         $this->outputCsv = $outputCsv;
     }
 
-    private function getDateRangeBuckets($query, $report)
+    private function getDateRangeBuckets(array $query, array $report): array
     {
         $readCount = intval($report['samplesReadCounts'][0]) * 0.9;
 
         $sessionQuery = $query;
         $sessionQuery['query']['metrics'] = [
-            ['expression' => 'ga:sessions']
+            ['expression' => 'ga:sessions'],
         ];
         $sessionQuery['query']['dimensions'] = [
-            ['name' => 'ga:date']
+            ['name' => 'ga:date'],
         ];
         unset($sessionQuery['query']['pageToken']);
 
@@ -54,10 +51,9 @@ class Antisampling
             return substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
         }, $report['data']);
 
-
         // divide date range to buckets
         $sampleBucket = array_map(function ($item) use ($readCount) {
-            return floor($item/$readCount) + 1;
+            return floor($item / $readCount) + 1;
         }, $cumulative);
 
         $buckets = $this->split($dates, $sampleBucket);
@@ -71,7 +67,7 @@ class Antisampling
         return $dateRangeBuckets;
     }
 
-    private function split($vector, $factor)
+    private function split(array $vector, array $factor): array
     {
         $buckets = [];
         foreach ($factor as $key => $bucketId) {
@@ -81,21 +77,21 @@ class Antisampling
         return $buckets;
     }
 
-    private function getDateRange($dates)
+    private function getDateRange(array $dates): array
     {
         $startDate = array_shift($dates);
         $endDate = array_pop($dates);
-        if ($endDate == null) {
+        if ($endDate === null) {
             $endDate = $startDate;
         }
 
         return [
             'startDate' => $startDate,
-            'endDate' => $endDate
+            'endDate' => $endDate,
         ];
     }
 
-    private function getRunningTotal(array $array)
+    private function getRunningTotal(array $array): array
     {
         $generator = function (array $array) {
             $total = 0;
@@ -107,7 +103,7 @@ class Antisampling
         return iterator_to_array($generator($array));
     }
 
-    public function dailyWalk($query, $report)
+    public function dailyWalk(array $query): void
     {
         unset($query['query']['pageToken']);
         $dateRanges = $query['query']['dateRanges'][0];
@@ -119,18 +115,18 @@ class Antisampling
 
             $query['query']['dateRanges'][0] = [
                 'startDate' => $startDateString,
-                'endDate' => $startDateString
+                'endDate' => $startDateString,
             ];
 
             $report = $this->client->getBatch($query);
 
             $this->writeReport($query, $report);
 
-            $startDate->modify("+1 Day");
+            $startDate->modify('+1 Day');
         }
     }
 
-    public function adaptive($query, $report)
+    public function adaptive(array $query, array $report): void
     {
         $dateRangeBuckets = $this->getDateRangeBuckets($query, $report);
         foreach ($dateRangeBuckets as $dateRange) {
@@ -140,7 +136,7 @@ class Antisampling
         }
     }
 
-    private function writeReport($query, $report)
+    private function writeReport(array $query, array $report): void
     {
         $this->paginator->paginate($query, $report, $this->outputCsv);
     }
