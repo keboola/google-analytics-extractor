@@ -100,7 +100,7 @@ class AntisamplingTest extends ClientTest
         $output = new Output('/tmp/ga-test', uniqid('in.c-ex-google-analytics-test'));
         $logger = new Logger('ex-google-analytics-test');
         $extractor = new Extractor($this->client, $output, $logger);
-        $extractor->run([$query], [$profile]);
+        $extractor->run($query, [$profile]);
     }
 
     private function dailyWalk($query)

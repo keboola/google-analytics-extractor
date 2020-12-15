@@ -20,74 +20,34 @@
         "accountName": "Keboola Status"
       }
     ],
-    "queries": [
-      {
-        "id": 0,
-        "name": "dailyWalk",
-        "outputTable": "dailyWalk",
-        "antisampling": "dailyWalk",
-        "enabled": true,
-        "query": {
-          "metrics": [
-            {
-              "expression": "ga:pageviews"
-            }
-          ],
-          "dimensions": [
-            {
-              "name": "ga:date"
-            },
-            {
-              "name": "ga:sourceMedium"
-            },
-            {
-              "name": "ga:landingPagePath"
-            }
-          ],
-          "filtersExpression": "",
-          "segments": null,
-          "dateRanges": [
-            {
-              "startDate": "-3 days",
-              "endDate": "-1 day"
-            }
-          ]
+    "name": "dailyWalk",
+    "outputTable": "dailyWalk",
+    "antisampling": "dailyWalk",
+    "query": {
+      "metrics": [
+        {
+          "expression": "ga:pageviews"
         }
-      },
-      {
-        "id": 1,
-        "name": "adaptive",
-        "outputTable": "adaptive",
-        "antisampling": "adaptive",
-        "enabled": true,
-        "query": {
-          "viewId": "26550866",
-          "metrics": [
-            {
-              "expression": "ga:pageviews"
-            }
-          ],
-          "dimensions": [
-            {
-              "name": "ga:date"
-            },
-            {
-              "name": "ga:sourceMedium"
-            },
-            {
-              "name": "ga:landingPagePath"
-            }
-          ],
-          "filtersExpression": "",
-          "segments": null,
-          "dateRanges": [
-            {
-              "startDate": "-3 days",
-              "endDate": "-1 day"
-            }
-          ]
+      ],
+      "dimensions": [
+        {
+          "name": "ga:date"
+        },
+        {
+          "name": "ga:sourceMedium"
+        },
+        {
+          "name": "ga:landingPagePath"
         }
-      }
-    ]
+      ],
+      "filtersExpression": "",
+      "segments": null,
+      "dateRanges": [
+        {
+          "startDate": "-3 days",
+          "endDate": "-1 day"
+        }
+      ]
+    }
   }
 }
