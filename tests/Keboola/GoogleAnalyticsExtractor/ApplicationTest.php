@@ -375,7 +375,7 @@ class ApplicationTest extends TestCase
 
         return $finder->files()
             ->in($this->dataDir . '/out/tables')
-            ->name('/^' . $queryName . '.*\.manifest$/i')
+            ->name('/^' . $queryName . '.*\.csv.manifest$/i')
         ;
     }
 
