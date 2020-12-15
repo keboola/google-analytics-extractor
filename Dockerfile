@@ -12,17 +12,9 @@ COPY docker/composer-install.sh /tmp/composer-install.sh
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         locales \
-        wget \
-        curl \
-        make \
         git \
-        bzip2 \
-        time \
-        libzip-dev \
-        zip \
         unzip \
         openssl \
-        vim \
 	&& rm -r /var/lib/apt/lists/* \
 	&& sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen \
 	&& locale-gen \
