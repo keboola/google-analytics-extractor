@@ -45,7 +45,7 @@ class Component extends BaseComponent
                 ->setIncremental(true)
                 ->setPrimaryKeyColumns(['id']);
 
-            $this->getManifestManager()->writeTableManifest('profiles', $outTableManifestOptions);
+            $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
 
             $output = new Output($this->getDataDir());
             $output->writeProfiles(

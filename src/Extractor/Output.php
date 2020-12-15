@@ -63,7 +63,7 @@ class Output
 
     public function createReport(array $query): CsvFile
     {
-        $csv = $this->createCsvFile(sprintf('%s_%s', $query['outputTable'], uniqid()));
+        $csv = $this->createCsvFile($query['outputTable']);
         $csv->writeRow($this->createHeaderRowFromQuery($query));
         return $csv;
     }
