@@ -19,6 +19,8 @@ class Extractor
 
     private LoggerInterface $logger;
 
+    private const FILTER_PROFILES_RETURN_KEYS = ['id', 'name', 'webPropertyId', 'accountId'];
+
     public function __construct(Client $gaApi, Output $output, LoggerInterface $logger)
     {
         $this->gaApi = $gaApi;
@@ -132,6 +134,66 @@ class Extractor
         return [
             'status' => 'success',
             'queries' => $status,
+        ];
+    }
+
+    public function getProfilesPropertiesAction(): array
+    {
+        $profiles = $this->gaApi->getAccountProfiles();
+        $filteredProfiles = [];
+        if ($profiles) {
+            $accounts = $this->gaApi->getAccounts();
+            $webProperties = $this->gaApi->getWebProperties();
+
+            $listAccounts = (array) array_combine(
+                array_map(fn($v) => $v['id'], $accounts),
+                array_map(fn($v) => $v['name'], $accounts)
+            );
+
+            $listWebProperties = (array) array_combine(
+                array_map(fn($v) => $v['id'], $webProperties),
+                array_map(fn($v) => $v['name'], $webProperties)
+            );
+
+            $filteredProfiles = array_map(function ($item) use ($listAccounts, $listWebProperties) {
+                $result = (array) array_filter(
+                    $item,
+                    fn($k) => in_array($k, self::FILTER_PROFILES_RETURN_KEYS),
+                    ARRAY_FILTER_USE_KEY
+                );
+
+                if ($listWebProperties[$result['webPropertyId']]) {
+                    $result['webPropertyName'] = $listWebProperties[$result['webPropertyId']];
+                }
+
+                if ($listAccounts[$result['accountId']]) {
+                    $result['accountName'] = $listAccounts[$result['accountId']];
+                }
+                return $result;
+            }, $profiles);
+        }
+
+        $properties  = $this->gaApi->getAccountProperties();
+        $prop = [];
+        foreach ($properties as $property) {
+            $account = [
+                'accountKey' => $property['account'],
+                'accountName' => $property['displayName'],
+            ];
+            foreach ($property['propertySummaries'] as $propertySummary) {
+                $prop[] = array_merge(
+                    $account,
+                    [
+                        'propertyKey' => $propertySummary['property'],
+                        'propertyName' => $propertySummary['displayName'],
+                    ]
+                );
+            }
+        }
+
+        return [
+            'profiles' => $filteredProfiles,
+            'properties' => $prop,
         ];
     }
 

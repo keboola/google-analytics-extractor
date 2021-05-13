@@ -10,10 +10,14 @@ use Psr\Log\LoggerInterface;
 
 class Client
 {
+    /** @phpcs:disable */
+    public const ACCOUNT_PROPERTIES_URL = 'https://analyticsadmin.googleapis.com/v1alpha/accountSummaries';
+    public const ACCOUNT_WEB_PROPERTIES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/';
+    public const ACCOUNT_PROFILES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/~all/profiles';
+    public const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
     public const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
     private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
-    /** @phpcs:disable */
     private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
     /** @phpcs:enable */
 
@@ -42,6 +46,34 @@ class Client
     public function getSegments(): array
     {
         $response = $this->api->request(self::SEGMENTS_URL);
+        $body = json_decode($response->getBody()->getContents(), true);
+        return $body['items'];
+    }
+
+    public function getAccountProperties(): array
+    {
+        $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL);
+        $body = json_decode($response->getBody()->getContents(), true);
+        return array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']));
+    }
+
+    public function getAccounts(): array
+    {
+        $response = $this->api->request(self::ACCOUNTS_URL);
+        $body = json_decode($response->getBody()->getContents(), true);
+        return $body['items'];
+    }
+
+    public function getWebProperties(): array
+    {
+        $response = $this->api->request(self::ACCOUNT_WEB_PROPERTIES_URL);
+        $body = json_decode($response->getBody()->getContents(), true);
+        return $body['items'];
+    }
+
+    public function getAccountProfiles(): array
+    {
+        $response = $this->api->request(self::ACCOUNT_PROFILES_URL);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'];
     }
