@@ -189,6 +189,16 @@ class ApplicationTest extends TestCase
         Assert::assertEquals('success', $result['status']);
     }
 
+    public function testAppProfilesProperties(): void
+    {
+        $this->config = $this->getConfig('_empty');
+        $this->config['action'] = 'getProfilesProperties';
+        $result = json_decode($this->runProcess()->getOutput(), true);
+
+        Assert::assertArrayHasKey('profiles', $result);
+        Assert::assertArrayHasKey('properties', $result);
+    }
+
     public function testAppCustomMetrics(): void
     {
         $this->config['action'] = 'customMetrics';
