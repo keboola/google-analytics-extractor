@@ -141,7 +141,7 @@ class Extractor
     {
         return [];
     }
-    
+
     public function getProfilesPropertiesAction(): array
     {
         $profiles = $this->gaApi->getAccountProfiles();
