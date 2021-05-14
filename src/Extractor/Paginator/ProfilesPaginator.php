@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Keboola\GoogleAnalyticsExtractor\Extractor;
+namespace Keboola\GoogleAnalyticsExtractor\Extractor\Paginator;
 
 use Keboola\Csv\CsvFile;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
-class Paginator
+class ProfilesPaginator implements IPaginator
 {
     private Output $output;
 

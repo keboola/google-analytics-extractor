@@ -6,6 +6,7 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\UserException;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\ProfilesPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -50,7 +51,7 @@ class Extractor
     public function runProfiles(array $parameters, array $profiles): array
     {
         $status = [];
-        $paginator = new Paginator($this->output, $this->gaApi);
+        $paginator = new ProfilesPaginator($this->output, $this->gaApi);
 
         if (isset($parameters['query'])) {
             $outputCsv = $this->output->createReport($parameters);
