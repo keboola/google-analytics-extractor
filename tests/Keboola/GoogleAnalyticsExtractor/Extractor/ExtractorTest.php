@@ -53,7 +53,7 @@ class ExtractorTest extends TestCase
         $parameters = $config->getParameters();
         $profiles = $parameters['profiles'];
 
-        $this->extractor->run($parameters, [$profiles[0]]);
+        $this->extractor->runProfiles($parameters, [$profiles[0]]);
 
         $outputFiles = $this->getOutputFiles($parameters['outputTable']);
         Assert::assertNotEmpty($outputFiles);
@@ -99,7 +99,7 @@ class ExtractorTest extends TestCase
         $profiles = $parameters['profiles'];
         unset($parameters['query']);
 
-        $this->extractor->run($parameters, $profiles[0]);
+        $this->extractor->runProfiles($parameters, $profiles[0]);
 
         Assert::assertTrue(true);
     }
