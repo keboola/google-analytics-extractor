@@ -37,7 +37,7 @@ class Component extends BaseComponent
     {
         try {
             if ($this->getConfig()->hasProfiles()) {
-                $this->getExtractor()->run(
+                $this->getExtractor()->runProfiles(
                     $this->getConfig()->getParameters(),
                     $this->getConfig()->getProfiles()
                 );

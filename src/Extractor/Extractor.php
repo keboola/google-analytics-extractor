@@ -47,7 +47,7 @@ class Extractor
         };
     }
 
-    public function run(array $parameters, array $profiles): array
+    public function runProfiles(array $parameters, array $profiles): array
     {
         $status = [];
         $paginator = new Paginator($this->output, $this->gaApi);

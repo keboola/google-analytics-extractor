@@ -99,7 +99,7 @@ class AntisamplingTest extends ClientTest
         $output = new Output('/tmp/ga-test');
         $logger = new NullLogger();
         $extractor = new Extractor($this->client, $output, $logger);
-        $extractor->run($query, [$profile]);
+        $extractor->runProfiles($query, [$profile]);
     }
 
     private function dailyWalk(array $query): void
