@@ -137,6 +137,11 @@ class Extractor
         ];
     }
 
+    public function runProperties(array $parameters, array $properties): array
+    {
+        return [];
+    }
+    
     public function getProfilesPropertiesAction(): array
     {
         $profiles = $this->gaApi->getAccountProfiles();

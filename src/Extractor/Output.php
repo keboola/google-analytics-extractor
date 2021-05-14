@@ -44,6 +44,21 @@ class Output
         return $csv;
     }
 
+    public function writeProperties(CsvFile $csv, array $properties): CsvFile
+    {
+        $csv->writeRow(['propertyKey', 'propertyName', 'accountKey', 'accountName']);
+        foreach ($properties as $property) {
+            $csv->writeRow([
+                'propertyKey' => $property['propertyKey'],
+                'propertyName' => $property['propertyName'],
+                'accountKey' => $property['accountKey'],
+                'accountName' => $property['accountName'],
+            ]);
+        }
+
+        return $csv;
+    }
+
     private function createHeaderRowFromQuery(array $query): array
     {
         $dimensions = array_map(function ($item) {
