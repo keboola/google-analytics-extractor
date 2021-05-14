@@ -1,0 +1,37 @@
+name: GitHub Actions
+on: [push]
+env:
+  APP_IMAGE: keboola/google-analytics-extractor
+  CLIENT_ID: 1025566943657-ehdolnub9s0d0lfcrbgm8kgl1oep5o63.apps.googleusercontent.com
+  KBC_DEVELOPERPORTAL_APP: keboola.ex-google-analytics-v6
+  KBC_DEVELOPERPORTAL_USERNAME: keboola+ex_google_analytics_v6_github_actions
+  KBC_DEVELOPERPORTAL_VENDOR: keboola
+  VIEW_ID: 184062725
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+  KBC_DEVELOPERPORTAL_PASSWORD: ${{ secrets.KBC_DEVELOPERPORTAL_PASSWORD }}
+  ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Print Docker version
+        run: |
+          docker -v
+      - name: Build image and run tests
+        run: |
+          docker build -t $APP_IMAGE .
+          docker run -e CLIENT_ID -e CLIENT_SECRET -e ACCESS_TOKEN -e REFRESH_TOKEN -e VIEW_ID $APP_IMAGE composer ci
+      - name: Push image to ECR
+        run: |
+           docker pull quay.io/keboola/developer-portal-cli-v2:latest
+           export REPOSITORY=`docker run --rm -e KBC_DEVELOPERPORTAL_USERNAME -e KBC_DEVELOPERPORTAL_PASSWORD -e KBC_DEVELOPERPORTAL_URL quay.io/keboola/developer-portal-cli-v2:latest ecr:get-repository $KBC_DEVELOPERPORTAL_VENDOR $KBC_DEVELOPERPORTAL_APP`
+           docker tag $APP_IMAGE:latest $REPOSITORY:test
+           eval $(docker run --rm -e KBC_DEVELOPERPORTAL_USERNAME -e KBC_DEVELOPERPORTAL_PASSWORD -e KBC_DEVELOPERPORTAL_URL quay.io/keboola/developer-portal-cli-v2:latest ecr:get-login $KBC_DEVELOPERPORTAL_VENDOR $KBC_DEVELOPERPORTAL_APP)
+           docker push $REPOSITORY:test
+           docker pull quay.io/keboola/syrup-cli:latest
+      - name: Deploy
+        if: startsWith(github.ref, 'refs/tags/')
+        run: ./deploy.sh
