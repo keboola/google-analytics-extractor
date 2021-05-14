@@ -6,14 +6,18 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Generator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
+use Psr\Log\LoggerInterface;
 
 class Validator
 {
     private Client $gaApi;
 
-    public function __construct(Client $gaApi)
+    private LoggerInterface $logger;
+
+    public function __construct(Client $gaApi, LoggerInterface $logger)
     {
         $this->gaApi = $gaApi;
+        $this->logger = $logger;
     }
 
     public function validateProperties(array $configProperties): Generator
@@ -30,6 +34,10 @@ class Validator
         foreach ($configProperties as $configProperty) {
             if (array_key_exists($configProperty['propertyKey'], $listAllowProperties)) {
                 yield $configProperty;
+            } else {
+                $this->logger->warning(
+                    sprintf('Cannot access to property "%s".', $configProperty['propertyName'])
+                );
             }
         }
     }
@@ -46,6 +54,10 @@ class Validator
         foreach ($configProfiles as $configProfile) {
             if (array_key_exists($configProfile['id'], $listAllowProfiles)) {
                 yield $configProfile;
+            } else {
+                $this->logger->warning(
+                    sprintf('Cannot access to profile "%s".', $configProfile['name'])
+                );
             }
         }
     }

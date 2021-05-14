@@ -37,7 +37,10 @@ class Component extends BaseComponent
     protected function run(): void
     {
         try {
-            $validator = new Validator(new Client($this->getGoogleRestApi(), $this->getLogger()));
+            $validator = new Validator(
+                new Client($this->getGoogleRestApi(), $this->getLogger()),
+                $this->getLogger()
+            );
 
             if ($this->getConfig()->hasProfiles()) {
                 $validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
