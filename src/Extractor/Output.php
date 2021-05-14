@@ -59,7 +59,7 @@ class Output
         return $csv;
     }
 
-    private function createHeaderRowFromQuery(array $query): array
+    private function createHeaderRowFromQuery(array $query, string $type = 'idProfile'): array
     {
         $dimensions = array_map(function ($item) {
             return str_replace('ga:', '', $item['name']);
@@ -70,16 +70,16 @@ class Output
         }, $query['query']['metrics']);
 
         return array_merge(
-            ['id', 'idProfile'],
+            ['id', $type],
             $dimensions,
             $metrics
         );
     }
 
-    public function createReport(array $query): CsvFile
+    public function createReport(array $query, string $type = 'idProfile'): CsvFile
     {
         $csv = $this->createCsvFile($query['outputTable']);
-        $csv->writeRow($this->createHeaderRowFromQuery($query));
+        $csv->writeRow($this->createHeaderRowFromQuery($query, $type));
         return $csv;
     }
 
