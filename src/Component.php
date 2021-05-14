@@ -55,6 +55,26 @@ class Component extends BaseComponent
                     $this->getConfig()->getProfiles()
                 );
             }
+
+            if ($this->getConfig()->hasProperties()) {
+                $this->getExtractor()->runProperties(
+                    $this->getConfig()->getParameters(),
+                    $this->getConfig()->getProperties()
+                );
+
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['id']);
+
+                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+
+                $output = new Output($this->getDataDir());
+                $output->writeProperties(
+                    $output->createCsvFile('properties'),
+                    $this->getConfig()->getProperties()
+                );
+            }
         } catch (RequestException $e) {
             $this->handleException($e);
         }
