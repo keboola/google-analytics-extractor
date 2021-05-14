@@ -16,6 +16,7 @@ class Client
     public const ACCOUNT_PROFILES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/~all/profiles';
     public const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
     public const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    public const REPORTS_PROPERTIES_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:runReport';
     private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
     private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
@@ -108,6 +109,26 @@ class Client
             : $this->getReports($query);
     }
 
+    public function getPropertyReport(array $query, array $property): array
+    {
+        $url = sprintf(
+            self::REPORTS_PROPERTIES_URL,
+            $property['propertyKey']
+        );
+
+        $body = $this->getPropertyReportRequest($query['query']);
+
+        $this->logger->debug(sprintf('Sending Report request'), [
+            'request' => [
+                'method' => 'POST',
+                'url' => $url,
+                'body' => $body,
+            ],
+        ]);
+
+        return $this->processResponseProperty($this->request('POST', $url, $body), $query);
+    }
+
     public function getReports(array $query): array
     {
         $body = [
@@ -179,6 +200,51 @@ class Client
         $query['samplingLevel'] = empty($query['samplingLevel']) ? 'LARGE' : $query['samplingLevel'];
 
         return $query;
+    }
+
+    private function getPropertyReportRequest(array $query): array
+    {
+        return [
+            'dateRanges' => array_map(function ($item) {
+                return [
+                    'startDate' => date('Y-m-d', strtotime($item['startDate'])),
+                    'endDate' => date('Y-m-d', strtotime($item['endDate'])),
+                ];
+            }, $query['dateRanges']),
+            'keepEmptyRows' => true,
+            'dimensions' => $query['dimensions'],
+            'metrics' => $query['metrics'],
+            'offset' => $query['offset'] ?? 0,
+            'limit' => $query['maxResult'] ?? 5000,
+        ];
+    }
+
+    private function processResponseProperty(array $response, array $query): array
+    {
+        $dataSet = [];
+        $dimensionNames = array_map(fn($v) => $v['name'], $response['dimensionHeaders']);
+        $metricNames = array_map(fn($v) => $v['name'], $response['metricHeaders']);
+
+        $dimensions = [];
+        $metrics = [];
+        if (!empty($response['rows'])) {
+            foreach ($response['rows'] as $row) {
+                foreach ($row['dimensionValues'] as $k => $v) {
+                    $dimensions[$dimensionNames[$k]] = $v['value'];
+                }
+                foreach ($row['metricValues'] as $k => $v) {
+                    $metrics[$metricNames[$k]] = $v['value'];
+                }
+                $dataSet[] = new Result($metrics, $dimensions);
+            }
+        }
+
+        return [
+            'data' => $dataSet,
+            'query' => $query,
+            'totals' => $response['rowCount'],
+            'rowCount' => count($response['rows']),
+        ];
     }
 
     private function processResponse(array $response, array $query): array
