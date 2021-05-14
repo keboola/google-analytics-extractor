@@ -36,23 +36,25 @@ class Component extends BaseComponent
     protected function run(): void
     {
         try {
-            $this->getExtractor()->run(
-                $this->getConfig()->getParameters(),
-                $this->getConfig()->getProfiles()
-            );
+            if ($this->getConfig()->hasProfiles()) {
+                $this->getExtractor()->run(
+                    $this->getConfig()->getParameters(),
+                    $this->getConfig()->getProfiles()
+                );
 
-            $outTableManifestOptions = new OutTableManifestOptions();
-            $outTableManifestOptions
-                ->setIncremental(true)
-                ->setPrimaryKeyColumns(['id']);
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['id']);
 
-            $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
 
-            $output = new Output($this->getDataDir());
-            $output->writeProfiles(
-                $output->createCsvFile('profiles'),
-                $this->getConfig()->getProfiles()
-            );
+                $output = new Output($this->getDataDir());
+                $output->writeProfiles(
+                    $output->createCsvFile('profiles'),
+                    $this->getConfig()->getProfiles()
+                );
+            }
         } catch (RequestException $e) {
             $this->handleException($e);
         }
