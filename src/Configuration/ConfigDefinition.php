@@ -86,6 +86,7 @@ class ConfigDefinition extends BaseConfigDefinition
                         ->arrayNode('metrics')
                             ->prototype('array')
                                 ->children()
+                                    ->scalarNode('name')->end()
                                     ->scalarNode('expression')->end()
                                 ->end()
                             ->end()
