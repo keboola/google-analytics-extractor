@@ -1,0 +1,48 @@
+{
+  "parameters": {
+    "retriesCount": 1,
+    "properties": [
+      {
+        "accountKey": "accounts/185283969",
+        "accountName": "Keboola",
+        "propertyKey": "properties/255885884",
+        "propertyName": "users"
+      }
+    ],
+    "name": "users",
+    "outputTable": "users",
+    "query": {
+      "metrics": [
+        {
+          "name": "users",
+          "expression": "totalUsers"
+        },
+        {
+          "name": "pageviews",
+          "expression": "itemViews"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "date"
+        },
+        {
+          "name": "source"
+        },
+        {
+          "name": "medium"
+        },
+        {
+          "name": "country"
+        }
+      ],
+      "filtersExpression": "",
+      "dateRanges": [
+        {
+          "startDate": "-3 months",
+          "endDate": "-1 day"
+        }
+      ]
+    }
+  }
+}
