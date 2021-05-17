@@ -16,6 +16,7 @@ use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigSegmentsDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Validator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Component extends BaseComponent
@@ -36,23 +37,54 @@ class Component extends BaseComponent
     protected function run(): void
     {
         try {
-            $this->getExtractor()->run(
-                $this->getConfig()->getParameters(),
-                $this->getConfig()->getProfiles()
+            $validator = new Validator(
+                new Client($this->getGoogleRestApi(), $this->getLogger()),
+                $this->getLogger()
             );
 
-            $outTableManifestOptions = new OutTableManifestOptions();
-            $outTableManifestOptions
-                ->setIncremental(true)
-                ->setPrimaryKeyColumns(['id']);
+            if ($this->getConfig()->hasProfiles()) {
+                $validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
 
-            $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+                $this->getExtractor()->runProfiles(
+                    $this->getConfig()->getParameters(),
+                    iterator_to_array($validProfiles)
+                );
 
-            $output = new Output($this->getDataDir());
-            $output->writeProfiles(
-                $output->createCsvFile('profiles'),
-                $this->getConfig()->getProfiles()
-            );
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['id']);
+
+                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+
+                $output = new Output($this->getDataDir());
+                $output->writeProfiles(
+                    $output->createCsvFile('profiles'),
+                    $this->getConfig()->getProfiles()
+                );
+            }
+
+            if ($this->getConfig()->hasProperties()) {
+                $validProperties = $validator->validateProperties($this->getConfig()->getProperties());
+
+                $this->getExtractor()->runProperties(
+                    $this->getConfig()->getParameters(),
+                    iterator_to_array($validProperties)
+                );
+
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['id']);
+
+                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+
+                $output = new Output($this->getDataDir());
+                $output->writeProperties(
+                    $output->createCsvFile('properties'),
+                    $this->getConfig()->getProperties()
+                );
+            }
         } catch (RequestException $e) {
             $this->handleException($e);
         }

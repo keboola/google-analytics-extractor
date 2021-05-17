@@ -6,6 +6,8 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\UserException;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\ProfilesPaginator;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\PropertiesPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -47,10 +49,10 @@ class Extractor
         };
     }
 
-    public function run(array $parameters, array $profiles): array
+    public function runProfiles(array $parameters, array $profiles): array
     {
         $status = [];
-        $paginator = new Paginator($this->output, $this->gaApi);
+        $paginator = new ProfilesPaginator($this->output, $this->gaApi);
 
         if (isset($parameters['query'])) {
             $outputCsv = $this->output->createReport($parameters);
@@ -127,6 +129,43 @@ class Extractor
             }
         }
 
+        $usage = $this->output->getUsage();
+        $usage->setApiCalls($this->gaApi->getApiCallsCount());
+        $usage->write();
+
+        return [
+            'status' => 'success',
+            'queries' => $status,
+        ];
+    }
+
+    public function runProperties(array $parameters, array $properties): array
+    {
+        $status = [];
+        $paginator = new PropertiesPaginator($this->output, $this->gaApi);
+
+        if (isset($parameters['query'])) {
+            $parameters['query']['endpoint'] = 'properties';
+
+            $outputCsv = $this->output->createReport($parameters, 'idProperty');
+            $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
+            $this->logger->info(sprintf("Running query '%s'", $parameters['name']));
+
+            foreach ($properties as $property) {
+                $apiQuery = $parameters;
+                $paginator->setProperty($property);
+
+                $report = $this->gaApi->getPropertyReport($apiQuery, $property);
+
+                if (empty($report)) {
+                    continue;
+                }
+
+                $paginator->paginate($apiQuery, $report, $outputCsv);
+
+                $status[$parameters['name']][$property['propertyKey']] = 'ok';
+            }
+        }
         $usage = $this->output->getUsage();
         $usage->setApiCalls($this->gaApi->getApiCallsCount());
         $usage->write();

@@ -8,9 +8,24 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
+    public function hasProfiles(): bool
+    {
+        return !empty($this->getValue(['parameters', 'profiles']));
+    }
+
+    public function hasProperties(): bool
+    {
+        return !empty($this->getValue(['parameters', 'properties']));
+    }
+
     public function getProfiles(): array
     {
         return $this->getValue(['parameters', 'profiles']);
+    }
+
+    public function getProperties(): array
+    {
+        return $this->getValue(['parameters', 'properties']);
     }
 
     public function getRetries(): int

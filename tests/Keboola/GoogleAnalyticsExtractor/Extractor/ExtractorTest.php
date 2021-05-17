@@ -41,19 +41,28 @@ class ExtractorTest extends TestCase
         $this->extractor = new Extractor($client, $output, $logger);
     }
 
-    private function getConfig(): array
+    private function getConfig(string $configPostfix = ''): array
     {
-        $config = json_decode((string) file_get_contents($this->dataDir . '/config.json'), true);
+        $config = json_decode(
+            (string) file_get_contents(
+                sprintf(
+                    '%s/config%s.json',
+                    $this->dataDir,
+                    $configPostfix
+                )
+            ),
+            true
+        );
         return $config;
     }
 
-    public function testRun(): void
+    public function testRunProfiles(): void
     {
         $config = new Config($this->config, new ConfigDefinition());
         $parameters = $config->getParameters();
         $profiles = $parameters['profiles'];
 
-        $this->extractor->run($parameters, [$profiles[0]]);
+        $this->extractor->runProfiles($parameters, [$profiles[0]]);
 
         $outputFiles = $this->getOutputFiles($parameters['outputTable']);
         Assert::assertNotEmpty($outputFiles);
@@ -91,6 +100,52 @@ class ExtractorTest extends TestCase
         }
     }
 
+    public function testRunProperties(): void
+    {
+        $this->config = $this->getConfig('_properties');
+        $config = new Config($this->config, new ConfigDefinition());
+        $parameters = $config->getParameters();
+        $properties = $parameters['properties'];
+
+        $this->extractor->runProperties($parameters, $properties);
+
+        $outputFiles = $this->getOutputFiles($parameters['outputTable']);
+        Assert::assertNotEmpty($outputFiles);
+
+        /** @var \SplFileInfo $outputFile */
+        foreach ($outputFiles as $outputFile) {
+            Assert::assertFileExists((string) $outputFile->getRealPath());
+            Assert::assertNotEmpty((string) file_get_contents((string) $outputFile->getRealPath()));
+
+            $csv = new CsvFile((String) $outputFile->getRealPath());
+            $csv->next();
+            $header = $csv->current();
+
+            // check CSV header
+            $dimensions = $parameters['query']['dimensions'];
+            $metrics = $parameters['query']['metrics'];
+
+            foreach ($dimensions as $dimension) {
+                Assert::assertContains(
+                    $dimension['name'],
+                    $header
+                );
+            }
+            foreach ($metrics as $metric) {
+                Assert::assertContains(
+                    $metric['expression'],
+                    $header
+                );
+            }
+
+            // check date format
+            $csv->next();
+            $row = $csv->current();
+            $dateCol = array_search('date', $header);
+            Assert::assertStringContainsString('-', $row[$dateCol]);
+        }
+    }
+
     public function testRunEmptyResult(): void
     {
         $config = new Config($this->config, new ConfigDefinition());
@@ -99,7 +154,7 @@ class ExtractorTest extends TestCase
         $profiles = $parameters['profiles'];
         unset($parameters['query']);
 
-        $this->extractor->run($parameters, $profiles[0]);
+        $this->extractor->runProfiles($parameters, $profiles[0]);
 
         Assert::assertTrue(true);
     }

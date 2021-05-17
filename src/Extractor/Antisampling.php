@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Keboola\Csv\CsvFile;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\IPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
 class Antisampling
 {
-    private Paginator $paginator;
+    private IPaginator $paginator;
 
     private Client $client;
 
     private CsvFile $outputCsv;
 
-    public function __construct(Paginator $paginator, CsvFile $outputCsv)
+    public function __construct(IPaginator $paginator, CsvFile $outputCsv)
     {
         $this->paginator = $paginator;
         $this->client = $paginator->getClient();
