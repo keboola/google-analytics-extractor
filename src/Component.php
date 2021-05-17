@@ -6,12 +6,12 @@ namespace Keboola\GoogleAnalyticsExtractor;
 
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\BaseComponent;
-use Keboola\Component\Logger;
 use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
 use Keboola\Component\UserException;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigGetProfilesPropertiesDefinition;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigSegmentsDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
@@ -24,6 +24,7 @@ class Component extends BaseComponent
     private const ACTION_SAMPLE_JSON = 'sampleJson';
     private const ACTION_SEGMENTS = 'segments';
     private const ACTION_CUSTOM_METRICS = 'customMetrics';
+    private const ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
 
     public function getConfig(): Config
     {
@@ -120,6 +121,11 @@ class Component extends BaseComponent
         return $result;
     }
 
+    protected function getProfilesPropertiesAction(): array
+    {
+        return $this->getExtractor()->getProfilesPropertiesAction();
+    }
+
     protected function getConfigClass(): string
     {
         return Config::class;
@@ -128,12 +134,19 @@ class Component extends BaseComponent
 
     protected function getConfigDefinitionClass(): string
     {
-        return ConfigDefinition::class;
+        $action = $this->getRawConfig()['action'] ?? 'run';
+        switch ($action) {
+            case self::ACTION_GET_PROFILES_PROPERTIES:
+                return ConfigGetProfilesPropertiesDefinition::class;
+            default:
+                return ConfigDefinition::class;
+        }
     }
 
     protected function getSyncActions(): array
     {
         return [
+            self::ACTION_GET_PROFILES_PROPERTIES => 'getProfilesPropertiesAction',
             self::ACTION_SAMPLE => 'runSampleAction',
             self::ACTION_SAMPLE_JSON => 'runSampleJsonAction',
             self::ACTION_SEGMENTS => 'runSegmentsAction',
