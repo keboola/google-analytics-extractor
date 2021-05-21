@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Component\UserException;
-use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling\AntisamplingProfile;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\ProfilesPaginator;
@@ -113,7 +113,7 @@ class AntisamplingTest extends ClientTest
         $output = new Output('/tmp/ga-test');
         $paginator = new ProfilesPaginator($output, $this->client);
         $outputCsv = $output->createReport($query);
-        (new Antisampling($paginator, $outputCsv))->dailyWalk($query);
+        (new AntisamplingProfile($paginator, $outputCsv))->dailyWalk($query);
 
         $dailyWalkOutputCsv = $outputCsv->getPathname();
 
