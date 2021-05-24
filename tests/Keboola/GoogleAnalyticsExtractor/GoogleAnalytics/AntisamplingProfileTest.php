@@ -13,7 +13,7 @@ use PHPUnit\Framework\Assert;
 use Psr\Log\NullLogger;
 use Symfony\Component\Filesystem\Filesystem;
 
-class AntisamplingTest extends ClientTest
+class AntisamplingProfileTest extends ClientTest
 {
     private function buildQuery(string $algorithm = 'dailyWalk'): array
     {
