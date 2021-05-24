@@ -6,6 +6,8 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\UserException;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling\AntisamplingProfile;
+use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling\AntisamplingProperty;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\ProfilesPaginator;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\PropertiesPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
@@ -114,7 +116,7 @@ class Extractor
 
                     if ($isSampled || $parameters['antisampling'] === 'dailyWalk') {
                         $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
-                        $antisampling = new Antisampling($paginator, $outputCsv);
+                        $antisampling = new AntisamplingProfile($paginator, $outputCsv);
                         $algorithm = $parameters['antisampling'];
                         $antisampling->$algorithm($apiQuery, $report);
 
@@ -158,6 +160,24 @@ class Extractor
                 $report = $this->gaApi->getPropertyReport($apiQuery, $property);
 
                 if (empty($report)) {
+                    continue;
+                }
+
+                if (isset($parameters['antisampling']) && $parameters['antisampling'] === 'dailyWalk') {
+                    if (!$this->hasDimension($parameters, 'date')
+                        && !$this->hasDimension($parameters, 'dateHour')
+                    ) {
+                        throw new UserException(sprintf(
+                            'At least one of these dimensions must be set in order to use anti-sampling: %s',
+                            implode(' | ', ['date', 'dateHour'])
+                        ));
+                    }
+
+                    $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
+                    $antisampling = new AntisamplingProperty($paginator, $outputCsv, $report);
+                    $antisampling->dailyWalk($apiQuery);
+
+                    $status[$parameters['name']][$property['propertyKey']] = 'ok';
                     continue;
                 }
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Keboola\GoogleAnalyticsExtractor\Extractor;
+namespace Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling;
 
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\IPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
-class Antisampling
+class AntisamplingProfile implements IAntisampling
 {
     private IPaginator $paginator;
 
