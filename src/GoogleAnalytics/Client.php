@@ -242,8 +242,8 @@ class Client
         return [
             'data' => $dataSet,
             'query' => $query,
-            'totals' => $response['rowCount'],
-            'rowCount' => count($response['rows']),
+            'totals' => $response['rowCount'] ?? 0,
+            'rowCount' => isset($response['rows']) ? count($response['rows']) : 0,
         ];
     }
 
