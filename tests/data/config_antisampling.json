@@ -19,7 +19,6 @@
         "accountName": "Keboola Status"
       }
     ],
-    "name": "dailyWalk",
     "outputTable": "dailyWalk",
     "antisampling": "dailyWalk",
     "query": {

@@ -59,7 +59,7 @@ class Extractor
         if (isset($parameters['query'])) {
             $outputCsv = $this->output->createReport($parameters);
             $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
-            $this->logger->info(sprintf("Running query '%s'", $parameters['name']));
+            $this->logger->info(sprintf("Running query '%s'", $parameters['outputTable']));
 
             foreach ($profiles as $profile) {
                 $apiQuery = $parameters;
@@ -120,14 +120,14 @@ class Extractor
                         $algorithm = $parameters['antisampling'];
                         $antisampling->$algorithm($apiQuery, $report);
 
-                        $status[$parameters['name']][$profile['id']] = 'ok';
+                        $status[$parameters['outputTable']][$profile['id']] = 'ok';
                         continue;
                     }
                 }
 
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
-                $status[$parameters['name']][$profile['id']] = 'ok';
+                $status[$parameters['outputTable']][$profile['id']] = 'ok';
             }
         }
 
@@ -151,7 +151,7 @@ class Extractor
 
             $outputCsv = $this->output->createReport($parameters, 'idProperty');
             $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
-            $this->logger->info(sprintf("Running query '%s'", $parameters['name']));
+            $this->logger->info(sprintf("Running query '%s'", $parameters['outputTable']));
 
             foreach ($properties as $property) {
                 $apiQuery = $parameters;
@@ -177,13 +177,13 @@ class Extractor
                     $antisampling = new AntisamplingProperty($paginator, $outputCsv, $report);
                     $antisampling->dailyWalk($apiQuery);
 
-                    $status[$parameters['name']][$property['propertyKey']] = 'ok';
+                    $status[$parameters['outputTable']][$property['propertyKey']] = 'ok';
                     continue;
                 }
 
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
-                $status[$parameters['name']][$property['propertyKey']] = 'ok';
+                $status[$parameters['outputTable']][$property['propertyKey']] = 'ok';
             }
         }
         $usage = $this->output->getUsage();

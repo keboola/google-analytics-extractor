@@ -24,7 +24,6 @@ Docker application for extracting data from Google Analytics API (V4).
             "accountName": "ACCOUNT_NAME"
          }
       ],
-      "name": "users",
       "outputTable": "users",
       "query": {
          "metrics": [
@@ -71,7 +70,6 @@ Docker application for extracting data from Google Analytics API (V4).
             "propertyName": "PROPERTY_NAME"
          }
       ],
-      "name": "users",
       "outputTable": "users",
       "query": {
          "metrics": [
@@ -117,7 +115,6 @@ Docker application for extracting data from Google Analytics API (V4).
         "propertyName": "PROPERTY_NAME"
       }
     ],
-    "name": "users",
     "outputTable": "users",
     "antisampling": "dailyWalk",
     "query": {
