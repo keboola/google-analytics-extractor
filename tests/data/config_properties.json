@@ -9,7 +9,6 @@
         "propertyName": "users"
       }
     ],
-    "name": "users",
     "outputTable": "users",
     "query": {
       "metrics": [

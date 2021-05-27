@@ -19,7 +19,6 @@
         "accountName": "Keboola Status"
       }
     ],
-    "name": "adaptive",
     "outputTable": "adaptive",
     "antisampling": "adaptive",
     "query": {
