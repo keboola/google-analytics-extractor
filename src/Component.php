@@ -75,7 +75,7 @@ class Component extends BaseComponent
                 $outTableManifestOptions = new OutTableManifestOptions();
                 $outTableManifestOptions
                     ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['id']);
+                    ->setPrimaryKeyColumns(['propertyKey']);
 
                 $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
 
