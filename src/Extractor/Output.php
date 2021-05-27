@@ -66,7 +66,8 @@ class Output
         }, $query['query']['dimensions']);
 
         $metrics = array_map(function ($item) {
-            return str_replace('ga:', '', $item['expression']);
+            $metric = $item['expression'] ?? $item['name'];
+            return str_replace('ga:', '', $metric);
         }, $query['query']['metrics']);
 
         return array_merge(
