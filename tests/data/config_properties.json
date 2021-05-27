@@ -13,12 +13,10 @@
     "query": {
       "metrics": [
         {
-          "name": "users",
-          "expression": "totalUsers"
+          "name": "totalUsers"
         },
         {
-          "name": "pageviews",
-          "expression": "itemViews"
+          "name": "itemViews"
         }
       ],
       "dimensions": [

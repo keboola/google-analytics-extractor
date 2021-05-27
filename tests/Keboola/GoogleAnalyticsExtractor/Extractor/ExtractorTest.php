@@ -133,7 +133,7 @@ class ExtractorTest extends TestCase
             }
             foreach ($metrics as $metric) {
                 Assert::assertContains(
-                    $metric['expression'],
+                    $metric['name'],
                     $header
                 );
             }
