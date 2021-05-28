@@ -174,7 +174,7 @@ class Extractor
                     }
 
                     $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
-                    $antisampling = new AntisamplingProperty($paginator, $outputCsv, $report);
+                    $antisampling = new AntisamplingProperty($paginator, $outputCsv, $property);
                     $antisampling->dailyWalk($apiQuery);
 
                     $status[$parameters['outputTable']][$property['propertyKey']] = 'ok';
