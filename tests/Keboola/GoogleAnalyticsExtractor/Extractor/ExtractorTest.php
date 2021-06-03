@@ -169,7 +169,7 @@ class ExtractorTest extends TestCase
         $outputFiles = $this->getOutputFiles($parameters['outputTable']);
         Assert::assertNotEmpty($outputFiles);
 
-        Assert::assertTrue($this->logger->hasInfo('Skip property "Fake property".'));
+        Assert::assertTrue($this->logger->hasInfo('Skipping property "Fake property".'));
     }
 
     public function testRunEmptyResult(): void
