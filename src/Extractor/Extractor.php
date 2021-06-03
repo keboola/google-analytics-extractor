@@ -154,8 +154,7 @@ class Extractor
             $this->logger->info(sprintf("Running query '%s'", $parameters['outputTable']));
 
             foreach ($properties as $property) {
-                if (
-                    !empty($parameters['query']['viewId'])
+                if (!empty($parameters['query']['viewId'])
                     && $parameters['query']['viewId'] !== $property['propertyKey']
                 ) {
                     $this->logger->info(sprintf('Skip property "%s".', $property['propertyName']));
