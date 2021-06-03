@@ -13,6 +13,7 @@ use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Psr\Log\Test\TestLogger;
 use Symfony\Component\Finder\Finder;
 
 class ExtractorTest extends TestCase
@@ -23,11 +24,13 @@ class ExtractorTest extends TestCase
 
     private string $dataDir;
 
+    private TestLogger $logger;
+
     public function setUp(): void
     {
         $this->dataDir = __DIR__ . '/../../../../tests/data';
         $this->config = $this->getConfig();
-        $logger = new NullLogger();
+        $this->logger = new TestLogger();
         $client = new Client(
             new RestApi(
                 (string) getenv('CLIENT_ID'),
@@ -35,10 +38,10 @@ class ExtractorTest extends TestCase
                 (string) getenv('ACCESS_TOKEN'),
                 (string) getenv('REFRESH_TOKEN')
             ),
-            $logger
+            $this->logger
         );
         $output = new Output($this->dataDir);
-        $this->extractor = new Extractor($client, $output, $logger);
+        $this->extractor = new Extractor($client, $output, $this->logger);
     }
 
     private function getConfig(string $configPostfix = ''): array
@@ -144,6 +147,29 @@ class ExtractorTest extends TestCase
             $dateCol = array_search('date', $header);
             Assert::assertStringContainsString('-', $row[$dateCol]);
         }
+    }
+
+
+    public function testRunPropertiesFilter(): void
+    {
+        $this->config = $this->getConfig('_properties');
+        $config = new Config($this->config, new ConfigDefinition());
+        $parameters = $config->getParameters();
+        $properties = $parameters['properties'];
+        $properties[] = [
+            'accountKey' => 'accounts/123456789',
+            'accountName' => 'Keboola fake name',
+            'propertyKey' => 'properties/123456789',
+            'propertyName' => 'Fake property',
+        ];
+        $parameters['query']['viewId'] = 'properties/255885884';
+
+        $this->extractor->runProperties($parameters, $properties);
+
+        $outputFiles = $this->getOutputFiles($parameters['outputTable']);
+        Assert::assertNotEmpty($outputFiles);
+
+        Assert::assertTrue($this->logger->hasInfo('Skipping property "Fake property".'));
     }
 
     public function testRunEmptyResult(): void
