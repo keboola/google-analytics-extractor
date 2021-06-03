@@ -157,7 +157,7 @@ class Extractor
                 if (!empty($parameters['query']['viewId'])
                     && $parameters['query']['viewId'] !== $property['propertyKey']
                 ) {
-                    $this->logger->info(sprintf('Skip property "%s".', $property['propertyName']));
+                    $this->logger->info(sprintf('Skipping property "%s".', $property['propertyName']));
                     continue;
                 }
                 $apiQuery = $parameters;
