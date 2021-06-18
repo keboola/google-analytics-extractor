@@ -240,6 +240,37 @@ class ExtractorTest extends TestCase
         );
     }
 
+    public function testGetEmptyProfilesProperties(): void
+    {
+        $restApi = $this->createMock(RestApi::class);
+        $restApi
+            ->method('request')
+            ->with($this->logicalOr(
+                Client::ACCOUNT_PROPERTIES_URL,
+                Client::ACCOUNT_WEB_PROPERTIES_URL,
+                Client::ACCOUNT_PROFILES_URL,
+                Client::ACCOUNTS_URL
+            ))
+            ->will($this->returnCallback(array($this, 'returnMockServerRequestEmptyResponse')))
+        ;
+
+        $logger = new NullLogger();
+        $client = new Client(
+            $restApi,
+            $logger
+        );
+        $output = new Output($this->dataDir);
+        $extractor = new Extractor($client, $output, $logger);
+
+        $this->assertEquals(
+            [
+                'profiles' => [],
+                'properties' => [],
+            ],
+            $extractor->getProfilesPropertiesAction()
+        );
+    }
+
     public function returnMockServerRequest(string $url): Response
     {
         /** @phpcs:disable */
@@ -270,6 +301,11 @@ class ExtractorTest extends TestCase
                 );
         }
         /** @phpcs:enable */
+        return new Response(200, [], '');
+    }
+
+    public function returnMockServerRequestEmptyResponse(string $url): Response
+    {
         return new Response(200, [], '');
     }
 
