@@ -48,42 +48,45 @@ class Client
     {
         $response = $this->api->request(self::SEGMENTS_URL);
         $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'];
+        return $body['items'] ?? [];
     }
 
     public function getAccountProperties(): array
     {
         $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL);
         $body = json_decode($response->getBody()->getContents(), true);
-        return array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']));
+        if (isset($body['accountSummaries'])) {
+            return array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']));
+        }
+        return [];
     }
 
     public function getAccounts(): array
     {
         $response = $this->api->request(self::ACCOUNTS_URL);
         $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'];
+        return $body['items'] ?? [];
     }
 
     public function getWebProperties(): array
     {
         $response = $this->api->request(self::ACCOUNT_WEB_PROPERTIES_URL);
         $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'];
+        return $body['items'] ?? [];
     }
 
     public function getAccountProfiles(): array
     {
         $response = $this->api->request(self::ACCOUNT_PROFILES_URL);
         $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'];
+        return $body['items'] ?? [];
     }
 
     public function getCustomMetrics(int $accountId, string $webPropertyId): array
     {
         $response = $this->api->request(sprintf(self::CUSTOM_METRICS_URL, $accountId, $webPropertyId));
         $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'];
+        return $body['items'] ?? [];
     }
 
     public function request(string $method, string $url, ?array $body = null, ?array $query = null): array
