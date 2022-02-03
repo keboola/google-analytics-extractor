@@ -2,4 +2,5 @@ parameters:
     checkMissingIterableValueType: false
     ignoreErrors:
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition\:\:children\(\).#'
+        - '#Cannot call method integerNode\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null\.#'
         - '#logger of class Keboola\\Google\\ClientBundle\\Google\\RestApi constructor expects Monolog\\Logger\|null, Psr\\Log\\LoggerInterface given\.#'

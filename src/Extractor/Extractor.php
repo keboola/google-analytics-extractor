@@ -51,21 +51,21 @@ class Extractor
         };
     }
 
-    public function runProfiles(array $parameters, array $profiles): array
+    public function runProfiles(array $query, array $profiles): array
     {
         $status = [];
         $paginator = new ProfilesPaginator($this->output, $this->gaApi);
 
-        if (isset($parameters['query'])) {
-            $outputCsv = $this->output->createReport($parameters);
-            $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
-            $this->logger->info(sprintf("Running query '%s'", $parameters['outputTable']));
+        if (isset($query['query'])) {
+            $outputCsv = $this->output->createReport($query);
+            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             foreach ($profiles as $profile) {
-                $apiQuery = $parameters;
-                if (empty($parameters['query']['viewId'])) {
+                $apiQuery = $query;
+                if (empty($query['query']['viewId'])) {
                     $apiQuery['query']['viewId'] = (string) $profile['id'];
-                } else if ($parameters['query']['viewId'] !== $profile['id']) {
+                } else if ($query['query']['viewId'] !== $profile['id']) {
                     continue;
                 }
 
@@ -90,11 +90,11 @@ class Extractor
                     continue;
                 }
 
-                if (!empty($parameters['antisampling'])) {
-                    if (!$this->hasDimension($parameters, 'ga:date')
-                        && !$this->hasDimension($parameters, 'ga:dateHour')
-                        && !$this->hasDimension($parameters, 'ga:dateHourMinute')
-                        && !$this->hasDimension($parameters, 'mcf:conversionDate')
+                if (!empty($query['antisampling'])) {
+                    if (!$this->hasDimension($query, 'ga:date')
+                        && !$this->hasDimension($query, 'ga:dateHour')
+                        && !$this->hasDimension($query, 'ga:dateHourMinute')
+                        && !$this->hasDimension($query, 'mcf:conversionDate')
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
@@ -114,20 +114,20 @@ class Extractor
                         ));
                     }
 
-                    if ($isSampled || $parameters['antisampling'] === 'dailyWalk') {
-                        $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
+                    if ($isSampled || $query['antisampling'] === 'dailyWalk') {
+                        $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
                         $antisampling = new AntisamplingProfile($paginator, $outputCsv);
-                        $algorithm = $parameters['antisampling'];
+                        $algorithm = $query['antisampling'];
                         $antisampling->$algorithm($apiQuery, $report);
 
-                        $status[$parameters['outputTable']][$profile['id']] = 'ok';
+                        $status[$query['outputTable']][$profile['id']] = 'ok';
                         continue;
                     }
                 }
 
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
-                $status[$parameters['outputTable']][$profile['id']] = 'ok';
+                $status[$query['outputTable']][$profile['id']] = 'ok';
             }
         }
 
@@ -141,26 +141,26 @@ class Extractor
         ];
     }
 
-    public function runProperties(array $parameters, array $properties): array
+    public function runProperties(array $query, array $properties): array
     {
         $status = [];
         $paginator = new PropertiesPaginator($this->output, $this->gaApi);
 
-        if (isset($parameters['query'])) {
-            $parameters['query']['endpoint'] = 'properties';
+        if (isset($query['query'])) {
+            $query['query']['endpoint'] = 'properties';
 
-            $outputCsv = $this->output->createReport($parameters, 'idProperty');
-            $this->output->createManifest($outputCsv->getFilename(), $parameters['outputTable'], ['id'], true);
-            $this->logger->info(sprintf("Running query '%s'", $parameters['outputTable']));
+            $outputCsv = $this->output->createReport($query, 'idProperty');
+            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             foreach ($properties as $property) {
-                if (!empty($parameters['query']['viewId'])
-                    && $parameters['query']['viewId'] !== $property['propertyKey']
+                if (!empty($query['query']['viewId'])
+                    && $query['query']['viewId'] !== $property['propertyKey']
                 ) {
                     $this->logger->info(sprintf('Skipping property "%s".', $property['propertyName']));
                     continue;
                 }
-                $apiQuery = $parameters;
+                $apiQuery = $query;
                 $paginator->setProperty($property);
 
                 $report = $this->gaApi->getPropertyReport($apiQuery, $property);
@@ -169,9 +169,9 @@ class Extractor
                     continue;
                 }
 
-                if (isset($parameters['antisampling']) && $parameters['antisampling'] === 'dailyWalk') {
-                    if (!$this->hasDimension($parameters, 'date')
-                        && !$this->hasDimension($parameters, 'dateHour')
+                if (isset($query['antisampling']) && $query['antisampling'] === 'dailyWalk') {
+                    if (!$this->hasDimension($query, 'date')
+                        && !$this->hasDimension($query, 'dateHour')
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
@@ -179,17 +179,17 @@ class Extractor
                         ));
                     }
 
-                    $this->logger->info(sprintf("Using antisampling algorithm '%s'", $parameters['antisampling']));
+                    $this->logger->info(sprintf("Using antisampling algorithm '%s'", $query['antisampling']));
                     $antisampling = new AntisamplingProperty($paginator, $outputCsv, $property);
                     $antisampling->dailyWalk($apiQuery);
 
-                    $status[$parameters['outputTable']][$property['propertyKey']] = 'ok';
+                    $status[$query['outputTable']][$property['propertyKey']] = 'ok';
                     continue;
                 }
 
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
-                $status[$parameters['outputTable']][$property['propertyKey']] = 'ok';
+                $status[$query['outputTable']][$property['propertyKey']] = 'ok';
             }
         }
         $usage = $this->output->getUsage();

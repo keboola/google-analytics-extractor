@@ -27,6 +27,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 })
             ->end()
             ->children()
+                ->scalarNode('outputBucket')->isRequired()->cannotBeEmpty()->end()
                 ->integerNode('nonConflictPrimaryKey')
                     ->defaultValue(false)
                 ->end()

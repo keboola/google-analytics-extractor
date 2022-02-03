@@ -11,7 +11,7 @@ class OutputTest extends TestCase
 {
     public function testCreateJsonSampleReportNoData(): void
     {
-        $output = new Output('/tmp/output-test/json-sample-no-data');
+        $output = new Output('/tmp/output-test/json-sample-no-data', 'outputBucket');
         $query = [
             'query' => [
                 'viewId' => 'profile-1',
@@ -28,7 +28,7 @@ class OutputTest extends TestCase
 
     public function testCreateJsonSampleReport(): void
     {
-        $output = new Output('/tmp/output-test/json-sample');
+        $output = new Output('/tmp/output-test/json-sample', 'outputBucket');
         $query = [
             'query' => [
                 'viewId' => 'profile-1',
@@ -69,7 +69,7 @@ class OutputTest extends TestCase
 
     public function testCreateJsonSampleReportWithDateDimension(): void
     {
-        $output = new Output('/tmp/output-test/json-sample-with-date-dim');
+        $output = new Output('/tmp/output-test/json-sample-with-date-dim', 'outputBucket');
         $query = [
             'query' => [
                 'viewId' => 'profile-1',

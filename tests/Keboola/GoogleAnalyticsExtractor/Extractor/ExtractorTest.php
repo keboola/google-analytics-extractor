@@ -40,7 +40,7 @@ class ExtractorTest extends TestCase
             ),
             $this->logger
         );
-        $output = new Output($this->dataDir);
+        $output = new Output($this->dataDir, 'outputBucket');
         $this->extractor = new Extractor($client, $output, $this->logger);
     }
 
@@ -204,7 +204,7 @@ class ExtractorTest extends TestCase
             $restApi,
             $logger
         );
-        $output = new Output($this->dataDir);
+        $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);
 
         $this->assertEquals(
@@ -259,7 +259,7 @@ class ExtractorTest extends TestCase
             $restApi,
             $logger
         );
-        $output = new Output($this->dataDir);
+        $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);
 
         $this->assertEquals(

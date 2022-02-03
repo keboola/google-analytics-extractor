@@ -1,5 +1,6 @@
 {
   "parameters": {
+    "outputBucket": "in.c-ex-google-analytics-cfg1",
     "retriesCount": 1,
     "properties": [
       {
