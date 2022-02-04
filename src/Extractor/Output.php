@@ -15,9 +15,12 @@ class Output
 
     private array $options;
 
-    public function __construct(string $dataDir, array $options = [])
+    private string $outputBucket;
+
+    public function __construct(string $dataDir, string $outputBucket, array $options = [])
     {
         $this->dataDir = $dataDir;
+        $this->outputBucket = $outputBucket;
         $this->usage = new Usage($dataDir);
         $this->options = $options;
     }
@@ -169,7 +172,7 @@ class Output
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
 
         $manifestData = [
-            'destination' => sprintf('%s', $destination),
+            'destination' => sprintf('%s.%s', $this->outputBucket, $destination),
             'incremental' => $incremental,
         ];
 

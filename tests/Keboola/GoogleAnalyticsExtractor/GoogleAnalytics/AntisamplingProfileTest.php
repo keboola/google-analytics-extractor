@@ -96,7 +96,7 @@ class AntisamplingProfileTest extends ClientTest
             'endDate' => date('Y-m-d', strtotime('-1 day')),
         ]];
 
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $logger = new NullLogger();
         $extractor = new Extractor($this->client, $output, $logger);
         $extractor->runProfiles($query, [$profile]);
@@ -110,7 +110,7 @@ class AntisamplingProfileTest extends ClientTest
         }
         $fs->remove('/tmp/ga-test/*');
 
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $paginator = new ProfilesPaginator($output, $this->client);
         $outputCsv = $output->createReport($query);
         (new AntisamplingProfile($paginator, $outputCsv))->dailyWalk($query);
@@ -127,7 +127,7 @@ class AntisamplingProfileTest extends ClientTest
 
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $paginator = new ProfilesPaginator($output, $this->client);
         $outputCsv = $output->createReport($query2);
 

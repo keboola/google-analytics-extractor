@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor;
 
+use Generator;
 use Keboola\Csv\CsvFile;
-use PHP_CodeSniffer\Reports\Csv;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -51,8 +51,12 @@ class ApplicationTest extends TestCase
         return $config;
     }
 
-    public function testAppRun(): void
+    /**
+     * @dataProvider appRunDataProvider
+     */
+    public function testAppRun(string $configSuffix): void
     {
+        $this->config = $this->getConfig($configSuffix);
         $this->runProcess();
 
         $profiles = $this->getOutputFiles('profiles');
@@ -408,5 +412,16 @@ class ApplicationTest extends TestCase
 
             $csv->next();
         }
+    }
+
+    public function appRunDataProvider(): Generator
+    {
+        yield 'config' => [
+            '_old',
+        ];
+
+        yield 'configRow' => [
+            '',
+        ];
     }
 }

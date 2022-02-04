@@ -10,12 +10,12 @@ class Config extends BaseConfig
 {
     public function hasProfiles(): bool
     {
-        return !empty($this->getValue(['parameters', 'profiles']));
+        return !empty($this->getValue(['parameters', 'profiles'], false));
     }
 
     public function hasProperties(): bool
     {
-        return !empty($this->getValue(['parameters', 'properties']));
+        return !empty($this->getValue(['parameters', 'properties'], false));
     }
 
     public function getProfiles(): array
@@ -36,5 +36,19 @@ class Config extends BaseConfig
     public function getNonConflictPrimaryKey(): bool
     {
         return $this->getValue(['parameters', 'nonConflictPrimaryKey']);
+    }
+
+    public function getOutputBucket(): string
+    {
+        return $this->getValue(['parameters', 'outputBucket'], '');
+    }
+
+    public function getQueries(string $configDefinition): array
+    {
+        if ($configDefinition === OldConfigDefinition::class) {
+            return $this->getValue(['parameters', 'queries'], []);
+        } else {
+            return [$this->getValue(['parameters'], [])];
+        }
     }
 }

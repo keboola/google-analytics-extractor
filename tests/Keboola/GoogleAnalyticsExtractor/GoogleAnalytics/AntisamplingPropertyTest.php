@@ -78,7 +78,7 @@ class AntisamplingPropertyTest extends ClientTest
             'endDate' => date('Y-m-d', strtotime('-1 day')),
         ]];
 
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $logger = new NullLogger();
         $extractor = new Extractor($this->client, $output, $logger);
         $extractor->runProperties($query, [$this->getProperty()]);
@@ -93,7 +93,7 @@ class AntisamplingPropertyTest extends ClientTest
         $fs->remove('/tmp/ga-test/*');
 
         $property = $this->getProperty();
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $paginator = new PropertiesPaginator($output, $this->client);
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query);
@@ -111,7 +111,7 @@ class AntisamplingPropertyTest extends ClientTest
 
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
-        $output = new Output('/tmp/ga-test');
+        $output = new Output('/tmp/ga-test', 'outputBucket');
         $paginator = new PropertiesPaginator($output, $this->client);
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query2);

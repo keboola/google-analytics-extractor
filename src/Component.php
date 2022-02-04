@@ -12,7 +12,7 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigGetProfilesPropertiesDefinition;
-use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigSegmentsDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\OldConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
@@ -37,56 +37,63 @@ class Component extends BaseComponent
     protected function run(): void
     {
         try {
-            $validator = new Validator(
-                new Client($this->getGoogleRestApi(), $this->getLogger()),
-                $this->getLogger()
-            );
-
-            if ($this->getConfig()->hasProfiles()) {
-                $validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
-
-                $this->getExtractor()->runProfiles(
-                    $this->getConfig()->getParameters(),
-                    iterator_to_array($validProfiles)
-                );
-
-                $outTableManifestOptions = new OutTableManifestOptions();
-                $outTableManifestOptions
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['id']);
-
-                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
-
-                $output = new Output($this->getDataDir());
-                $output->writeProfiles(
-                    $output->createCsvFile('profiles'),
-                    $this->getConfig()->getProfiles()
-                );
-            }
-
-            if ($this->getConfig()->hasProperties()) {
-                $validProperties = $validator->validateProperties($this->getConfig()->getProperties());
-
-                $this->getExtractor()->runProperties(
-                    $this->getConfig()->getParameters(),
-                    iterator_to_array($validProperties)
-                );
-
-                $outTableManifestOptions = new OutTableManifestOptions();
-                $outTableManifestOptions
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['propertyKey']);
-
-                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
-
-                $output = new Output($this->getDataDir());
-                $output->writeProperties(
-                    $output->createCsvFile('properties'),
-                    $this->getConfig()->getProperties()
-                );
+            foreach ($this->getConfig()->getQueries($this->getConfigDefinitionClass()) as $query) {
+                $this->runQuery($query);
             }
         } catch (RequestException $e) {
             $this->handleException($e);
+        }
+    }
+
+    private function runQuery(array $query): void
+    {
+        $validator = new Validator(
+            new Client($this->getGoogleRestApi(), $this->getLogger()),
+            $this->getLogger()
+        );
+
+        if ($this->getConfig()->hasProfiles()) {
+            $validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
+
+            $this->getExtractor()->runProfiles(
+                $query,
+                iterator_to_array($validProfiles)
+            );
+
+            $outTableManifestOptions = new OutTableManifestOptions();
+            $outTableManifestOptions
+                ->setIncremental(true)
+                ->setPrimaryKeyColumns(['id']);
+
+            $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+
+            $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+            $output->writeProfiles(
+                $output->createCsvFile('profiles'),
+                $this->getConfig()->getProfiles()
+            );
+        }
+
+        if ($this->getConfig()->hasProperties()) {
+            $validProperties = $validator->validateProperties($this->getConfig()->getProperties());
+
+            $this->getExtractor()->runProperties(
+                $query,
+                iterator_to_array($validProperties)
+            );
+
+            $outTableManifestOptions = new OutTableManifestOptions();
+            $outTableManifestOptions
+                ->setIncremental(true)
+                ->setPrimaryKeyColumns(['propertyKey']);
+
+            $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+
+            $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+            $output->writeProperties(
+                $output->createCsvFile('properties'),
+                $this->getConfig()->getProperties()
+            );
         }
     }
 
@@ -171,6 +178,10 @@ class Component extends BaseComponent
             case self::ACTION_GET_PROFILES_PROPERTIES:
                 return ConfigGetProfilesPropertiesDefinition::class;
             default:
+                $config = $this->getRawConfig();
+                if (array_key_exists('queries', $config['parameters'])) {
+                    return OldConfigDefinition::class;
+                }
                 return ConfigDefinition::class;
         }
     }
@@ -190,7 +201,7 @@ class Component extends BaseComponent
     {
         return new Extractor(
             new Client($this->getGoogleRestApi(), $this->getLogger()),
-            new Output($this->getDataDir()),
+            new Output($this->getDataDir(), $this->getConfig()->getOutputBucket()),
             $this->getLogger()
         );
     }
