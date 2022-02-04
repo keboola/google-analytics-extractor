@@ -3,8 +3,8 @@ on: [push]
 env:
   APP_IMAGE: keboola/google-analytics-extractor
   CLIENT_ID: 1025566943657-ehdolnub9s0d0lfcrbgm8kgl1oep5o63.apps.googleusercontent.com
-  KBC_DEVELOPERPORTAL_APP: keboola.ex-google-analytics-v6
-  KBC_DEVELOPERPORTAL_USERNAME: keboola+ex_google_analytics_v6_github_actions
+  KBC_DEVELOPERPORTAL_APP: keboola.ex-google-analytics-v4
+  KBC_DEVELOPERPORTAL_USERNAME: keboola+ex_google_analytics_v4_github_actions
   KBC_DEVELOPERPORTAL_VENDOR: keboola
   VIEW_ID: 184062725
   CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}

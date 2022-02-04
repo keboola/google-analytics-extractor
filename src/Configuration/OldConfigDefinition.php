@@ -41,6 +41,7 @@ class OldConfigDefinition extends BaseConfigDefinition
                 ->end()
                 ->arrayNode('queries')->isRequired()
                     ->prototype('array')
+                        ->ignoreExtraKeys()
                         ->children()
                         ->enumNode('endpoint')->defaultValue('reports')->values(['mcf', 'reports'])->end()
                         ->arrayNode('query')
