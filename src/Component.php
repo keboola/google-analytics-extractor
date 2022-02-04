@@ -62,6 +62,7 @@ class Component extends BaseComponent
 
             $outTableManifestOptions = new OutTableManifestOptions();
             $outTableManifestOptions
+                ->setDestination($this->getConfig()->getOutputBucket() . '.properties')
                 ->setIncremental(true)
                 ->setPrimaryKeyColumns(['id']);
 
@@ -84,6 +85,7 @@ class Component extends BaseComponent
 
             $outTableManifestOptions = new OutTableManifestOptions();
             $outTableManifestOptions
+                ->setDestination($this->getConfig()->getOutputBucket() . '.profiles')
                 ->setIncremental(true)
                 ->setPrimaryKeyColumns(['propertyKey']);
 
