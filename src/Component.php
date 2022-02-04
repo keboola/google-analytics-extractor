@@ -104,6 +104,11 @@ class Component extends BaseComponent
         $profile = $this->getConfig()->getProfiles()[0];
         $parameters = $this->getConfig()->getParameters();
 
+        if ($this->getConfigDefinitionClass() === OldConfigDefinition::class) {
+            $parameters += $parameters['queries'][0];
+            unset($parameters['queries']);
+        }
+
         if (empty($parameters['query']['viewId'])) {
             $parameters['query']['viewId'] = (string) $profile['id'];
         }
@@ -122,6 +127,11 @@ class Component extends BaseComponent
     {
         $profile = $this->getConfig()->getProfiles()[0];
         $parameters = $this->getConfig()->getParameters();
+
+        if ($this->getConfigDefinitionClass() === OldConfigDefinition::class) {
+            $parameters += $parameters['queries'][0];
+            unset($parameters['queries']);
+        }
 
         if (empty($parameters['query']['viewId'])) {
             $parameters['query']['viewId'] = (string) $profile['id'];
