@@ -62,7 +62,7 @@ class Extractor
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             foreach ($profiles as $profile) {
-                $this->logger->info(sprintf('Profile "%s" started.', $profile['name']));
+                $this->logger->info(sprintf('Profile "%s" started.', $profile['id']));
                 $apiQuery = $query;
                 if (empty($query['query']['viewId'])) {
                     $apiQuery['query']['viewId'] = (string) $profile['id'];
