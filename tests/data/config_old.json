@@ -57,6 +57,44 @@
             }
           ]
         }
+      },
+      {
+        "outputTable": "disabledUsers",
+        "enabled": false,
+        "query": {
+          "metrics": [
+            {
+              "expression": "ga:users"
+            },
+            {
+              "expression": "ga:pageviews"
+            },
+            {
+              "expression": "ga:bounces"
+            }
+          ],
+          "dimensions": [
+            {
+              "name": "ga:date"
+            },
+            {
+              "name": "ga:source"
+            },
+            {
+              "name": "ga:medium"
+            },
+            {
+              "name": "ga:country"
+            }
+          ],
+          "filtersExpression": "",
+          "dateRanges": [
+            {
+              "startDate": "-3 months",
+              "endDate": "-1 day"
+            }
+          ]
+        }
       }
     ]
   }
