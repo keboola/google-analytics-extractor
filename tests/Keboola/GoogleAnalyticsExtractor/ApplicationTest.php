@@ -65,6 +65,8 @@ class ApplicationTest extends TestCase
         $users = $this->getOutputFiles('users');
         $usersManifests = $this->getManifestFiles('users');
 
+        $disabledUsers = $this->getOutputFiles('disabledUsers');
+
         $manifests = $this->getManifestFiles('');
 
         Assert::assertEquals(1, count($profiles));
@@ -72,6 +74,8 @@ class ApplicationTest extends TestCase
 
         Assert::assertEquals(1, count($users));
         Assert::assertEquals(1, count($usersManifests));
+
+        Assert::assertEquals(0, count($disabledUsers));
 
         foreach ($manifests as $manifestFile) {
             $manifest = json_decode((string) file_get_contents((string) $manifestFile), true);
