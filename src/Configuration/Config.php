@@ -46,7 +46,10 @@ class Config extends BaseConfig
     public function getQueries(string $configDefinition): array
     {
         if ($configDefinition === OldConfigDefinition::class) {
-            return $this->getValue(['parameters', 'queries'], []);
+            $queries = $this->getValue(['parameters', 'queries'], []);
+            return array_filter($queries, function ($query) {
+                return $query['enabled'];
+            });
         } else {
             return [$this->getValue(['parameters'], [])];
         }
