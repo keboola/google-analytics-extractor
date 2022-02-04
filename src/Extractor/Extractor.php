@@ -62,7 +62,7 @@ class Extractor
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             foreach ($profiles as $profile) {
-                $this->logger->info(sprintf('Profile "%s" started.', $profile['id']));
+                $this->logger->info(sprintf('Profile "%s" export started.', $profile['id']));
                 $apiQuery = $query;
                 if (empty($query['query']['viewId'])) {
                     $apiQuery['query']['viewId'] = (string) $profile['id'];
@@ -155,7 +155,7 @@ class Extractor
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             foreach ($properties as $property) {
-                $this->logger->info(sprintf('Property "%s" started.', $property['propertyName']));
+                $this->logger->info(sprintf('Property "%s" export started.', $property['propertyName']));
                 if (!empty($query['query']['viewId'])
                     && $query['query']['viewId'] !== $property['propertyKey']
                 ) {
