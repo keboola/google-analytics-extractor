@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
 use Generator;
+use GuzzleHttp\Exception\ClientException;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Psr\Log\LoggerInterface;
 
@@ -44,7 +45,20 @@ class Validator
 
     public function validateProfiles(array $configProfiles): Generator
     {
-        $allowProfiles = $this->gaApi->getAccountProfiles();
+        try {
+            $allowProfiles = $this->gaApi->getAccountProfiles();
+        } catch (ClientException $e) {
+            $this->logger->warning(
+                sprintf(
+                    'Cannot download list of profiles. Skip validation profiles. Reason: "%s".',
+                    $e->getMessage()
+                )
+            );
+            array_walk($configProfiles, function ($profile) {
+                yield $profile;
+            });
+            return;
+        }
 
         $listAllowProfiles = (array) array_combine(
             array_map(fn($v) => $v['id'], $allowProfiles),
