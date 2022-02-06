@@ -11,6 +11,9 @@ env:
   KBC_DEVELOPERPORTAL_PASSWORD: ${{ secrets.KBC_DEVELOPERPORTAL_PASSWORD }}
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+  KBC_URL: "https://connection.keboola.com"
+  KBC_TOKEN: ${{ secrets.KBC_TOKEN }}
+  KBC_COMPONENTID: "keboola.ex-google-analytics-v4"
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -23,7 +26,7 @@ jobs:
       - name: Build image and run tests
         run: |
           docker build -t $APP_IMAGE .
-          docker run -e CLIENT_ID -e CLIENT_SECRET -e ACCESS_TOKEN -e REFRESH_TOKEN -e VIEW_ID $APP_IMAGE composer ci
+          docker run -e CLIENT_ID -e CLIENT_SECRET -e ACCESS_TOKEN -e REFRESH_TOKEN -e VIEW_ID $APP_IMAGE -e KBC_URL -e KBC_TOKEN -e KBC_COMPONENTID composer ci
       - name: Push image to ECR
         run: |
            docker pull quay.io/keboola/developer-portal-cli-v2:latest
