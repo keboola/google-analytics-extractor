@@ -107,7 +107,8 @@ class Output
         $dimensions = $this->formatResultKeys($reportDataItem->getDimensions());
 
         if (isset($dimensions['date'])) {
-            $dimensions['date'] = date('Y-m-d', strtotime($dimensions['date']));
+            $time = strtotime($dimensions['date']) ?: 0;
+            $dimensions['date'] = date('Y-m-d', $time);
         }
 
         $pKey = $this->getPrimaryKey($profileId, $dimensions);
