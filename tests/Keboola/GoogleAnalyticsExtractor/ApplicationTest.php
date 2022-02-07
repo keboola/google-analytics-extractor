@@ -224,7 +224,7 @@ class ApplicationTest extends TestCase
         // unset segment dimension to trigger API error
         unset($this->config['parameters']['query']['dimensions'][1]);
         $errorOutput = $this->runProcess()->getErrorOutput();
-        Assert::assertEquals("Expired or wrong credentials, please reauthorize.\n", $errorOutput);
+        Assert::assertStringContainsString('Request had invalid authentication credentials', $errorOutput);
     }
 
     public function testAppAuthException(): void
@@ -240,7 +240,7 @@ class ApplicationTest extends TestCase
             ]),
         ];
         $errorOutput = $this->runProcess()->getErrorOutput();
-        Assert::assertEquals("Expired or wrong credentials, please reauthorize.\n", $errorOutput);
+        Assert::assertStringContainsString('Request had invalid authentication credentials', $errorOutput);
     }
 
     public function testRunSampleAction(): void
