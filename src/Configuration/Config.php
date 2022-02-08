@@ -8,6 +8,11 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
+    public function migrateConfiguration(): bool
+    {
+        return $this->getValue(['parameters', 'migrateConfiguration'], false);
+    }
+
     public function hasProfiles(): bool
     {
         return !empty($this->getValue(['parameters', 'profiles'], false));

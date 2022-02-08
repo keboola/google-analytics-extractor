@@ -12,6 +12,7 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigGetProfilesPropertiesDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\MigrateConfiguration;
 use Keboola\GoogleAnalyticsExtractor\Configuration\OldConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Extractor;
@@ -36,6 +37,11 @@ class Component extends BaseComponent
 
     protected function run(): void
     {
+        if ($this->getConfig()->migrateConfiguration() === true) {
+            $migrateConfiguration = new MigrateConfiguration((string) getenv('KBC_CONFIGID'));
+            $migrateConfiguration->migrate();
+        }
+
         try {
             foreach ($this->getConfig()->getQueries($this->getConfigDefinitionClass()) as $query) {
                 $this->runQuery($query);
