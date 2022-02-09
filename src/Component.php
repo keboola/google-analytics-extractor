@@ -59,11 +59,12 @@ class Component extends BaseComponent
         );
 
         if ($this->getConfig()->hasProfiles()) {
-            $validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
+            // @TODO fixme
+            //$validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
 
             $this->getExtractor()->runProfiles(
                 $query,
-                iterator_to_array($validProfiles)
+                $this->getConfig()->getProfiles()
             );
 
             $outTableManifestOptions = new OutTableManifestOptions();
