@@ -49,7 +49,7 @@ class MigrateConfigurationTest extends TestCase
         $query = $configurationArray['parameters']['queries'][0];
         unset($query['name'], $query['enabled']);
 
-        Assert::assertEquals($query, $migratedConfiguration['rows'][0]['configuration']);
+        Assert::assertEquals($query, $migratedConfiguration['rows'][0]['configuration']['parameters']);
         Assert::assertEquals(
             $configurationArray['parameters']['profiles'],
             $migratedConfiguration['configuration']['parameters']['profiles']
