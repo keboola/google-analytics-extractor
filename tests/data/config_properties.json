@@ -23,15 +23,6 @@
       "dimensions": [
         {
           "name": "date"
-        },
-        {
-          "name": "source"
-        },
-        {
-          "name": "medium"
-        },
-        {
-          "name": "country"
         }
       ],
       "filtersExpression": "",

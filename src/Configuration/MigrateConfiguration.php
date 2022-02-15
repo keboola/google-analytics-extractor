@@ -52,7 +52,7 @@ class MigrateConfiguration
             $row = new ConfigurationRow($componentConfiguration);
             $row
                 ->setName($queryName)
-                ->setConfiguration($query)
+                ->setConfiguration(['parameters' => $query])
                 ->setIsDisabled(!$enabled)
             ;
             $components->addConfigurationRow($row);
