@@ -47,7 +47,7 @@ class MigrateConfigurationTest extends TestCase
         );
 
         $query = $configurationArray['parameters']['queries'][0];
-        unset($query['name'], $query['enabled']);
+        unset($query['name'], $query['enabled'], $query['id']);
 
         Assert::assertEquals($query, $migratedConfiguration['rows'][0]['configuration']['parameters']);
         Assert::assertEquals(
@@ -95,6 +95,7 @@ class MigrateConfigurationTest extends TestCase
         "name": "query1Test",
         "enabled": true,
         "outputTable": "table1",
+        "id": "id",
         "endpoint": "reports",
         "query": {
           "dateRanges": [

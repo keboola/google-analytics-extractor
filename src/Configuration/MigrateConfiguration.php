@@ -47,7 +47,7 @@ class MigrateConfiguration
         foreach ($queries as $query) {
             $queryName = $query['name'];
             $enabled = $query['enabled'];
-            unset($query['name'], $query['enabled']);
+            unset($query['name'], $query['enabled'], $query['id']);
 
             $row = new ConfigurationRow($componentConfiguration);
             $row
