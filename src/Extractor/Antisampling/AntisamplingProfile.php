@@ -108,7 +108,7 @@ class AntisamplingProfile implements IAntisampling
     {
         unset($query['query']['pageToken']);
         $dateRanges = $query['query']['dateRanges'][0];
-        $startDate = new \DateTime($dateRanges['startDate']);
+        $startDate = new \DateTime($this->client->getStartDate($dateRanges['startDate']));
         $endDate = new \DateTime($dateRanges['endDate']);
 
         while ($startDate->diff($endDate)->format('%r%a') >= 0) {
