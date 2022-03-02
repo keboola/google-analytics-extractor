@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a0bd1867882eecf86b17c01680f6c6ca",
+    "content-hash": "cdf924ca8396b93e3975d72770ab9df7",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2088,6 +2088,103 @@
                 "source": "https://github.com/keboola/phpcs-standard/tree/master"
             },
             "time": "2019-10-16T11:14:48+00:00"
+        },
+        {
+            "name": "keboola/datadir-tests",
+            "version": "5.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/keboola/datadir-tests.git",
+                "reference": "12304c1e41fcca78ce00ca9491214f76e8ef4182"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/datadir-tests/zipball/12304c1e41fcca78ce00ca9491214f76e8ef4182",
+                "reference": "12304c1e41fcca78ce00ca9491214f76e8ef4182",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "keboola/php-temp": "^2.0",
+                "php": "^7.4|^8.0",
+                "phpunit/phpunit": "^9.0",
+                "symfony/filesystem": "^5.0",
+                "symfony/finder": "^5.0",
+                "symfony/process": "^5.0"
+            },
+            "require-dev": {
+                "keboola/coding-standard": "^13.0",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpstan/phpstan": "^1.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Keboola\\DatadirTests\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Tool for functional testing of Keboola Connection components",
+            "support": {
+                "issues": "https://github.com/keboola/datadir-tests/issues",
+                "source": "https://github.com/keboola/datadir-tests/tree/5.3.0"
+            },
+            "time": "2022-03-01T13:00:12+00:00"
+        },
+        {
+            "name": "keboola/php-temp",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/keboola/php-temp.git",
+                "reference": "cbdb4dd0dfe548d7bffd74a0e66294981aea49ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/php-temp/zipball/cbdb4dd0dfe548d7bffd74a0e66294981aea49ce",
+                "reference": "cbdb4dd0dfe548d7bffd74a0e66294981aea49ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "symfony/filesystem": ">2.8"
+            },
+            "require-dev": {
+                "infection/infection": "^0.12",
+                "jakub-onderka/php-parallel-lint": "^1.0",
+                "keboola/coding-standard": "^8.0",
+                "phpstan/phpstan-shim": "^0.11",
+                "phpunit/phpunit": "^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Keboola\\Temp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Keboola",
+                    "email": "devel@keboola.com"
+                }
+            ],
+            "description": "Temp library handles application temporary files",
+            "keywords": [
+                "filesystem",
+                "temp"
+            ],
+            "support": {
+                "issues": "https://github.com/keboola/php-temp/issues",
+                "source": "https://github.com/keboola/php-temp/tree/2.0.1"
+            },
+            "time": "2019-04-26T07:18:24+00:00"
         },
         {
             "name": "myclabs/deep-copy",
