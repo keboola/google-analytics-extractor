@@ -20,9 +20,6 @@ class ConfigDefinition extends BaseConfigDefinition
                     if (empty($item['profiles']) && empty($item['properties'])) {
                         throw new InvalidConfigurationException('Profiles or Properties must be configured.');
                     }
-                    if (!empty($item['profiles']) && !empty($item['properties'])) {
-                        throw new InvalidConfigurationException('Both profiles and properties cannot be set together.');
-                    }
                     return $item;
                 })
             ->end()
