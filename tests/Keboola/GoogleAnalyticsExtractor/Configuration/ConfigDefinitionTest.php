@@ -44,20 +44,6 @@ class ConfigDefinitionTest extends TestCase
         new Config($config, new ConfigDefinition());
     }
 
-    public function testErrorSetProfilesPropertiesTogether(): void
-    {
-        $config = $this->config;
-        $config['parameters']['properties'] = [[
-            'accountKey' => 'accounts/123456',
-            'accountName' => 'Keboola',
-            'propertyKey' => 'properties/123456',
-            'propertyName' => 'users',
-        ]];
-        $this->expectException(InvalidConfigurationException::class);
-        $this->expectExceptionMessage('Both profiles and properties cannot be set together.');
-        new Config($config, new ConfigDefinition());
-    }
-
     private function getConfig(): array
     {
         $config = json_decode((string) file_get_contents($this->dataDir . '/config.json'), true);
