@@ -11,6 +11,7 @@
       }
     ],
     "outputTable": "users",
+    "endpoint": "data-api",
     "query": {
       "metrics": [
         {
