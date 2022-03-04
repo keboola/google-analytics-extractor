@@ -44,6 +44,29 @@ class ConfigDefinitionTest extends TestCase
         new Config($config, new ConfigDefinition());
     }
 
+    public function testDateRangeLastrun(): void
+    {
+        $config = $this->config;
+
+        $config['parameters']['query']['dateRanges'] = [[
+            'startDate' => Config::STATE_LAST_RUN_DATE,
+            'endDate' => '-1 day',
+        ]];
+
+        $configData = new Config($config, new ConfigDefinition());
+
+        Assert::assertIsArray($configData->getData());
+
+        $config['parameters']['query']['dateRanges'][] = [
+            'startDate' => Config::STATE_LAST_RUN_DATE,
+            'endDate' => '-2 day',
+        ];
+
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Cannot set "lastrun" Date Range more than once.');
+        new Config($config, new ConfigDefinition());
+    }
+
     private function getConfig(): array
     {
         $config = json_decode((string) file_get_contents($this->dataDir . '/config.json'), true);

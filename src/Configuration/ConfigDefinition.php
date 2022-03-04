@@ -20,6 +20,15 @@ class ConfigDefinition extends BaseConfigDefinition
                     if (empty($item['profiles']) && empty($item['properties'])) {
                         throw new InvalidConfigurationException('Profiles or Properties must be configured.');
                     }
+                    if (!empty($item['query']['dateRanges'])) {
+                        $filteredDateRanges = array_filter(
+                            $item['query']['dateRanges'],
+                            fn($v) => $v['startDate'] === Config::STATE_LAST_RUN_DATE
+                        );
+                        if (count($filteredDateRanges) > 1) {
+                            throw new InvalidConfigurationException('Cannot set "lastrun" Date Range more than once.');
+                        }
+                    }
                     return $item;
                 })
             ->end()
