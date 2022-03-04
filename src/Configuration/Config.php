@@ -8,6 +8,12 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
+    public const ENDPOINT_MCF = 'mcf';
+
+    public const ENDPOINT_REPORTS = 'reports';
+
+    public const ENDPOINT_DATA_API = 'data-api';
+
     public function migrateConfiguration(): bool
     {
         return $this->getValue(['parameters', 'migrateConfiguration'], false);
@@ -31,6 +37,11 @@ class Config extends BaseConfig
     public function getProperties(): array
     {
         return $this->getValue(['parameters', 'properties']);
+    }
+
+    public function getEndpoint(): string
+    {
+        return $this->getValue(['parameters', 'endpoint']);
     }
 
     public function getRetries(): int
@@ -58,5 +69,23 @@ class Config extends BaseConfig
         } else {
             return [$this->getValue(['parameters'], [])];
         }
+    }
+
+    public function processProfiles(string $configDefinition): bool
+    {
+        if ($configDefinition === OldConfigDefinition::class) {
+            return true;
+        }
+
+        return in_array($this->getEndpoint(), [Config::ENDPOINT_MCF, Config::ENDPOINT_REPORTS]);
+    }
+
+    public function processProperties(string $configDefinition): bool
+    {
+        if ($configDefinition === OldConfigDefinition::class) {
+            return false;
+        }
+
+        return in_array($this->getEndpoint(), [Config::ENDPOINT_DATA_API]);
     }
 }

@@ -58,7 +58,7 @@ class Component extends BaseComponent
             $this->getLogger()
         );
 
-        if ($this->getConfig()->hasProfiles()) {
+        if ($this->getConfig()->processProfiles($this->getConfigDefinitionClass())) {
             // @TODO fixme
             //$validProfiles = $validator->validateProfiles($this->getConfig()->getProfiles());
 
@@ -82,7 +82,7 @@ class Component extends BaseComponent
             );
         }
 
-        if ($this->getConfig()->hasProperties()) {
+        if ($this->getConfig()->processProperties($this->getConfigDefinitionClass())) {
             $validProperties = $validator->validateProperties($this->getConfig()->getProperties());
 
             $this->getExtractor()->runProperties(

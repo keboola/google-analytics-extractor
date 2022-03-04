@@ -217,6 +217,24 @@ class ApplicationTest extends TestCase
         Assert::assertEquals('success', $result['status']);
     }
 
+    public function testAppRunProperties(): void
+    {
+        $this->config = $this->getConfig('_properties');
+        $this->runProcess();
+
+        $properties = $this->getOutputFiles('properties');
+        $propertiesManifests = $this->getManifestFiles('properties');
+
+        $users = $this->getOutputFiles('users');
+        $usersManifests = $this->getManifestFiles('users');
+
+        Assert::assertEquals(1, count($properties));
+        Assert::assertEquals(1, count($propertiesManifests));
+
+        Assert::assertEquals(1, count($users));
+        Assert::assertEquals(1, count($usersManifests));
+    }
+
     public function testAppUserException(): void
     {
         $this->config = $this->getConfig();

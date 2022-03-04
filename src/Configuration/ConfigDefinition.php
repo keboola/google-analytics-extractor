@@ -79,7 +79,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->end()
                 ->enumNode('endpoint')
                     ->defaultValue('reports')
-                    ->values(['mcf', 'reports'])
+                    ->values(['mcf', 'reports', 'data-api'])
                 ->end()
                 ->arrayNode('query')
                     ->children()
