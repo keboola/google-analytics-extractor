@@ -8,6 +8,8 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
+    public const STATE_LAST_RUN_DATE = 'lastRunDate';
+
     public const ENDPOINT_MCF = 'mcf';
 
     public const ENDPOINT_REPORTS = 'reports';
@@ -59,6 +61,11 @@ class Config extends BaseConfig
         return $this->getValue(['parameters', 'outputBucket'], '');
     }
 
+    public function getQuery(): array
+    {
+        return $this->getValue(['parameters', 'query'], '');
+    }
+
     public function getQueries(string $configDefinition): array
     {
         if ($configDefinition === OldConfigDefinition::class) {
@@ -69,6 +76,25 @@ class Config extends BaseConfig
         } else {
             return [$this->getValue(['parameters'], [])];
         }
+    }
+
+    public function hasLastRunState(): bool
+    {
+        $query = $this->getQuery();
+
+        return !empty(array_filter($query['dateRanges'], fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE));
+    }
+
+    public function getLastRunState(): array
+    {
+        $query = $this->getQuery();
+
+        $filteredDateRanges = array_filter(
+            $query['dateRanges'],
+            fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE
+        );
+
+        return !empty($filteredDateRanges) ? $filteredDateRanges[0] : [];
     }
 
     public function processProfiles(string $configDefinition): bool

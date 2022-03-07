@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Psr\Log\LoggerInterface;
 
@@ -28,10 +29,13 @@ class Client
 
     protected int $apiCallsCount = 0;
 
-    public function __construct(GoogleApi $api, LoggerInterface $logger)
+    private array $inputState;
+
+    public function __construct(GoogleApi $api, LoggerInterface $logger, array $inputState)
     {
         $this->api = $api;
         $this->logger = $logger;
+        $this->inputState = $inputState;
         // don't retry on 403 error
         $this->api->setBackoffCallback403(function () {
             return false;
@@ -162,7 +166,10 @@ class Client
 
         $params = [
             'ids' => sprintf('ga:%s', $query['query']['viewId']),
-            'start-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['startDate'])),
+            'start-date' => date(
+                'Y-m-d',
+                (int) strtotime($this->getStartDate($query['query']['dateRanges'][0]['startDate']))
+            ),
             'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
@@ -192,7 +199,7 @@ class Client
     {
         $query['dateRanges'] = array_map(function ($item) {
             return [
-                'startDate' => date('Y-m-d', strtotime($item['startDate'])),
+                'startDate' => date('Y-m-d', (int) strtotime($this->getStartDate($item['startDate']))),
                 'endDate' => date('Y-m-d', strtotime($item['endDate'])),
             ];
         }, $query['dateRanges']);
@@ -210,7 +217,7 @@ class Client
         return [
             'dateRanges' => array_map(function ($item) {
                 return [
-                    'startDate' => date('Y-m-d', strtotime($item['startDate'])),
+                    'startDate' => date('Y-m-d', (int) strtotime($this->getStartDate($item['startDate']))),
                     'endDate' => date('Y-m-d', strtotime($item['endDate'])),
                 ];
             }, $query['dateRanges']),
@@ -371,5 +378,13 @@ class Client
         return function ($retries) use ($base) {
             return (int) ($base * pow(2, $retries - 1) + rand(0, 500));
         };
+    }
+
+    public function getStartDate(string $startDate): string
+    {
+        if ($startDate === Config::STATE_LAST_RUN_DATE) {
+            $startDate = $this->inputState[Config::STATE_LAST_RUN_DATE] ?? '2005-01-01';
+        }
+        return $startDate;
     }
 }

@@ -49,12 +49,18 @@ class Component extends BaseComponent
         } catch (RequestException $e) {
             $this->handleException($e);
         }
+
+        if ($this->getConfig()->hasLastRunState()) {
+            $this->writeOutputStateToFile([
+                Config::STATE_LAST_RUN_DATE => $this->getConfig()->getLastRunState()['endDate'],
+            ]);
+        }
     }
 
     private function runQuery(array $query): void
     {
         $validator = new Validator(
-            new Client($this->getGoogleRestApi(), $this->getLogger()),
+            new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
             $this->getLogger()
         );
 
@@ -219,7 +225,7 @@ class Component extends BaseComponent
     private function getExtractor(): Extractor
     {
         return new Extractor(
-            new Client($this->getGoogleRestApi(), $this->getLogger()),
+            new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
             new Output($this->getDataDir(), $this->getConfig()->getOutputBucket()),
             $this->getLogger()
         );

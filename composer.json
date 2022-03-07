@@ -17,22 +17,30 @@
     "symfony/process": "^5.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "phpstan/phpstan": "^0.12.59",
     "keboola/coding-standard": "^9.0",
-    "php-parallel-lint/php-parallel-lint": "^1.2"
+    "keboola/datadir-tests": "^5.3",
+    "php-parallel-lint/php-parallel-lint": "^1.2",
+    "phpstan/phpstan": "^0.12.59",
+    "phpunit/phpunit": "^9.5"
   },
   "autoload": {
     "psr-4": {
       "Keboola\\GoogleAnalyticsExtractor\\": "src/",
-      "Keboola\\GoogleAnalyticsExtractor\\Tests\\": "tests/phpunit/",
       "Keboola\\": ["src/Keboola/", "tests/Keboola/"]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Keboola\\GoogleAnalyticsExtractor\\Tests\\": "tests/phpunit/",
+      "Keboola\\GoogleAnalyticsExtractor\\Functional\\": "tests/functional/"
     }
   },
   "scripts": {
     "tests-phpunit": "phpunit",
+    "tests-datadir": "phpunit tests/functional",
     "tests": [
-      "@tests-phpunit"
+      "@tests-phpunit",
+      "@tests-datadir"
     ],
 
     "phpstan": "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon",

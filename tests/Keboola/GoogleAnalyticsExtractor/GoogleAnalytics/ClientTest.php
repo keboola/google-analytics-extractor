@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
 use Keboola\Google\ClientBundle\Google\RestApi;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
+use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -23,7 +25,8 @@ class ClientTest extends TestCase
                 (string) getenv('ACCESS_TOKEN'),
                 (string) getenv('REFRESH_TOKEN')
             ),
-            new NullLogger()
+            new NullLogger(),
+            []
         );
     }
 

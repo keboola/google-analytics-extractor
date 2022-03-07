@@ -38,7 +38,8 @@ class ExtractorTest extends TestCase
                 (string) getenv('ACCESS_TOKEN'),
                 (string) getenv('REFRESH_TOKEN')
             ),
-            $this->logger
+            $this->logger,
+            []
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $this->extractor = new Extractor($client, $output, $this->logger);
@@ -202,7 +203,8 @@ class ExtractorTest extends TestCase
         $logger = new NullLogger();
         $client = new Client(
             $restApi,
-            $logger
+            $logger,
+            []
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);
@@ -257,7 +259,8 @@ class ExtractorTest extends TestCase
         $logger = new NullLogger();
         $client = new Client(
             $restApi,
-            $logger
+            $logger,
+            []
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);

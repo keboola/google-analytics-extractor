@@ -18,7 +18,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator(
             new Client(
                 $this->getMockRestApi(),
-                $logger
+                $logger,
+                []
             ),
             $logger
         );
@@ -46,7 +47,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator(
             new Client(
                 $this->getMockRestApi(),
-                $logger
+                $logger,
+                []
             ),
             $logger
         );
@@ -87,7 +89,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator(
             new Client(
                 $this->getMockRestApi(),
-                $logger
+                $logger,
+                []
             ),
             $logger
         );
@@ -113,7 +116,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator(
             new Client(
                 $this->getMockRestApi(),
-                $logger
+                $logger,
+                []
             ),
             $logger
         );
