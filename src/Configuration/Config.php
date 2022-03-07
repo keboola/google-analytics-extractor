@@ -63,7 +63,7 @@ class Config extends BaseConfig
 
     public function getQuery(): array
     {
-        return $this->getValue(['parameters', 'query'], '');
+        return $this->getValue(['parameters', 'query'], []);
     }
 
     public function getQueries(string $configDefinition): array
@@ -82,12 +82,20 @@ class Config extends BaseConfig
     {
         $query = $this->getQuery();
 
+        if (empty($query['dateRanges'])) {
+            return false;
+        }
+
         return !empty(array_filter($query['dateRanges'], fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE));
     }
 
     public function getLastRunState(): array
     {
         $query = $this->getQuery();
+
+        if (!$this->hasLastRunState()) {
+            return [];
+        }
 
         $filteredDateRanges = array_filter(
             $query['dateRanges'],
