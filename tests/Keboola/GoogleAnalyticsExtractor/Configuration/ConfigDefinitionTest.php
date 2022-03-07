@@ -44,6 +44,16 @@ class ConfigDefinitionTest extends TestCase
         new Config($config, new ConfigDefinition());
     }
 
+    public function testDateRangeLastrunOldConfig(): void
+    {
+        $config = $this->getConfig('_old');
+
+        $configData = new Config($config, new OldConfigDefinition());
+
+        Assert::assertFalse($configData->hasLastRunState());
+        Assert::assertEquals([], $configData->getLastRunState());
+    }
+
     public function testDateRangeLastrun(): void
     {
         $config = $this->config;
@@ -67,9 +77,9 @@ class ConfigDefinitionTest extends TestCase
         new Config($config, new ConfigDefinition());
     }
 
-    private function getConfig(): array
+    private function getConfig(string $suffix = ''): array
     {
-        $config = json_decode((string) file_get_contents($this->dataDir . '/config.json'), true);
+        $config = json_decode((string) file_get_contents($this->dataDir . '/config' . $suffix . '.json'), true);
         return $config;
     }
 }

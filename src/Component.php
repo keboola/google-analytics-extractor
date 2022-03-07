@@ -50,7 +50,7 @@ class Component extends BaseComponent
             $this->handleException($e);
         }
 
-        if ($this->getConfig()->hasLastRunState()) {
+        if ($this->getConfigDefinitionClass() === ConfigDefinition::class && $this->getConfig()->hasLastRunState()) {
             $this->writeOutputStateToFile([
                 Config::STATE_LAST_RUN_DATE => $this->getConfig()->getLastRunState()['endDate'],
             ]);
