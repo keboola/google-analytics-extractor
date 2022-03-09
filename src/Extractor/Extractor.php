@@ -370,7 +370,7 @@ class Extractor
         return false;
     }
 
-    private function getErrorMessage(string $message)
+    private function getErrorMessage(string $message): string
     {
         preg_match('/"message": "([\w\W]+)"?/i', $message, $match);
         $reason = trim($match[1]) ?? $message;
