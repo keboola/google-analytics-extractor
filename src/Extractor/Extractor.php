@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\UserException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling\AntisamplingProfile;
@@ -206,7 +207,17 @@ class Extractor
 
     public function getProfilesPropertiesAction(): array
     {
-        $profiles = $this->gaApi->getAccountProfiles();
+        $messages = [];
+
+        try {
+            $profiles = $this->gaApi->getAccountProfiles();
+        } catch (ClientException $e) {
+            $messages[] = sprintf(
+                'Cannot download list of Google Analytics profiles. %s',
+                $this->getErrorMessage($e->getMessage())
+            );
+            $profiles = [];
+        }
         $filteredProfiles = [];
         if ($profiles) {
             $accounts = $this->gaApi->getAccounts();
@@ -240,7 +251,15 @@ class Extractor
             }, $profiles);
         }
 
-        $properties  = $this->gaApi->getAccountProperties();
+        try {
+            $properties = $this->gaApi->getAccountProperties();
+        } catch (ClientException $e) {
+            $properties = [];
+            $messages[] = sprintf(
+                'Cannot download list of Data API properties. %s',
+                $this->getErrorMessage($e->getMessage())
+            );
+        }
         $prop = [];
         foreach ($properties as $property) {
             $account = [
@@ -259,6 +278,7 @@ class Extractor
         }
 
         return [
+            'messages' => $messages,
             'profiles' => $filteredProfiles,
             'properties' => $prop,
         ];
@@ -348,5 +368,21 @@ class Extractor
             }
         }
         return false;
+    }
+
+    private function getErrorMessage(string $message)
+    {
+        preg_match('/"message": "([\w\W]+)"?/i', $message, $match);
+        $reason = trim($match[1]) ?? $message;
+        if (strpos($reason, 'Google Analytics API has not been used') !== false) {
+            return 'Please, enable "Google Analytics API" in your Developers Console.';
+        }
+        if (strpos($reason, 'Google Analytics Admin API has not been used') !== false) {
+            return 'Please, enable "Google Analytics Admin API" in your Developers Console.';
+        }
+        return sprintf(
+            'Reason: "%s".',
+            $reason
+        );
     }
 }
