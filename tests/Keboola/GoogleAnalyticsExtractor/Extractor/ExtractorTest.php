@@ -237,6 +237,7 @@ class ExtractorTest extends TestCase
                         'propertyName' => 'users',
                     ],
                 ],
+                'messages' => [],
             ],
             $extractor->getProfilesPropertiesAction()
         );
@@ -269,6 +270,7 @@ class ExtractorTest extends TestCase
             [
                 'profiles' => [],
                 'properties' => [],
+                'messages' => [],
             ],
             $extractor->getProfilesPropertiesAction()
         );
