@@ -24,7 +24,7 @@ class Extractor
 
     private LoggerInterface $logger;
 
-    private const FILTER_PROFILES_RETURN_KEYS = ['id', 'name', 'webPropertyId', 'accountId'];
+    private const FILTER_PROFILES_RETURN_KEYS = ['id', 'name', 'webPropertyId', 'accountId', 'eCommerceTracking'];
 
     public function __construct(Client $gaApi, Output $output, LoggerInterface $logger)
     {
