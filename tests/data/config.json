@@ -9,7 +9,8 @@
         "webPropertyId": "UA-128209249-1",
         "webPropertyName": "Keboola Website",
         "accountId": 128209249,
-        "accountName": "Keboola Website"
+        "accountName": "Keboola Website",
+        "eCommerceTracking": true
       },
       {
         "id": 88156763,
