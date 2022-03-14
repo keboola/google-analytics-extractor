@@ -217,6 +217,7 @@ class ExtractorTest extends TestCase
                         'accountId' => '52541130',
                         'webPropertyId' => 'UA-52541130-1',
                         'name' => 'All Web Site Data',
+                        'eCommerceTracking' => false,
                         'webPropertyName' => 'status.keboola.com',
                         'accountName' => 'Keboola Status Blog',
                     ],
@@ -225,6 +226,7 @@ class ExtractorTest extends TestCase
                         'accountId' => '128209249',
                         'webPropertyId' => 'UA-128209249-1',
                         'name' => 'All Web Site Data',
+                        'eCommerceTracking' => true,
                         'webPropertyName' => 'Website',
                         'accountName' => 'Keboola Website',
                     ],
@@ -296,7 +298,7 @@ class ExtractorTest extends TestCase
                 return new Response(
                     200,
                     [],
-                    '{"kind":"analytics#profiles","username":"ondrej.jodas@keboola.com","totalResults":2,"startIndex":1,"itemsPerPage":1000,"items":[{"id":"88156763","accountId":"52541130","webPropertyId":"UA-52541130-1","name":"All Web Site Data"},{"id":"184062725","accountId":"128209249","webPropertyId":"UA-128209249-1","name":"All Web Site Data"}]}'
+                    '{"kind":"analytics#profiles","username":"ondrej.jodas@keboola.com","totalResults":2,"startIndex":1,"itemsPerPage":1000,"items":[{"id":"88156763","accountId":"52541130","webPropertyId":"UA-52541130-1","name":"All Web Site Data","eCommerceTracking":false},{"id":"184062725","accountId":"128209249","webPropertyId":"UA-128209249-1","name":"All Web Site Data","eCommerceTracking":true}]}'
                 );
             case Client::ACCOUNTS_URL:
                 return new Response(
