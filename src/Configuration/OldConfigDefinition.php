@@ -30,6 +30,7 @@ class OldConfigDefinition extends BaseConfigDefinition
                 ->end()
                 ->arrayNode('profiles')->isRequired()
                     ->prototype('array')
+                        ->ignoreExtraKeys()
                         ->children()
                             ->scalarNode('id')->isRequired()->end()
                             ->scalarNode('name')->isRequired()->end()

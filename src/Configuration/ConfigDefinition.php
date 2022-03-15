@@ -43,6 +43,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->end()
                 ->arrayNode('profiles')
                     ->prototype('array')
+                        ->ignoreExtraKeys()
                         ->children()
                             ->scalarNode('id')
                                 ->isRequired()
