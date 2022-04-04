@@ -32,6 +32,7 @@ class ConfigDefinition extends BaseConfigDefinition
                     return $item;
                 })
             ->end()
+            ->ignoreExtraKeys(true)
             ->children()
                 ->scalarNode('outputBucket')->isRequired()->cannotBeEmpty()->end()
                 ->integerNode('nonConflictPrimaryKey')
