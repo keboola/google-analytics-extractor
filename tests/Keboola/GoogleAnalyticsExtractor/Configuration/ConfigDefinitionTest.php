@@ -77,6 +77,32 @@ class ConfigDefinitionTest extends TestCase
         new Config($config, new ConfigDefinition());
     }
 
+    public function testAddSegmentDimension(): void
+    {
+        $config = $this->config;
+
+        $config['parameters']['query']['segments'] = [[
+            'segmentId' => '-1',
+        ]];
+
+        $configData = new Config($config, new ConfigDefinition());
+
+        $dimensions = array_map(fn($v) => $v['name'], $configData->getParameters()['query']['dimensions']);
+
+        $this->assertTrue(in_array('ga:segment', $dimensions));
+
+        $config['parameters']['query']['dimensions'][] = ['name' => 'ga:segment'];
+
+        $configData = new Config($config, new ConfigDefinition());
+
+        $dimensions = array_filter(
+            $configData->getParameters()['query']['dimensions'],
+            fn($v) => $v['name'] === 'ga:segment'
+        );
+
+        $this->assertCount(1, $dimensions);
+    }
+
     private function getConfig(string $suffix = ''): array
     {
         $config = json_decode((string) file_get_contents($this->dataDir . '/config' . $suffix . '.json'), true);
