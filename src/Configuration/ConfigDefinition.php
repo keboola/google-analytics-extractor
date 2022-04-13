@@ -29,6 +29,12 @@ class ConfigDefinition extends BaseConfigDefinition
                             throw new InvalidConfigurationException('Cannot set "lastrun" Date Range more than once.');
                         }
                     }
+                    if (!empty($item['query']['segments'])) {
+                        $dimensions = array_map(fn($v) => $v['name'], $item['query']['dimensions']);
+                        if (!in_array('ga:segment', $dimensions)) {
+                            $item['query']['dimensions'][] = ['name' => 'ga:segment'];
+                        }
+                    }
                     return $item;
                 })
             ->end()
