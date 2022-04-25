@@ -16,7 +16,6 @@ class OldConfigDefinition extends BaseConfigDefinition
         $parametersNode
             ->ignoreExtraKeys()
             ->children()
-                ->booleanNode('migrateConfiguration')->defaultFalse()->end()
                 ->scalarNode('outputBucket')
                     ->isRequired()
                     ->cannotBeEmpty()

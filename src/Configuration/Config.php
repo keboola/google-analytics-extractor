@@ -16,11 +16,6 @@ class Config extends BaseConfig
 
     public const ENDPOINT_DATA_API = 'data-api';
 
-    public function migrateConfiguration(): bool
-    {
-        return $this->getValue(['parameters', 'migrateConfiguration'], false);
-    }
-
     public function hasProfiles(): bool
     {
         return !empty($this->getValue(['parameters', 'profiles'], false));
