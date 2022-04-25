@@ -438,10 +438,6 @@ class ApplicationTest extends TestCase
 
     public function appRunDataProvider(): Generator
     {
-        yield 'config' => [
-            '_old',
-        ];
-
         yield 'configRow' => [
             '',
         ];

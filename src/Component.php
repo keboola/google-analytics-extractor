@@ -37,8 +37,10 @@ class Component extends BaseComponent
 
     protected function run(): void
     {
-        $migrateConfiguration = new MigrateConfiguration((string) getenv('KBC_CONFIGID'));
-        $migrateConfiguration->migrate();
+        if ($this->getConfigDefinitionClass() === OldConfigDefinition::class) {
+            $migrateConfiguration = new MigrateConfiguration((string) getenv('KBC_CONFIGID'));
+            $migrateConfiguration->migrate();
+        }
 
         try {
             foreach ($this->getConfig()->getQueries($this->getConfigDefinitionClass()) as $query) {
