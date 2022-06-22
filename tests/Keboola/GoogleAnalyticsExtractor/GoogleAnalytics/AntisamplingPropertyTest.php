@@ -111,6 +111,7 @@ class AntisamplingPropertyTest extends ClientTest
             date('Y-m-d', strtotime('-1 days')),
         ];
 
+        $logger = new TestLogger();
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
         $output = new Output('/tmp/ga-test', 'outputBucket');
@@ -126,6 +127,8 @@ class AntisamplingPropertyTest extends ClientTest
             $rep = $this->client->getPropertyReport($query2, $property);
             $paginator->paginate($query2, $rep, $outputCsv);
         }
+
+        Assert::assertCount(count($dates), $logger->records);
 
         $expectedOutputCsv = $outputCsv->getPathname();
 

@@ -126,6 +126,7 @@ class AntisamplingProfileTest extends ClientTest
             date('Y-m-d', strtotime('-1 days')),
         ];
 
+        $logger = new TestLogger();
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
         $output = new Output('/tmp/ga-test', 'outputBucket');
@@ -140,6 +141,7 @@ class AntisamplingProfileTest extends ClientTest
             $rep = $this->client->getBatch($query2);
             $paginator->paginate($query2, $rep, $outputCsv);
         }
+        Assert::assertCount(count($dates), $logger->records);
 
         $expectedOutputCsv = $outputCsv->getPathname();
 
