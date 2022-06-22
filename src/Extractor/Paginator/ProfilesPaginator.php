@@ -7,6 +7,7 @@ namespace Keboola\GoogleAnalyticsExtractor\Extractor\Paginator;
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
+use Psr\Log\LoggerInterface;
 
 class ProfilesPaginator implements IPaginator
 {
@@ -14,10 +15,13 @@ class ProfilesPaginator implements IPaginator
 
     private Client $client;
 
-    public function __construct(Output $output, Client $client)
+    private LoggerInterface $logger;
+
+    public function __construct(Output $output, Client $client, LoggerInterface $logger)
     {
         $this->output = $output;
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     public function getOutput(): Output
@@ -32,9 +36,13 @@ class ProfilesPaginator implements IPaginator
 
     public function paginate(array $query, array $report, CsvFile $csvFile): void
     {
+        $counter = 0;
         do {
             // writer first result
             $this->output->writeReport($csvFile, $report, $query['query']['viewId']);
+            $counter += count($report['data']);
+
+            $this->logger->info(sprintf('Downloaded %s/%s records.', $counter, $report['rowCount']));
 
             // get next page if there's any
             $nextQuery = null;

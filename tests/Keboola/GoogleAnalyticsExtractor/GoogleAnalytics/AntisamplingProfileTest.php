@@ -11,6 +11,7 @@ use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\ProfilesPaginator;
 use PHPUnit\Framework\Assert;
 use Psr\Log\NullLogger;
+use Psr\Log\Test\TestLogger;
 use Symfony\Component\Filesystem\Filesystem;
 
 class AntisamplingProfileTest extends ClientTest
@@ -109,9 +110,9 @@ class AntisamplingProfileTest extends ClientTest
             $fs->mkdir('/tmp/ga-test');
         }
         $fs->remove('/tmp/ga-test/*');
-
+        $logger = new TestLogger();
         $output = new Output('/tmp/ga-test', 'outputBucket');
-        $paginator = new ProfilesPaginator($output, $this->client);
+        $paginator = new ProfilesPaginator($output, $this->client, $logger);
         $outputCsv = $output->createReport($query);
         (new AntisamplingProfile($paginator, $outputCsv))->dailyWalk($query);
 
@@ -128,7 +129,7 @@ class AntisamplingProfileTest extends ClientTest
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
         $output = new Output('/tmp/ga-test', 'outputBucket');
-        $paginator = new ProfilesPaginator($output, $this->client);
+        $paginator = new ProfilesPaginator($output, $this->client, $logger);
         $outputCsv = $output->createReport($query2);
 
         foreach ($dates as $date) {

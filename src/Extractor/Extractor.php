@@ -55,7 +55,7 @@ class Extractor
     public function runProfiles(array $query, array $profiles): array
     {
         $status = [];
-        $paginator = new ProfilesPaginator($this->output, $this->gaApi);
+        $paginator = new ProfilesPaginator($this->output, $this->gaApi, $this->logger);
 
         if (isset($query['query'])) {
             $outputCsv = $this->output->createReport($query);
@@ -146,7 +146,7 @@ class Extractor
     public function runProperties(array $query, array $properties): array
     {
         $status = [];
-        $paginator = new PropertiesPaginator($this->output, $this->gaApi);
+        $paginator = new PropertiesPaginator($this->output, $this->gaApi, $this->logger);
 
         if (isset($query['query'])) {
             $query['query']['endpoint'] = 'properties';
