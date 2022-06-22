@@ -11,6 +11,7 @@ use Keboola\GoogleAnalyticsExtractor\Extractor\Output;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\PropertiesPaginator;
 use PHPUnit\Framework\Assert;
 use Psr\Log\NullLogger;
+use Psr\Log\Test\TestLogger;
 use Symfony\Component\Filesystem\Filesystem;
 
 class AntisamplingPropertyTest extends ClientTest
@@ -92,9 +93,10 @@ class AntisamplingPropertyTest extends ClientTest
         }
         $fs->remove('/tmp/ga-test/*');
 
+        $logger = new TestLogger();
         $property = $this->getProperty();
         $output = new Output('/tmp/ga-test', 'outputBucket');
-        $paginator = new PropertiesPaginator($output, $this->client);
+        $paginator = new PropertiesPaginator($output, $this->client, $logger);
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query);
         (new AntisamplingProperty($paginator, $outputCsv, $property))->dailyWalk($query);
@@ -109,10 +111,11 @@ class AntisamplingPropertyTest extends ClientTest
             date('Y-m-d', strtotime('-1 days')),
         ];
 
+        $logger = new TestLogger();
         $query2 = $query;
         $query2['outputTable'] = 'antisampling-expected';
         $output = new Output('/tmp/ga-test', 'outputBucket');
-        $paginator = new PropertiesPaginator($output, $this->client);
+        $paginator = new PropertiesPaginator($output, $this->client, $logger);
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query2);
 
@@ -124,6 +127,8 @@ class AntisamplingPropertyTest extends ClientTest
             $rep = $this->client->getPropertyReport($query2, $property);
             $paginator->paginate($query2, $rep, $outputCsv);
         }
+
+        Assert::assertCount(count($dates), $logger->records);
 
         $expectedOutputCsv = $outputCsv->getPathname();
 
