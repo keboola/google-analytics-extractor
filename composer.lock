@@ -489,16 +489,16 @@
         },
         {
             "name": "keboola/google-client-bundle",
-            "version": "5.1.1",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/google-client-bundle.git",
-                "reference": "15c57e605c7b40cde974c9f876acce6ffe97320e"
+                "reference": "2ea1e702a5edf0ff0e3ecd3469b658c28b848445"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/15c57e605c7b40cde974c9f876acce6ffe97320e",
-                "reference": "15c57e605c7b40cde974c9f876acce6ffe97320e",
+                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/2ea1e702a5edf0ff0e3ecd3469b658c28b848445",
+                "reference": "2ea1e702a5edf0ff0e3ecd3469b658c28b848445",
                 "shasum": ""
             },
             "require": {
@@ -538,9 +538,9 @@
             ],
             "support": {
                 "issues": "https://github.com/keboola/google-client-bundle/issues",
-                "source": "https://github.com/keboola/google-client-bundle/tree/5.1.1"
+                "source": "https://github.com/keboola/google-client-bundle/tree/5.1.2"
             },
-            "time": "2022-04-01T13:19:11+00:00"
+            "time": "2022-06-23T08:45:26+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -4353,5 +4353,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
