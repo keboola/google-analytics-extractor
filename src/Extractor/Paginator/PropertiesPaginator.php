@@ -46,14 +46,16 @@ class PropertiesPaginator implements IPaginator
 
     public function paginate(array $query, array $report, CsvFile $csvFile): void
     {
+        $localCounter = 0;
         do {
+            $localCounter += $report['rowCount'];
             $this->rowCounter += $report['rowCount'];
 
             // writer first result
             $propertyId = str_replace('properties/', '', $this->property['propertyKey']);
             $this->output->writeReport($csvFile, $report, $propertyId);
 
-            $this->logger->info(sprintf('Downloaded %s/%s records.', $this->rowCounter, $report['totals']));
+            $this->logger->info(sprintf('Downloaded %s/%s records.', $localCounter, $report['totals']));
 
             // get next page if there's any
             $nextQuery = null;
