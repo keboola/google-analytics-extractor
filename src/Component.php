@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor;
 
+use DateTime;
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
@@ -51,8 +52,9 @@ class Component extends BaseComponent
         }
 
         if ($this->getConfigDefinitionClass() === ConfigDefinition::class && $this->getConfig()->hasLastRunState()) {
+            $dateTime = new DateTime($this->getConfig()->getLastRunState()['endDate']);
             $this->writeOutputStateToFile([
-                Config::STATE_LAST_RUN_DATE => $this->getConfig()->getLastRunState()['endDate'],
+                Config::STATE_LAST_RUN_DATE => $dateTime->format('Y-m-d'),
             ]);
         }
     }
