@@ -1,8 +1,5 @@
 # Google Analytics Extractor
 
-[![Build Status](https://travis-ci.com/keboola/google-analytics-extractor.svg?branch=master)](https://travis-ci.com/keboola/google-analytics-extractor)
-[![Code Climate](https://codeclimate.com/github/keboola/google-analytics-extractor/badges/gpa.svg)](https://codeclimate.com/github/keboola/google-analytics-extractor)
-[![Test Coverage](https://codeclimate.com/github/keboola/google-analytics-extractor/badges/coverage.svg)](https://codeclimate.com/github/keboola/google-analytics-extractor/coverage)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/keboola/google-analytics-extractor/blob/master/LICENSE.md)
 
 Docker application for extracting data from Google Analytics API (V4).
