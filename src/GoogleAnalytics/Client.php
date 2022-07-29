@@ -203,6 +203,13 @@ class Client
                 'endDate' => date('Y-m-d', strtotime($item['endDate'])),
             ];
         }, $query['dateRanges']);
+
+        $dateRangesInfo = array_map(
+            fn($v) => sprintf('%s - %s', $v['startDate'], $v['endDate']),
+            $query['dateRanges']
+        );
+        $this->logger->info('Using Date Ranges: ' . implode(', ', $dateRangesInfo));
+
         $query['pageSize'] = 5000;
         $query['includeEmptyRows'] = true;
         $query['hideTotals'] = false;
