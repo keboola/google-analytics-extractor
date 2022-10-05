@@ -211,6 +211,8 @@ class Extractor
 
         try {
             $profiles = $this->gaApi->getAccountProfiles();
+            echo json_encode($profiles);
+            exit();
         } catch (ClientException $e) {
             $messages[] = sprintf(
                 'Cannot download list of Google Analytics profiles. %s',
