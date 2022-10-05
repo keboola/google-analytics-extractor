@@ -253,6 +253,8 @@ class Extractor
 
         try {
             $properties = $this->gaApi->getAccountProperties();
+            echo json_encode($properties);
+            exit();
         } catch (ClientException $e) {
             $properties = [];
             $messages[] = sprintf(
