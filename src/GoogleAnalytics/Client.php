@@ -57,7 +57,7 @@ class Client
 
     public function getAccountProperties(): array
     {
-        $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL);
+        $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL . '?pageSize=200');
         $body = json_decode($response->getBody()->getContents(), true);
         if (isset($body['accountSummaries'])) {
             return array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']));
