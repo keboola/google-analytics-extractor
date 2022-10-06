@@ -152,7 +152,7 @@ class ValidatorTest extends TestCase
     {
         /** @phpcs:disable */
         switch ($url) {
-            case Client::ACCOUNT_PROPERTIES_URL:
+            case sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL):
                 return new Response(
                     200,
                     [],
@@ -175,7 +175,7 @@ class ValidatorTest extends TestCase
         $restApi
             ->method('request')
             ->with($this->logicalOr(
-                Client::ACCOUNT_PROPERTIES_URL,
+                sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL),
                 Client::ACCOUNT_PROFILES_URL
             ))
             ->will($this->returnCallback([$this, 'returnMockServerRequest']));
