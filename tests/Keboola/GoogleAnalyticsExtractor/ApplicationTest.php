@@ -12,7 +12,6 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
-use function _HumbugBoxf1b87ffa78eb\RingCentral\Psr7\str;
 
 class ApplicationTest extends TestCase
 {

@@ -64,7 +64,7 @@ class Client
             $body = json_decode($response->getBody()->getContents(), true);
 
             if (isset($body['accountSummaries'])) {
-                array_merge(
+                $accountProperties = array_merge(
                     $accountProperties,
                     array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']))
                 );
