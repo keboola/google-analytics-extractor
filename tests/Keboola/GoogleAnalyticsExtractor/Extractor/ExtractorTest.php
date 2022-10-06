@@ -192,7 +192,7 @@ class ExtractorTest extends TestCase
         $restApi
             ->method('request')
             ->with($this->logicalOr(
-                Client::ACCOUNT_PROPERTIES_URL,
+                sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
                 Client::ACCOUNT_PROFILES_URL,
                 Client::ACCOUNTS_URL
@@ -251,7 +251,7 @@ class ExtractorTest extends TestCase
         $restApi
             ->method('request')
             ->with($this->logicalOr(
-                Client::ACCOUNT_PROPERTIES_URL,
+                sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
                 Client::ACCOUNT_PROFILES_URL,
                 Client::ACCOUNTS_URL
@@ -288,7 +288,7 @@ class ExtractorTest extends TestCase
                     [],
                     '{"kind":"analytics#webproperties","username":"ondrej.jodas@keboola.com","totalResults":2,"startIndex":1,"itemsPerPage":1000,"items":[{"id":"UA-52541130-1","accountId":"52541130","name":"status.keboola.com"},{"id":"UA-128209249-1","accountId":"128209249","name":"Website"}]}'
                 );
-            case Client::ACCOUNT_PROPERTIES_URL:
+            case sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL):
                 return new Response(
                     200,
                     [],
