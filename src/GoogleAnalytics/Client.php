@@ -57,12 +57,21 @@ class Client
 
     public function getAccountProperties(): array
     {
-        $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL);
-        $body = json_decode($response->getBody()->getContents(), true);
-        if (isset($body['accountSummaries'])) {
-            return array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']));
-        }
-        return [];
+        $accountProperties = [];
+
+        do {
+            $response = $this->api->request(self::ACCOUNT_PROPERTIES_URL);
+            $body = json_decode($response->getBody()->getContents(), true);
+
+            if (isset($body['accountSummaries'])) {
+                array_merge(
+                    $accountProperties,
+                    array_filter($body['accountSummaries'], fn(array $v) => isset($v['propertySummaries']))
+                );
+            }
+        } while (isset($body['nextPageToken']));
+
+        return $accountProperties;
     }
 
     public function getAccounts(): array
