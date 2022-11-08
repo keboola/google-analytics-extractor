@@ -62,12 +62,12 @@ class Client
         do {
             if (isset($body['nextPageToken'])) {
                 $url = sprintf(
-                    '%s?pageSize=200&pageToken=%s',
+                    '%s?pageSize=50&pageToken=%s',
                     self::ACCOUNT_PROPERTIES_URL,
                     $body['nextPageToken']
                 );
             } else {
-                $url = sprintf('%s?pageSize=200', self::ACCOUNT_PROPERTIES_URL);
+                $url = sprintf('%s?pageSize=50', self::ACCOUNT_PROPERTIES_URL);
             }
 
             $response = $this->api->request($url);
