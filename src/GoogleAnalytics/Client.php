@@ -60,7 +60,17 @@ class Client
         $accountSummaries = [];
 
         do {
-            $response = $this->api->request(sprintf('%s?pageSize=200', self::ACCOUNT_PROPERTIES_URL));
+            if (isset($body['nextPageToken'])) {
+                $url = sprintf(
+                    '%s?pageSize=200&pageToken=%s',
+                    self::ACCOUNT_PROPERTIES_URL,
+                    $body['nextPageToken']
+                );
+            } else {
+                $url = sprintf('%s?pageSize=200', self::ACCOUNT_PROPERTIES_URL);
+            }
+
+            $response = $this->api->request($url);
             $body = json_decode($response->getBody()->getContents(), true);
 
             if (isset($body['accountSummaries'])) {
