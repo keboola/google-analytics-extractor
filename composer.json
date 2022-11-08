@@ -54,7 +54,8 @@
       "@tests"
     ],
     "ci": [
-      "@composer validate --no-check-publish --no-check-all"
+      "@composer validate --no-check-publish --no-check-all",
+      "@build"
     ]
   },
   "config": {
