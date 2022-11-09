@@ -18,6 +18,11 @@ use Symfony\Component\Finder\Finder;
 
 class ExtractorTest extends TestCase
 {
+    /** @phpcs:disable */
+    private const NEXT_PAGE_TOKEN_1 = 'AOlqmtWnOMPDKi1Ja0CjfkpNKBiXwJHiqUfdBX5nXJ3MFvUquyKw8E48FLB_puDk_PuLNkPpNCzHsanY-HGO4hF16VB6mkkaHjXzoksmu93LS2bS2RO3FyUBxqmW2WA=';
+    private const NEXT_PAGE_TOKEN_2 = 'b8pE9HJNvEv44XYxwVnl5GPAcrvqq-HbcfVH3XiSNf11zLrHa87o112Ucouj1g0MV1xFgnZSoxLXkzCIHFSjbfRYDWifQQa6IVYuN9YJ5bHVrjePOg%XEFpGfj7fhEBF';
+    /** @phpcs:enable */
+
     private Extractor $extractor;
 
     private array $config;
@@ -192,7 +197,7 @@ class ExtractorTest extends TestCase
         $restApi
             ->method('request')
             ->with($this->logicalOr(
-                sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL),
+                sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
                 Client::ACCOUNT_PROFILES_URL,
                 Client::ACCOUNTS_URL
@@ -251,7 +256,7 @@ class ExtractorTest extends TestCase
         $restApi
             ->method('request')
             ->with($this->logicalOr(
-                sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL),
+                sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
                 Client::ACCOUNT_PROFILES_URL,
                 Client::ACCOUNTS_URL
@@ -278,6 +283,73 @@ class ExtractorTest extends TestCase
         );
     }
 
+    public function testGetAccountProperties(): void
+    {
+        $restApi = $this->createMock(RestApi::class);
+
+        $baseUrl = sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, 1);
+        $firstPage = $baseUrl;
+        $secondPage = sprintf('%s&pageToken=%s', $baseUrl, self::NEXT_PAGE_TOKEN_1);
+        $thirdPage = sprintf('%s&pageToken=%s', $baseUrl, self::NEXT_PAGE_TOKEN_2);
+        $restApi
+            ->method('request')
+            ->with($this->logicalOr($firstPage, $secondPage, $thirdPage))
+            ->will($this->returnCallback([$this, 'returnMockServerAccountPropertiesResponse']))
+        ;
+
+        $logger = new NullLogger();
+        $client = new Client(
+            $restApi,
+            $logger,
+            []
+        );
+
+        $this->assertEquals(
+            [
+                1 => [
+                    'name' => 'accountSummaries/4475423',
+                    'account' => 'accounts/4475423',
+                    'displayName' => 'Keboola Component Portal',
+                    'propertySummaries' => [
+                        [
+                            'property' => 'properties/331566540',
+                            'displayName' => 'Adam Výborný',
+                            'propertyType' => 'PROPERTY_TYPE_ORDINARY',
+                            'parent' => 'accounts/4475423',
+                        ],
+                    ],
+                ],
+                0 => [
+                    'name' => 'accountSummaries/4475422',
+                    'account' => 'accounts/4475422',
+                    'displayName' => 'Keboola Website',
+                    'propertySummaries' => [
+                        [
+                            'property' => 'properties/331566539',
+                            'displayName' => 'Ondřej Jodas',
+                            'propertyType' => 'PROPERTY_TYPE_ORDINARY',
+                            'parent' => 'accounts/4475422',
+                        ],
+                    ],
+                ],
+                2 => [
+                    'name' => 'accountSummaries/4475424',
+                    'account' => 'accounts/4475424',
+                    'displayName' => 'Keboola Developer Documentation',
+                    'propertySummaries' => [
+                        [
+                            'property' => 'properties/331566541',
+                            'displayName' => 'Ondřej Jodas',
+                            'propertyType' => 'PROPERTY_TYPE_ORDINARY',
+                            'parent' => 'accounts/4475424',
+                        ],
+                    ],
+                ],
+            ],
+            $client->getAccountProperties(1)
+        );
+    }
+
     public function returnMockServerRequest(string $url): Response
     {
         /** @phpcs:disable */
@@ -288,7 +360,7 @@ class ExtractorTest extends TestCase
                     [],
                     '{"kind":"analytics#webproperties","username":"ondrej.jodas@keboola.com","totalResults":2,"startIndex":1,"itemsPerPage":1000,"items":[{"id":"UA-52541130-1","accountId":"52541130","name":"status.keboola.com"},{"id":"UA-128209249-1","accountId":"128209249","name":"Website"}]}'
                 );
-            case sprintf('%s?pageSize=200', Client::ACCOUNT_PROPERTIES_URL):
+            case sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE):
                 return new Response(
                     200,
                     [],
@@ -316,6 +388,32 @@ class ExtractorTest extends TestCase
         return new Response(200, [], '');
     }
 
+    public function returnMockServerAccountPropertiesResponse(string $url): Response
+    {
+        /** @phpcs:disable */
+        switch ($url) {
+            case sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, 1):
+                return new Response(
+                    200,
+                    [],
+                    '{"accountSummaries":[{"name":"accountSummaries/4475422","account":"accounts/4475422","displayName":"Keboola Website","propertySummaries":[{"property":"properties/331566539","displayName":"Ondřej Jodas","propertyType":"PROPERTY_TYPE_ORDINARY","parent":"accounts/4475422"}]}],"nextPageToken":"AOlqmtWnOMPDKi1Ja0CjfkpNKBiXwJHiqUfdBX5nXJ3MFvUquyKw8E48FLB_puDk_PuLNkPpNCzHsanY-HGO4hF16VB6mkkaHjXzoksmu93LS2bS2RO3FyUBxqmW2WA="}'
+                );
+            case sprintf('%s?pageSize=%d&pageToken=%s', Client::ACCOUNT_PROPERTIES_URL, 1, self::NEXT_PAGE_TOKEN_1):
+                return new Response(
+                    200,
+                    [],
+                    '{"accountSummaries":[{"name":"accountSummaries/4475423","account":"accounts/4475423","displayName":"Keboola Component Portal","propertySummaries":[{"property":"properties/331566540","displayName":"Adam Výborný","propertyType":"PROPERTY_TYPE_ORDINARY","parent":"accounts/4475423"}]}],"nextPageToken":"b8pE9HJNvEv44XYxwVnl5GPAcrvqq-HbcfVH3XiSNf11zLrHa87o112Ucouj1g0MV1xFgnZSoxLXkzCIHFSjbfRYDWifQQa6IVYuN9YJ5bHVrjePOg%XEFpGfj7fhEBF"}'
+                );
+            case sprintf('%s?pageSize=%s&pageToken=%s', Client::ACCOUNT_PROPERTIES_URL, 1, self::NEXT_PAGE_TOKEN_2):
+                return new Response(
+                    200,
+                    [],
+                    '{"accountSummaries":[{"name":"accountSummaries/4475424","account":"accounts/4475424","displayName":"Keboola Developer Documentation","propertySummaries":[{"property":"properties/331566541","displayName":"Ondřej Jodas","propertyType":"PROPERTY_TYPE_ORDINARY","parent":"accounts/4475424"}]}]}'
+                );
+        }
+        /** @phpcs:enable */
+        return new Response(200, [], '');
+    }
     private function getOutputFiles(string $queryName): Finder
     {
         $finder = new Finder();
