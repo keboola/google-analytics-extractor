@@ -18,6 +18,7 @@ class Client
     public const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
     public const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
     public const REPORTS_PROPERTIES_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:runReport';
+    public const PAGE_SIZE = 5;
     private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
     private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
@@ -55,18 +56,18 @@ class Client
         return $body['items'] ?? [];
     }
 
-    public function getAccountProperties(): array
+    public function getAccountProperties(int $pageSize = self::PAGE_SIZE): array
     {
         $accountSummaries = [];
 
         do {
-            $url = sprintf('%s?pageSize=200', self::ACCOUNT_PROPERTIES_URL);
+            $url = sprintf('%s?pageSize=%d', self::ACCOUNT_PROPERTIES_URL, $pageSize);
             if (isset($body['nextPageToken'])) {
                 $url = sprintf('%s&pageToken=%s', $url, $body['nextPageToken']);
             }
             $response = $this->api->request($url);
+            return $response->getBody()->getContents();
             $body = json_decode($response->getBody()->getContents(), true);
-
             if (isset($body['accountSummaries'])) {
                 $accountSummaries[] = $body['accountSummaries'];
             }
