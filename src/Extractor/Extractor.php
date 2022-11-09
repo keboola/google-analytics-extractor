@@ -207,6 +207,7 @@ class Extractor
 
     public function getProfilesPropertiesAction(): array
     {
+        return $this->gaApi->getAccountProperties();
         $messages = [];
 
         try {
