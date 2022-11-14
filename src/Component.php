@@ -266,7 +266,7 @@ class Component extends BaseComponent
         ]);
 
         if ($e->getCode() === 400) {
-            throw new UserException($e->getMessage());
+            throw new UserException($e->getMessage() . $e->getResponse()->getBody());
         }
 
         if ($e->getCode() === 401) {
