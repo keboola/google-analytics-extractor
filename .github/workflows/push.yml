@@ -80,15 +80,15 @@ jobs:
       -
         name: Run tests
         run: |
-          docker run
-            -e CLIENT_ID
-            -e CLIENT_SECRET
-            -e ACCESS_TOKEN
-            -e REFRESH_TOKEN
-            -e VIEW_ID
-            -e KBC_URL
-            -e KBC_TOKEN
-            -e KBC_COMPONENTID
+          docker run \
+            -e CLIENT_ID \
+            -e CLIENT_SECRET \
+            -e ACCESS_TOKEN \
+            -e REFRESH_TOKEN \
+            -e VIEW_ID \
+            -e KBC_URL \
+            -e KBC_TOKEN \
+            -e KBC_COMPONENTID \
           $APP_IMAGE composer ci
 
   tests-in-kbc:

@@ -143,12 +143,7 @@ class Client
                 'body' => $body,
             ],
         ];
-        $this->logger->info('Sending Report request', $context);
-        $this->logger->critical('Sending Report request', $context);
-        $this->logger->warning('Sending Report request', $context);
         $this->logger->alert('Sending Report request', $context);
-        $this->logger->error('Sending Report request', $context);
-        $this->logger->notice('Sending Report request', $context);
 
         return $this->processResponseProperty($this->request('POST', $url, $body), $query);
     }
