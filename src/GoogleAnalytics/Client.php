@@ -136,7 +136,7 @@ class Client
 
         $body = $this->getPropertyReportRequest($query['query']);
 
-        $this->logger->debug(sprintf('Sending Report request'), [
+        $this->logger->info(sprintf('Sending Report request'), [
             'request' => [
                 'method' => 'POST',
                 'url' => $url,
