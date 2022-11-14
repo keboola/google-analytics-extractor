@@ -255,7 +255,7 @@ class Component extends BaseComponent
             throw new UserException($e->getMessage());
         }
 
-        $this->getLogger()->debug('Request failed', [
+        $this->getLogger()->error('Request failed', [
             'code' => $e->getCode(),
             'message' => $e->getMessage(),
             'response' => [
