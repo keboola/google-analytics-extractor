@@ -14,27 +14,111 @@ env:
   KBC_URL: "https://connection.keboola.com"
   KBC_TOKEN: ${{ secrets.KBC_TOKEN }}
   KBC_COMPONENTID: "keboola.ex-google-analytics-v4"
+
 jobs:
-  Build:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      app_image_tag: ${{ steps.tag.outputs.app_image_tag }}
+      is_semantic_tag: ${{ steps.tag.outputs.is_semantic_tag }}
+    steps:
+      -
+        name: Check out the repo
+        uses: actions/checkout@v3
+      -
+        name: Print Docker version
+        run: docker -v
+      -
+        name: Docker login
+        if: env.DOCKERHUB_TOKEN
+        run: docker login --username "$DOCKERHUB_USER" --password "$DOCKERHUB_TOKEN"
+      -
+        name: Build image
+        run: docker build -t $APP_IMAGE .
+      -
+        name: Set image tag
+        id: tag
+        run: |
+          TAG="${GITHUB_REF##*/}"
+          IS_SEMANTIC_TAG=$(echo "$TAG" | grep -q '^v\?[0-9]\+\.[0-9]\+\.[0-9]\+$' && echo true || echo false)
+          echo "Tag = '$TAG', is semantic tag = '$IS_SEMANTIC_TAG'"
+          echo "is_semantic_tag=$IS_SEMANTIC_TAG" >> $GITHUB_OUTPUT
+          echo "app_image_tag=$TAG" >> $GITHUB_OUTPUT
+      -
+        name: Push image to ECR
+        uses: keboola/action-push-to-ecr@master
+        with:
+          vendor: ${{ env.KBC_DEVELOPERPORTAL_VENDOR }}
+          app_id: ${{ env.KBC_DEVELOPERPORTAL_APP }}
+          username: ${{ env.KBC_DEVELOPERPORTAL_USERNAME }}
+          password: ${{ env.KBC_DEVELOPERPORTAL_PASSWORD }}
+          tag: ${{ steps.tag.outputs.app_image_tag }}
+          push_latest: ${{ steps.tag.outputs.is_semantic_tag }}
+          source_image: ${{ env.APP_IMAGE}}
+
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    # strategy:
+    #   fail-fast: false
+    #   matrix: ...
+    steps:
+      -
+        name: Check out the repo
+        uses: actions/checkout@v3
+      -
+        name: Pull image from ECR
+        uses: keboola/action-pull-from-ecr@master
+        with:
+          vendor: ${{ env.KBC_DEVELOPERPORTAL_VENDOR }}
+          app_id: ${{ env.KBC_DEVELOPERPORTAL_APP }}
+          username: ${{ env.KBC_DEVELOPERPORTAL_USERNAME }}
+          password: ${{ env.KBC_DEVELOPERPORTAL_PASSWORD }}
+          tag: ${{ needs.build.outputs.app_image_tag }}
+          target_image: ${{ env.APP_IMAGE}}
+          tag_as_latest: true
+      -
+        name: Run tests
+        run: |
+          docker run
+            -e CLIENT_ID
+            -e CLIENT_SECRET
+            -e ACCESS_TOKEN
+            -e REFRESH_TOKEN
+            -e VIEW_ID
+            -e KBC_URL
+            -e KBC_TOKEN
+            -e KBC_COMPONENTID
+          $APP_IMAGE composer ci
+
+  tests-in-kbc:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Print Docker version
-        run: |
-          docker -v
-      - name: Build image and run tests
-        run: |
-          docker build -t $APP_IMAGE .
-          docker run -e CLIENT_ID -e CLIENT_SECRET -e ACCESS_TOKEN -e REFRESH_TOKEN -e VIEW_ID -e KBC_URL -e KBC_TOKEN -e KBC_COMPONENTID $APP_IMAGE composer ci
-      - name: Push image to ECR
-        run: |
-           docker pull quay.io/keboola/developer-portal-cli-v2:latest
-           export REPOSITORY=`docker run --rm -e KBC_DEVELOPERPORTAL_USERNAME -e KBC_DEVELOPERPORTAL_PASSWORD -e KBC_DEVELOPERPORTAL_URL quay.io/keboola/developer-portal-cli-v2:latest ecr:get-repository $KBC_DEVELOPERPORTAL_VENDOR $KBC_DEVELOPERPORTAL_APP`
-           docker tag $APP_IMAGE:latest $REPOSITORY:test
-           eval $(docker run --rm -e KBC_DEVELOPERPORTAL_USERNAME -e KBC_DEVELOPERPORTAL_PASSWORD -e KBC_DEVELOPERPORTAL_URL quay.io/keboola/developer-portal-cli-v2:latest ecr:get-login $KBC_DEVELOPERPORTAL_VENDOR $KBC_DEVELOPERPORTAL_APP)
-           docker push $REPOSITORY:test
-           docker pull quay.io/keboola/syrup-cli:latest
-      - name: Deploy
-        if: startsWith(github.ref, 'refs/tags/')
-        run: ./deploy.sh
+      -
+        name: Run KBC test jobs
+        if: env.KBC_STORAGE_TOKEN && env.KBC_TEST_PROJECT_CONFIGS
+        uses: keboola/action-run-configs-parallel@master
+        with:
+          token: ${{ env.KBC_STORAGE_TOKEN }}
+          componentId: ${{ env.KBC_DEVELOPERPORTAL_APP }}
+          tag: ${{ needs.build.outputs.app_image_tag }}
+          configs: ${{ env.KBC_TEST_PROJECT_CONFIGS }}
+
+  deploy:
+    needs:
+      - build
+      - tests
+      - tests-in-kbc
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') && needs.build.outputs.is_semantic_tag == 'true'
+    steps:
+      -
+        name: Set tag in the Deloper Portal
+        uses: keboola/action-set-tag-developer-portal@master
+        with:
+          vendor: ${{ env.KBC_DEVELOPERPORTAL_VENDOR }}
+          app_id: ${{ env.KBC_DEVELOPERPORTAL_APP }}
+          username: ${{ env.KBC_DEVELOPERPORTAL_USERNAME }}
+          password: ${{ env.KBC_DEVELOPERPORTAL_PASSWORD }}
+          tag: ${{ needs.build.outputs.app_image_tag }}
