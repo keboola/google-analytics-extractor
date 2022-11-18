@@ -9,7 +9,7 @@
     "ext-json": "*",
     "keboola/common-exceptions": "^1.1",
     "keboola/csv": "^1.1",
-    "keboola/google-client-bundle": "^5.1",
+    "keboola/google-client-bundle": "^5.2",
     "keboola/php-component": "^8.1",
     "keboola/storage-api-client": "^12.9",
     "symfony/config": "^5.2",
