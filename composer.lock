@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c27144022a9839ff48fada422e11016c",
+    "content-hash": "d6b78dc7887e7a45bb217f3e576f005d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -489,16 +489,16 @@
         },
         {
             "name": "keboola/google-client-bundle",
-            "version": "5.2.0",
+            "version": "5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/google-client-bundle.git",
-                "reference": "92ec74762696e0788d6bff25aec5debc54806aa8"
+                "reference": "683a8ed521aec625eaa2d4cea6fd9adfb4247d35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/92ec74762696e0788d6bff25aec5debc54806aa8",
-                "reference": "92ec74762696e0788d6bff25aec5debc54806aa8",
+                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/683a8ed521aec625eaa2d4cea6fd9adfb4247d35",
+                "reference": "683a8ed521aec625eaa2d4cea6fd9adfb4247d35",
                 "shasum": ""
             },
             "require": {
@@ -538,9 +538,9 @@
             ],
             "support": {
                 "issues": "https://github.com/keboola/google-client-bundle/issues",
-                "source": "https://github.com/keboola/google-client-bundle/tree/5.2.0"
+                "source": "https://github.com/keboola/google-client-bundle/tree/5.3.0"
             },
-            "time": "2022-11-18T10:59:25+00:00"
+            "time": "2022-12-05T13:27:06+00:00"
         },
         {
             "name": "keboola/php-component",
