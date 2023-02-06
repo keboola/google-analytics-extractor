@@ -26,7 +26,7 @@ class AntisamplingPropertyTest extends ClientTest
             'query' => [
                 'metrics' => [
                     [
-                        'name' => 'screenPageViews',
+                        'name' => 'conversions',
                     ],
                 ],
                 'dimensions' => [
