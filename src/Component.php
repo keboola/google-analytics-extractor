@@ -236,6 +236,9 @@ class Component extends BaseComponent
     private function getGoogleRestApi(): RestApi
     {
         $tokenData = json_decode($this->getConfig()->getOAuthApiData(), true);
+        if (!isset($tokenData['access_token'], $tokenData['refresh_token'])) {
+            throw new ApplicationException('Token data are broken.');
+        }
 
         $client = new RestApi(
             $this->getConfig()->getOAuthApiAppKey(),
