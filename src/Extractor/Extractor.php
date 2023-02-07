@@ -372,8 +372,14 @@ class Extractor
 
     private function getErrorMessage(string $message): string
     {
-        preg_match('/"message": "([\w\W]+)"?/i', $message, $match);
-        $reason = trim($match[1]) ?? $message;
+        if (preg_match('/"message": "([\w\W]+)"?/i', $message, $match)) {
+            $reason = trim($match[1]) ?? $message;
+        } else {
+            $reason = $message;
+        }
+        if (strpos($reason, '401 Unauthorized') !== false) {
+            return 'Reason: Unauthorized. Please, try to reset authorization';
+        }
         if (strpos($reason, 'Google Analytics API has not been used') !== false) {
             return 'Please, enable "Google Analytics API" in your Developers Console.';
         }

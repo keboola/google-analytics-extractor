@@ -1,0 +1,14 @@
+{
+  "authorization": {
+    "oauth_api": {
+      "credentials": {
+        "appKey": "1025566943657-k9nvvskd1jbet47h0cuhmqktha05mf4s.apps.googleusercontent.com",
+        "#appSecret": "%env(string:CLIENT_SECRET)%",
+        "#data": "%env(string:CREDENTIALS_DATA)%"
+      }
+    }
+  },
+  "componentId": "keboola.ex-google-analytics-v4",
+  "action": "getProfilesProperties",
+  "branchId": null
+}
