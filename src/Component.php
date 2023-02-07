@@ -279,6 +279,7 @@ class Component extends BaseComponent
                     'You don\'t have access to Google Analytics resource. ' .
                     'Probably you don\'t have access to profile, or profile doesn\'t exists anymore.'
                 );
+                return;
             } else {
                 throw new UserException('Reason: ' . $e->getResponse()->getReasonPhrase(), 403, $e);
             }
