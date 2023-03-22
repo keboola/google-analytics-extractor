@@ -237,7 +237,7 @@ class Component extends BaseComponent
     {
         $tokenData = json_decode($this->getConfig()->getOAuthApiData(), true);
         if (!isset($tokenData['access_token'], $tokenData['refresh_token'])) {
-            throw new ApplicationException('Token data are broken.');
+            throw new UserException('The token data are broken. Please try to reauthorize.');
         }
 
         $client = new RestApi(
