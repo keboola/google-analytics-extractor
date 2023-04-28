@@ -40,6 +40,7 @@ class ConfigDefinition extends BaseConfigDefinition
             ->end()
             ->ignoreExtraKeys(true)
             ->children()
+                ->booleanNode('skipGenerateSystemTables')->defaultFalse()->end()
                 ->scalarNode('outputBucket')->isRequired()->cannotBeEmpty()->end()
                 ->integerNode('nonConflictPrimaryKey')
                     ->defaultValue(false)

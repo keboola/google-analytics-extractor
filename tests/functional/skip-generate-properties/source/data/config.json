@@ -1,0 +1,47 @@
+{
+  "authorization": {
+    "oauth_api": {
+      "credentials": {
+        "appKey": "%env(string:CLIENT_ID)%",
+        "#appSecret": "%env(string:CLIENT_SECRET)%",
+        "#data": "%env(string:CREDENTIALS_DATA)%"
+      }
+    }
+  },
+  "parameters": {
+    "skipGenerateSystemTables": true,
+    "outputBucket": "out.outputBucket",
+    "properties": [
+      {
+        "accountKey": "accounts/185283969",
+        "accountName": "Keboola",
+        "propertyKey": "properties/255885884",
+        "propertyName": "users"
+      }
+    ],
+    "endpoint": "data-api",
+    "outputTable": "users",
+    "query": {
+      "metrics": [
+        {
+          "name": "totalUsers"
+        },
+        {
+          "name": "itemViews"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "date"
+        }
+      ],
+      "filtersExpression": "",
+      "dateRanges": [
+        {
+          "startDate": "2024-04-01",
+          "endDate": "2024-04-20"
+        }
+      ]
+    }
+  }
+}

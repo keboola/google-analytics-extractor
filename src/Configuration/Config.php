@@ -36,6 +36,11 @@ class Config extends BaseConfig
         return $this->getValue(['parameters', 'properties']);
     }
 
+    public function skipGenerateSystemTables(): bool
+    {
+        return $this->getValue(['parameters', 'skipGenerateSystemTables'], false);
+    }
+
     public function getEndpoint(): string
     {
         return $this->getValue(['parameters', 'endpoint']);
