@@ -75,19 +75,21 @@ class Component extends BaseComponent
                 $this->getConfig()->getProfiles()
             );
 
-            $outTableManifestOptions = new OutTableManifestOptions();
-            $outTableManifestOptions
-                ->setDestination($this->getConfig()->getOutputBucket() . '.profiles')
-                ->setIncremental(true)
-                ->setPrimaryKeyColumns(['id']);
+            if (!$this->getConfig()->skipGenerateSystemTables()) {
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setDestination($this->getConfig()->getOutputBucket() . '.profiles')
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['id']);
 
-            $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
 
-            $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
-            $output->writeProfiles(
-                $output->createCsvFile('profiles'),
-                $this->getConfig()->getProfiles()
-            );
+                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $output->writeProfiles(
+                    $output->createCsvFile('profiles'),
+                    $this->getConfig()->getProfiles()
+                );
+            }
         }
 
         if ($this->getConfig()->processProperties($this->getConfigDefinitionClass())) {
@@ -98,19 +100,21 @@ class Component extends BaseComponent
                 iterator_to_array($validProperties)
             );
 
-            $outTableManifestOptions = new OutTableManifestOptions();
-            $outTableManifestOptions
-                ->setDestination($this->getConfig()->getOutputBucket() . '.properties')
-                ->setIncremental(true)
-                ->setPrimaryKeyColumns(['propertyKey']);
+            if (!$this->getConfig()->skipGenerateSystemTables()) {
+                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions
+                    ->setDestination($this->getConfig()->getOutputBucket() . '.properties')
+                    ->setIncremental(true)
+                    ->setPrimaryKeyColumns(['propertyKey']);
 
-            $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
 
-            $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
-            $output->writeProperties(
-                $output->createCsvFile('properties'),
-                $this->getConfig()->getProperties()
-            );
+                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $output->writeProperties(
+                    $output->createCsvFile('properties'),
+                    $this->getConfig()->getProperties()
+                );
+            }
         }
     }
 
