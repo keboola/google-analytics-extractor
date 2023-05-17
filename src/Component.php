@@ -6,6 +6,7 @@ namespace Keboola\GoogleAnalyticsExtractor;
 
 use DateTime;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
 use Keboola\Component\UserException;
@@ -298,6 +299,10 @@ class Component extends BaseComponent
 
         if ($e->getCode() === 429) {
             throw new UserException($e->getMessage());
+        }
+
+        if ($e instanceof ServerException && str_contains('internal_failure', (string) $e->getResponse()->getBody())) {
+            throw new UserException('Google API error: internal failure', 500, $e);
         }
 
         throw new ApplicationException((string) $e->getResponse()->getBody(), 500, $e);
