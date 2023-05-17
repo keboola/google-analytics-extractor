@@ -181,7 +181,7 @@ class Client
                 'Y-m-d',
                 (int) strtotime($this->getStartDate($query['query']['dateRanges'][0]['startDate']))
             ),
-            'end-date' => date('Y-m-d', strtotime($query['query']['dateRanges'][0]['endDate'])),
+            'end-date' => date('Y-m-d', (int) strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
             'dimensions' => implode(',', $dimensions),
             'samplingLevel' => $query['query']['samplingLevel'] ?? 'HIGHER_PRECISION',
@@ -211,7 +211,7 @@ class Client
         $query['dateRanges'] = array_map(function ($item) {
             return [
                 'startDate' => date('Y-m-d', (int) strtotime($this->getStartDate($item['startDate']))),
-                'endDate' => date('Y-m-d', strtotime($item['endDate'])),
+                'endDate' => date('Y-m-d', (int) strtotime($item['endDate'])),
             ];
         }, $query['dateRanges']);
 
@@ -236,7 +236,7 @@ class Client
             'dateRanges' => array_map(function ($item) {
                 return [
                     'startDate' => date('Y-m-d', (int) strtotime($this->getStartDate($item['startDate']))),
-                    'endDate' => date('Y-m-d', strtotime($item['endDate'])),
+                    'endDate' => date('Y-m-d', (int) strtotime($item['endDate'])),
                 ];
             }, $query['dateRanges']),
             'keepEmptyRows' => true,
