@@ -39,6 +39,7 @@ class Extractor
     public function getBackoffCallback403(): Closure
     {
         $falseReasons = [
+            'Forbidden',
             'insufficientPermissions',
             'dailyLimitExceeded',
             'usageLimits.userRateLimitExceededUnreg',
@@ -62,6 +63,7 @@ class Extractor
             $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
+            $downloadedProfiles = false;
             foreach ($profiles as $profile) {
                 $this->logger->info(sprintf('Profile "%s" export started.', $profile['id']));
                 $apiQuery = $query;
@@ -73,14 +75,15 @@ class Extractor
 
                 try {
                     $report = $this->getReport($apiQuery);
+                    $downloadedProfiles = true;
                 } catch (RequestException $e) {
                     if ($e->getCode() === 403 &&
                         $e->getResponse() instanceof ResponseInterface &&
                         strtolower($e->getResponse()->getReasonPhrase()) === 'forbidden'
                     ) {
                         $this->logger->warning(sprintf(
-                            "You don't have access to Google Analytics resource. 
-                        Probably you don't have access to profile (%s), or it doesn't exists anymore.",
+                            "You don't have access to Google Analytics resource. " .
+                            "Probably you don't have access to profile (%s), or it doesn't exists anymore.",
                             $profile['id']
                         ));
                         continue;
@@ -131,6 +134,10 @@ class Extractor
 
                 $status[$query['outputTable']][$profile['id']] = 'ok';
             }
+
+            if (!$downloadedProfiles) {
+                throw new UserException('No profiles were downloaded. Check job events.');
+            }
         }
 
         $usage = $this->output->getUsage();
@@ -155,6 +162,7 @@ class Extractor
             $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
+            $downloadedProperties = false;
             foreach ($properties as $property) {
                 $this->logger->info(sprintf('Property "%s" export started.', $property['propertyName']));
                 if (!empty($query['query']['viewId'])
@@ -167,6 +175,7 @@ class Extractor
                 $paginator->setProperty($property);
 
                 $report = $this->gaApi->getPropertyReport($apiQuery, $property);
+                $downloadedProperties = true;
 
                 if (empty($report)) {
                     continue;
@@ -193,6 +202,10 @@ class Extractor
                 $paginator->paginate($apiQuery, $report, $outputCsv);
 
                 $status[$query['outputTable']][$property['propertyKey']] = 'ok';
+            }
+
+            if (!$downloadedProperties) {
+                throw new UserException('No properties were downloaded. Check job events.');
             }
         }
         $usage = $this->output->getUsage();
