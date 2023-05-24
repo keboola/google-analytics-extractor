@@ -172,7 +172,7 @@ class Extractor
                     $this->logger->info('empty report');
                     continue;
                 }
-                $this->logger->info($query);
+                $this->logger->info(json_encode($query));
 
                 if (isset($query['antisampling']) && $query['antisampling'] === 'dailyWalk') {
                     if (!$this->hasDimension($query, 'date')
