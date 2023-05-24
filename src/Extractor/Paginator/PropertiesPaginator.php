@@ -49,7 +49,6 @@ class PropertiesPaginator implements IPaginator
         $localCounter = 0;
         do {
             $localCounter += $report['rowCount'];
-            $this->rowCounter += $report['rowCount'];
 
             // writer first result
             $propertyId = str_replace('properties/', '', $this->property['propertyKey']);
@@ -59,13 +58,13 @@ class PropertiesPaginator implements IPaginator
 
             // get next page if there's any
             $nextQuery = null;
-            if ($report['totals'] > $this->rowCounter) {
+            if ($report['totals'] > $localCounter) {
                 $nextQuery = $query;
-                $nextQuery['query']['offset'] = $this->rowCounter;
+                $nextQuery['query']['offset'] = $localCounter;
                 $report = $this->client->getPropertyReport($nextQuery, $this->property);
             }
 
             $query = $nextQuery;
-        } while ($report['totals'] > $this->rowCounter);
+        } while ($report['totals'] > $localCounter);
     }
 }
