@@ -244,7 +244,7 @@ class Client
             'dimensions' => $query['dimensions'],
             'metrics' => $query['metrics'],
             'offset' => $query['offset'] ?? 0,
-            'limit' => $query['maxResult'] ?? 5000,
+            'limit' => $query['maxResults'] ?? 5000,
         ];
     }
 
