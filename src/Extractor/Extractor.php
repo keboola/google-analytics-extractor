@@ -145,6 +145,7 @@ class Extractor
 
     public function runProperties(array $query, array $properties): array
     {
+        $this->logger->info(json_encode($query));
         $status = [];
         $paginator = new PropertiesPaginator($this->output, $this->gaApi, $this->logger);
 
