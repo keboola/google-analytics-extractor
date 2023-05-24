@@ -145,7 +145,7 @@ class Client
             ])
         ));
 
-        return $this->processResponseProperty($this->request('POST', $url, $body), $query);
+        return $this->processResponseProperty($this->request('POST', $url, $body), $body);
     }
 
     public function getReports(array $query): array
