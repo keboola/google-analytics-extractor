@@ -169,8 +169,10 @@ class Extractor
                 $report = $this->gaApi->getPropertyReport($apiQuery, $property);
 
                 if (empty($report)) {
+                    $this->logger->info('empty report');
                     continue;
                 }
+                $this->logger->info($query);
 
                 if (isset($query['antisampling']) && $query['antisampling'] === 'dailyWalk') {
                     if (!$this->hasDimension($query, 'date')
