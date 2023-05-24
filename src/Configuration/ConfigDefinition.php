@@ -28,6 +28,15 @@ class ConfigDefinition extends BaseConfigDefinition
                         if (count($filteredDateRanges) > 1) {
                             throw new InvalidConfigurationException('Cannot set "lastrun" Date Range more than once.');
                         }
+                        $item['query']['dateRanges'] = array_map(function ($v) {
+                            if ($v['startDate'] !== Config::STATE_LAST_RUN_DATE) {
+                                $start = new \DateTime($v['startDate']);
+                                $end = new \DateTime($v['endDate']);
+                                $v['startDate'] = $start->format('Y-m-d');
+                                $v['endDate'] = $end->format('Y-m-d');
+                            }
+                            return $v;
+                        }, $item['query']['dateRanges']);
                     }
                     if (!empty($item['query']['segments'])) {
                         $dimensions = array_map(fn($v) => $v['name'], $item['query']['dimensions']);
