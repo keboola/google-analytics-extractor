@@ -1,0 +1,1 @@
+{"destination":"out.outputBucket.users","incremental":true,"primary_key":["id"]}
