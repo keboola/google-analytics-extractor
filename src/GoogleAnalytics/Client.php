@@ -232,7 +232,7 @@ class Client
 
     private function getPropertyReportRequest(array $query): array
     {
-        return [
+        $request = [
             'dateRanges' => array_map(function ($item) {
                 return [
                     'startDate' => date('Y-m-d', (int) strtotime($this->getStartDate($item['startDate']))),
@@ -245,6 +245,20 @@ class Client
             'offset' => $query['offset'] ?? 0,
             'limit' => $query['maxResults'] ?? 5000,
         ];
+
+        if (!empty($query['dimensionFilter']) &&
+            in_array($query['dimensionFilter']['filter']['fieldName'], $request['dimensions'])
+        ) {
+            $request['dimensionFilter'] = $query['dimensionFilter'];
+        }
+
+        if (!empty($query['metricFilter']) &&
+            in_array($query['metricFilter']['filter']['fieldName'], $request['metrics'])
+        ) {
+            $request['metricFilter'] = $query['metricFilter'];
+        }
+
+        return $request;
     }
 
     private function processResponseProperty(array $response, array $query): array
