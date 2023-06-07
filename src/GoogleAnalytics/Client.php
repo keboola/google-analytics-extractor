@@ -246,14 +246,16 @@ class Client
             'limit' => $query['maxResults'] ?? 5000,
         ];
 
+        $dimensionsList = array_map(fn($v) => $v['name'], $request['dimensions']);
         if (!empty($query['dimensionFilter']) &&
-            in_array($query['dimensionFilter']['filter']['fieldName'], $request['dimensions'])
+            in_array($query['dimensionFilter']['filter']['fieldName'], $dimensionsList)
         ) {
             $request['dimensionFilter'] = $query['dimensionFilter'];
         }
 
+        $metricsList = array_map(fn($v) => $v['name'], $request['metrics']);
         if (!empty($query['metricFilter']) &&
-            in_array($query['metricFilter']['filter']['fieldName'], $request['metrics'])
+            in_array($query['metricFilter']['filter']['fieldName'], $metricsList)
         ) {
             $request['metricFilter'] = $query['metricFilter'];
         }
