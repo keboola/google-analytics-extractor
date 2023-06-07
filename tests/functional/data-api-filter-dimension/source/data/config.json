@@ -1,0 +1,60 @@
+{
+  "authorization": {
+    "oauth_api": {
+      "credentials": {
+        "appKey": "%env(string:CLIENT_ID)%",
+        "#appSecret": "%env(string:CLIENT_SECRET)%",
+        "#data": "%env(string:CREDENTIALS_DATA)%"
+      }
+    }
+  },
+  "parameters": {
+    "outputBucket": "in.c-ex-google-analytics-cfg",
+    "retriesCount": 1,
+    "properties": [
+      {
+        "accountKey": "accounts/185283969",
+        "accountName": "Keboola",
+        "propertyKey": "properties/255885884",
+        "propertyName": "users"
+      }
+    ],
+    "outputTable": "users",
+    "endpoint": "data-api",
+    "query": {
+      "metrics": [
+        {
+          "name": "totalUsers"
+        },
+        {
+          "name": "itemViews"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "date"
+        },
+        {
+          "name": "dayOfWeek"
+        }
+      ],
+      "dimensionFilter": {
+        "filter": {
+          "fieldName": "dayOfWeek",
+          "inListFilter": {
+            "values": [
+              "2", "3"
+            ]
+          }
+        }
+      },
+      "filtersExpression": "",
+      "dateRanges": [
+        {
+          "startDate": "-3 months",
+          "endDate": "-1 day"
+        }
+      ]
+    }
+  }
+}
