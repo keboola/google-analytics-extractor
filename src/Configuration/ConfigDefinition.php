@@ -115,6 +115,8 @@ class ConfigDefinition extends BaseConfigDefinition
                                 ->end()
                             ->end()
                         ->end()
+                        ->arrayNode('metricFilter')->ignoreExtraKeys(false)->children()->end()->end()
+                        ->arrayNode('dimensionFilter')->ignoreExtraKeys(false)->children()->end()->end()
                         ->arrayNode('dimensions')
                             ->prototype('array')
                                 ->children()
