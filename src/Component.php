@@ -273,8 +273,9 @@ class Component extends BaseComponent
             ],
         ]);
 
+        $response = (string) $e->getResponse()->getBody();
         if ($e->getCode() === 400) {
-            throw new UserException($e->getMessage());
+            throw new UserException($response !== '' ? $response : $e->getMessage());
         }
 
         if ($e->getCode() === 401) {
@@ -301,10 +302,10 @@ class Component extends BaseComponent
             throw new UserException($e->getMessage());
         }
 
-        if ($e instanceof ServerException && str_contains('internal_failure', (string) $e->getResponse()->getBody())) {
+        if ($e instanceof ServerException && str_contains('internal_failure', $response)) {
             throw new UserException('Google API error: internal failure', 500, $e);
         }
 
-        throw new ApplicationException((string) $e->getResponse()->getBody(), 500, $e);
+        throw new ApplicationException($response, 500, $e);
     }
 }
