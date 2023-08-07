@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bda8af8a3e868e0a334108d5847e75ad",
+    "content-hash": "04e2d3af2af89e94a5137e23e92def5f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -528,16 +528,16 @@
         },
         {
             "name": "keboola/google-client-bundle",
-            "version": "dev-adamvyborny-CM-649-retry-on-400",
+            "version": "5.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/google-client-bundle.git",
-                "reference": "16e6646f0d1ab347a385c8ace673e278e4128bef"
+                "reference": "94fe967213b49216be9671be58a37f15240b51fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/16e6646f0d1ab347a385c8ace673e278e4128bef",
-                "reference": "16e6646f0d1ab347a385c8ace673e278e4128bef",
+                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/94fe967213b49216be9671be58a37f15240b51fc",
+                "reference": "94fe967213b49216be9671be58a37f15240b51fc",
                 "shasum": ""
             },
             "require": {
@@ -577,9 +577,9 @@
             ],
             "support": {
                 "issues": "https://github.com/keboola/google-client-bundle/issues",
-                "source": "https://github.com/keboola/google-client-bundle/tree/adamvyborny-CM-649-retry-on-400"
+                "source": "https://github.com/keboola/google-client-bundle/tree/5.4.1"
             },
-            "time": "2023-08-04T12:13:15+00:00"
+            "time": "2023-08-07T13:02:46+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -4471,9 +4471,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keboola/google-client-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
