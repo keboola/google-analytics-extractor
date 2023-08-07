@@ -49,8 +49,8 @@
       "filtersExpression": "",
       "dateRanges": [
         {
-          "startDate": "-3 months",
-          "endDate": "-1 day"
+          "startDate": "2023-03-07",
+          "endDate": "2023-06-06"
         }
       ]
     }
