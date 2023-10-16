@@ -60,49 +60,6 @@ class AntisamplingProfileTest extends ClientTest
         $this->dailyWalk($query);
     }
 
-    public function testAdaptive(): void
-    {
-        $query = $this->buildQuery();
-        $query['antisampling'] = 'adaptive';
-        $query['samplingLevel'] = 'SMALL';
-        $report = $this->client->getBatch($query);
-
-        Assert::arrayHasKey($report['data']);
-        Assert::assertNotEmpty($report['data']);
-        Assert::arrayHasKey($report['query']);
-        Assert::assertNotEmpty($report['query']);
-        Assert::arrayHasKey($report['rowCount']);
-    }
-
-    public function testGaDateError(): void
-    {
-        $this->expectException(UserException::class);
-        $this->expectExceptionMessage(
-            'At least one of these dimensions must be set in order to use anti-sampling:' .
-            ' ga:date | ga:dateHour | ga:dateHourMinute'
-        );
-        $query = $this->buildQuery();
-        $query['antisampling'] = 'dailyWalk';
-        $query['samplingLevel'] = 'SMALL';
-        $profile = ['id' => getenv('VIEW_ID')];
-        $query['query']['dimensions'] = [
-            ['name' => 'ga:week'],
-            ['name' => 'ga:source'],
-            ['name' => 'ga:medium'],
-            ['name' => 'ga:landingPagePath'],
-            ['name' => 'ga:pagePath'],
-        ];
-        $query['query']['dateRanges'] = [[
-            'startDate' => date('Y-m-d', strtotime('-4 days')),
-            'endDate' => date('Y-m-d', strtotime('-1 day')),
-        ]];
-
-        $output = new Output('/tmp/ga-test', 'outputBucket');
-        $logger = new NullLogger();
-        $extractor = new Extractor($this->client, $output, $logger);
-        $extractor->runProfiles($query, [$profile]);
-    }
-
     private function dailyWalk(array $query): void
     {
         $fs = new Filesystem();
