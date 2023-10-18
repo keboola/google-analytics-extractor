@@ -294,6 +294,14 @@ class Component extends BaseComponent
             }
         }
 
+        if ($e->getCode() === 502) {
+            throw new UserException(
+                'Google API is temporary unavailable. Please try again later.',
+                502,
+                $e
+            );
+        }
+
         if ($e->getCode() === 503) {
             throw new UserException('Google API error: ' . $e->getMessage(), 503, $e);
         }
