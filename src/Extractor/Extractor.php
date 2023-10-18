@@ -404,4 +404,31 @@ class Extractor
             $reason
         );
     }
+
+    public function getPropertiesMetadata(array $properties, ?string $viewId = null): array
+    {
+        $metadata = [
+            'dimensions' => [],
+            'metrics' => [],
+        ];
+        foreach ($properties as $property) {
+            if ($viewId && $property['propertyKey'] !== $viewId) {
+                continue;
+            }
+            $propertyMetadata = $this->gaApi->getPropertyMetadata($property['propertyKey']);
+            foreach (['dimensions', 'metrics'] as $type) {
+                $metadataTypeExists = array_map(fn(array $item) => $item['apiName'], $metadata[$type]);
+                $propertyMetadataType = $propertyMetadata[$type];
+
+                $propertyMetadataType = array_filter($propertyMetadataType, function ($item) use ($metadataTypeExists) {
+                    if (in_array($item['apiName'], $metadataTypeExists)) {
+                        return false;
+                    }
+                    return true;
+                });
+                $metadata[$type] = array_merge($propertyMetadataType, $metadata[$type]);
+            }
+        }
+        return $metadata;
+    }
 }

@@ -15,7 +15,6 @@ class DatadirTest extends DatadirTestCase
             'access_token' => getenv('ACCESS_TOKEN'),
             'refresh_token' => getenv('REFRESH_TOKEN'),
         ];
-
         putenv(sprintf(
             'CREDENTIALS_DATA=%s',
             json_encode($credentialsData)

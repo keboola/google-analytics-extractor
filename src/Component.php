@@ -29,6 +29,7 @@ class Component extends BaseComponent
     private const ACTION_SEGMENTS = 'segments';
     private const ACTION_CUSTOM_METRICS = 'customMetrics';
     private const ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
+    private const ACTION_GET_PROPERTIES_METADATA = 'getPropertiesMetadata';
 
     public function getConfig(): Config
     {
@@ -192,6 +193,21 @@ class Component extends BaseComponent
         return $result;
     }
 
+    protected function getPropertiesMetadata(): array
+    {
+        $properties = $this->getConfig()->getProperties();
+        $viewId = $this->getConfig()->getQuery()['viewId'] ?? null;
+
+        $result = [];
+        try {
+            $result = $this->getExtractor()->getPropertiesMetadata($properties, $viewId);
+        } catch (RequestException $e) {
+            $this->handleException($e);
+        }
+
+        return $result;
+    }
+
     protected function getProfilesPropertiesAction(): array
     {
         return $this->getExtractor()->getProfilesPropertiesAction();
@@ -222,6 +238,7 @@ class Component extends BaseComponent
     {
         return [
             self::ACTION_GET_PROFILES_PROPERTIES => 'getProfilesPropertiesAction',
+            self::ACTION_GET_PROPERTIES_METADATA => 'getPropertiesMetadata',
             self::ACTION_SAMPLE => 'runSampleAction',
             self::ACTION_SAMPLE_JSON => 'runSampleJsonAction',
             self::ACTION_SEGMENTS => 'runSegmentsAction',

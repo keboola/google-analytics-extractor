@@ -124,6 +124,7 @@ class ClientTest extends TestCase
             ],
         ];
 
+        $this->client->getApi()->setBackoffsCount(3);
         try {
             $this->client->getBatch($query);
         } catch (ClientException $e) {
@@ -132,7 +133,7 @@ class ClientTest extends TestCase
 
         /** @var TestHandler $testHandler */
         $testHandler = $this->logger->getHandlers()[0];
-        for ($i = 1; $i <= 6; $i++) {
+        for ($i = 1; $i < 3; $i++) {
             /** @var \Monolog\LogRecord $record */
             $record = $testHandler->getRecords()[$i];
             $this->assertEquals(

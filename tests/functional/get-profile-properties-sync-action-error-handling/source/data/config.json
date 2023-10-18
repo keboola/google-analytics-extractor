@@ -4,7 +4,7 @@
       "credentials": {
         "appKey": "1025566943657-k9nvvskd1jbet47h0cuhmqktha05mf4s.apps.googleusercontent.com",
         "#appSecret": "%env(string:CLIENT_SECRET)%",
-        "#data": "%env(string:CREDENTIALS_DATA)%"
+        "#data": "{\"access_token\": \"invalid_access_token\", \"refresh_token\": \"invalid_refresh_token\"}"
       }
     }
   },
