@@ -22,6 +22,7 @@ class Client
     private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
     private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
     private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
+    private const PROPERTY_METADATA_URL = 'https://analyticsdata.googleapis.com/v1beta/%s/metadata';
     /** @phpcs:enable */
 
     protected GoogleApi $api;
@@ -74,6 +75,14 @@ class Client
         } while (isset($body['nextPageToken']));
 
         return array_filter(array_merge([], ...$accountSummaries), fn(array $v) => isset($v['propertySummaries']));
+    }
+
+    public function getPropertyMetadata(string $propertyId): array
+    {
+        $url = sprintf(self::PROPERTY_METADATA_URL, $propertyId);
+        $response = $this->api->request($url);
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     public function getAccounts(): array
