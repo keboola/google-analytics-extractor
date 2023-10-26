@@ -14,6 +14,7 @@ use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigGetProfilesPropertiesDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\ConfigGetPropertiesMetadataDefinition;
 use Keboola\GoogleAnalyticsExtractor\Configuration\MigrateConfiguration;
 use Keboola\GoogleAnalyticsExtractor\Configuration\OldConfigDefinition;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
@@ -225,6 +226,8 @@ class Component extends BaseComponent
         switch ($action) {
             case self::ACTION_GET_PROFILES_PROPERTIES:
                 return ConfigGetProfilesPropertiesDefinition::class;
+            case self::ACTION_GET_PROPERTIES_METADATA:
+                return ConfigGetPropertiesMetadataDefinition::class;
             default:
                 $config = $this->getRawConfig();
                 if (array_key_exists('queries', $config['parameters'])) {
