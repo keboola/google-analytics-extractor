@@ -9,9 +9,6 @@
     }
   },
   "parameters": {
-    "outputBucket": "in.c-ex-google-analytics-cfg",
-    "outputTable": "test",
-    "retriesCount": 1,
     "properties": [
       {
         "accountKey": "accounts/185283969",
