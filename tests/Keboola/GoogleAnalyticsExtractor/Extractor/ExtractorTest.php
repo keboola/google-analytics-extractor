@@ -199,7 +199,7 @@ class ExtractorTest extends TestCase
             ->with($this->logicalOr(
                 sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
-                Client::ACCOUNT_PROFILES_URL,
+                sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNTS_URL
             ))
             ->will($this->returnCallback(array($this, 'returnMockServerRequest')))
@@ -257,8 +257,8 @@ class ExtractorTest extends TestCase
             ->method('request')
             ->with($this->logicalOr(
                 sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
+                sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
-                Client::ACCOUNT_PROFILES_URL,
                 Client::ACCOUNTS_URL
             ))
             ->will($this->returnCallback(array($this, 'returnMockServerRequestEmptyResponse')))
