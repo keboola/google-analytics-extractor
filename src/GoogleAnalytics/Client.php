@@ -99,11 +99,22 @@ class Client
         return $body['items'] ?? [];
     }
 
-    public function getAccountProfiles(): array
+    public function getAccountProfiles(int $pageSize = self::PAGE_SIZE): array
     {
-        $response = $this->api->request(self::ACCOUNT_PROFILES_URL);
-        $body = json_decode($response->getBody()->getContents(), true);
-        return $body['items'] ?? [];
+        $items = [];
+        do {
+            $url = sprintf('%s?max-results=%d', self::ACCOUNT_PROFILES_URL, $pageSize);
+            if (isset($body['nextLink'])) {
+                $url = $body['nextLink'];
+            }
+            $response = $this->api->request($url);
+            $body = json_decode($response->getBody()->getContents(), true);
+            if (isset($body['items'])) {
+                $items[] = $body['items'];
+            }
+        } while (isset($body['nextLink']));
+
+        return array_merge([], ...$items);
     }
 
     public function getCustomMetrics(int $accountId, string $webPropertyId): array
