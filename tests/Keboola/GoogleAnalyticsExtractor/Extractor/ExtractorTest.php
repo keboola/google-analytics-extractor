@@ -366,7 +366,7 @@ class ExtractorTest extends TestCase
                     [],
                     '{"accountSummaries":[{"name":"accountSummaries/128209249","account":"accounts/128209249","displayName":"Keboola Website"},{"name":"accountSummaries/185283969","account":"accounts/185283969","displayName":"Ondřej Jodas","propertySummaries":[{"property":"properties/255885884","displayName":"users"}]},{"name":"accountSummaries/52541130","account":"accounts/52541130","displayName":"Keboola Status Blog"}]}'
                 );
-            case Client::ACCOUNT_PROFILES_URL:
+            case sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE):
                 return new Response(
                     200,
                     [],
