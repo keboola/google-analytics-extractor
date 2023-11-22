@@ -437,7 +437,7 @@ class Client
     public function getStartDate(string $startDate): string
     {
         if ($startDate === Config::STATE_LAST_RUN_DATE) {
-            $startDate = $this->inputState[Config::STATE_LAST_RUN_DATE] ?? '2005-01-01';
+            $startDate = $this->inputState[Config::STATE_LAST_RUN_DATE] ?? '2015-08-13';
         }
         return $startDate;
     }
