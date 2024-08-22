@@ -181,7 +181,11 @@ class ApplicationTest extends TestCase
     public function testAppCustomMetrics(): void
     {
         $this->config['action'] = 'customMetrics';
-        $result = json_decode($this->runProcess()->getOutput(), true);
+        $result = (array) json_decode(
+            $this->runProcess()->getOutput(),
+            true, 512,
+            JSON_THROW_ON_ERROR,
+        );
 
         Assert::assertArrayHasKey('status', $result);
         Assert::assertArrayHasKey('data', $result);
@@ -320,7 +324,7 @@ class ApplicationTest extends TestCase
         $usersManifestFiles = $this->getManifestFiles('users');
 
         $process = $this->runProcess();
-        $output = json_decode($process->getOutput(), true);
+        $output = (array) json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
 
         Assert::assertEquals(0, $process->getExitCode());
         Assert::assertEmpty($output['data']);
