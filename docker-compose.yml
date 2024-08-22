@@ -1,4 +1,3 @@
-version: "2"
 services:
   app: &main
     image: keboola/google-analytics-extractor
