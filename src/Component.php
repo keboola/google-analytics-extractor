@@ -25,12 +25,12 @@ use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Component extends BaseComponent
 {
-    private const ACTION_SAMPLE = 'sample';
-    private const ACTION_SAMPLE_JSON = 'sampleJson';
-    private const ACTION_SEGMENTS = 'segments';
-    private const ACTION_CUSTOM_METRICS = 'customMetrics';
-    private const ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
-    private const ACTION_GET_PROPERTIES_METADATA = 'getPropertiesMetadata';
+    private const string ACTION_SAMPLE = 'sample';
+    private const string ACTION_SAMPLE_JSON = 'sampleJson';
+    private const string ACTION_SEGMENTS = 'segments';
+    private const string ACTION_CUSTOM_METRICS = 'customMetrics';
+    private const string ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
+    private const string ACTION_GET_PROPERTIES_METADATA = 'getPropertiesMetadata';
 
     public function getConfig(): Config
     {

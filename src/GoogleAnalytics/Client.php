@@ -13,17 +13,17 @@ use Psr\Log\LoggerInterface;
 class Client
 {
     /** @phpcs:disable */
-    public const ACCOUNT_PROPERTIES_URL = 'https://analyticsadmin.googleapis.com/v1alpha/accountSummaries';
-    public const ACCOUNT_WEB_PROPERTIES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/';
-    public const ACCOUNT_PROFILES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/~all/profiles';
-    public const ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
-    public const REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
-    public const REPORTS_PROPERTIES_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:runReport';
-    public const PAGE_SIZE = 200;
-    private const MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
-    private const SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
-    private const CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
-    private const PROPERTY_METADATA_URL = 'https://analyticsdata.googleapis.com/v1beta/%s/metadata';
+    public const string ACCOUNT_PROPERTIES_URL = 'https://analyticsadmin.googleapis.com/v1alpha/accountSummaries';
+    public const string ACCOUNT_WEB_PROPERTIES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/';
+    public const string ACCOUNT_PROFILES_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/~all/webproperties/~all/profiles';
+    public const string ACCOUNTS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts';
+    public const string REPORTS_URL = 'https://analyticsreporting.googleapis.com/v4/reports:batchGet';
+    public const string REPORTS_PROPERTIES_URL = 'https://analyticsdata.googleapis.com/v1beta/%s:runReport';
+    public const int PAGE_SIZE = 200;
+    private const string MCF_URL = 'https://www.googleapis.com/analytics/v3/data/mcf';
+    private const string SEGMENTS_URL = 'https://www.googleapis.com/analytics/v3/management/segments';
+    private const string CUSTOM_METRICS_URL = 'https://www.googleapis.com/analytics/v3/management/accounts/%s/webproperties/%s/customMetrics';
+    private const string PROPERTY_METADATA_URL = 'https://analyticsdata.googleapis.com/v1beta/%s/metadata';
     /** @phpcs:enable */
 
     protected GoogleApi $api;
