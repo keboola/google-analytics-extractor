@@ -1,68 +1,85 @@
 {
-  "name": "keboola/google-analytics-extractor",
-  "license": "MIT",
-  "type": "project",
-  "description": "Keboola Google Analytics Extractor",
-  "keywords": ["keboola", "google", "analytics", "extractor"],
-  "require": {
-    "php": "^8.3",
-    "ext-json": "*",
-    "keboola/common-exceptions": "^1.1",
-    "keboola/csv": "^1.1",
-    "keboola/google-client-bundle": "^5.4",
-    "keboola/php-component": "^10.1",
-    "keboola/storage-api-client": "^12.9",
-    "symfony/config": "^5.2",
-    "symfony/finder": "^5.2",
-    "symfony/process": "^5.2"
-  },
-  "require-dev": {
-    "keboola/coding-standard": "^15.0",
-    "keboola/datadir-tests": "^5.3",
-    "php-parallel-lint/php-parallel-lint": "^1.2",
-    "phpstan/phpstan": "^1.11",
-    "phpunit/phpunit": "^9.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "Keboola\\GoogleAnalyticsExtractor\\": "src/",
-      "Keboola\\": ["src/Keboola/", "tests/Keboola/"]
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Keboola\\GoogleAnalyticsExtractor\\Tests\\": "tests/phpunit/",
-      "Keboola\\GoogleAnalyticsExtractor\\Functional\\": "tests/functional/"
-    }
-  },
-  "scripts": {
-    "tests-phpunit": "phpunit",
-    "tests-datadir": "phpunit tests/functional",
-    "tests": [
-      "@tests-phpunit",
-      "@tests-datadir"
+    "name": "keboola/google-analytics-extractor",
+    "license": "MIT",
+    "type": "project",
+    "description": "Keboola Google Analytics Extractor",
+    "keywords": [
+        "keboola",
+        "google",
+        "analytics",
+        "extractor"
     ],
-
-    "phpstan": "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon",
-    "phpcs": "phpcs -n --ignore=vendor --extensions=php .",
-    "phpcbf": "phpcbf -n --ignore=vendor --extensions=php .",
-    "phplint": "parallel-lint -j 10 --exclude vendor .",
-    "build": [
-      "@phplint",
-      "@phpcs",
-      "@phpstan",
-      "@tests"
-    ],
-    "ci": [
-      "@composer validate --no-check-publish --no-check-all",
-      "@build"
-    ]
-  },
-  "config": {
-    "sort-packages": true,
-    "optimize-autoloader": true,
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true
+    "require": {
+        "php": "^8.3",
+        "ext-json": "*",
+        "keboola/common-exceptions": "^1.1",
+        "keboola/csv": "^1.1",
+        "keboola/google-client-bundle": "^5.4",
+        "keboola/php-component": "^10.1",
+        "keboola/storage-api-client": "^12.9",
+        "symfony/config": "^5.2",
+        "symfony/finder": "^5.2",
+        "symfony/process": "^5.2"
+    },
+    "require-dev": {
+        "cweagans/composer-patches": "^1.7",
+        "keboola/coding-standard": "^15.0",
+        "keboola/datadir-tests": "^5.3",
+        "php-parallel-lint/php-parallel-lint": "^1.2",
+        "phpstan/phpstan": "^1.11",
+        "phpunit/phpunit": "^9.5",
+        "symplify/vendor-patches": "^11.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Keboola\\GoogleAnalyticsExtractor\\": "src/",
+            "Keboola\\": [
+                "src/Keboola/",
+                "tests/Keboola/"
+            ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Keboola\\GoogleAnalyticsExtractor\\Tests\\": "tests/phpunit/",
+            "Keboola\\GoogleAnalyticsExtractor\\Functional\\": "tests/functional/"
+        }
+    },
+    "scripts": {
+        "tests-phpunit": "phpunit",
+        "tests-datadir": "phpunit tests/functional",
+        "tests": [
+            "@tests-phpunit",
+            "@tests-datadir"
+        ],
+        "phpstan": "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon",
+        "phpcs": "phpcs -n --ignore=vendor --extensions=php .",
+        "phpcbf": "phpcbf -n --ignore=vendor --extensions=php .",
+        "phplint": "parallel-lint -j 10 --exclude vendor .",
+        "build": [
+            "@phplint",
+            "@phpcs",
+            "@phpstan",
+            "@tests"
+        ],
+        "ci": [
+            "@composer validate --no-check-publish --no-check-all",
+            "@build"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "cweagans/composer-patches": true
+        }
+    },
+    "extra": {
+        "patches": {
+            "keboola/csv": [
+                "patches/keboola-csv-src-keboola-csv-csvfile-php.patch"
+            ]
+        }
     }
-  }
 }

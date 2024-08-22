@@ -9,6 +9,7 @@ WORKDIR /code/
 
 COPY docker/php-prod.ini /usr/local/etc/php/php.ini
 COPY docker/composer-install.sh /tmp/composer-install.sh
+COPY patches /code/patches
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         locales \

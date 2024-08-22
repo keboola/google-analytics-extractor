@@ -1,0 +1,50 @@
+--- /dev/null
++++ ../src/Keboola/Csv/CsvFile.php
+@@ -209,7 +209,8 @@
+ 	 * @link http://php.net/manual/en/iterator.current.php
+ 	 * @return mixed Can return any type.
+ 	 */
+-	public function current()
++    #[\ReturnTypeWillChange]
++    public function current()
+ 	{
+ 		return $this->_currentRow;
+ 	}
+@@ -220,7 +221,8 @@
+ 	 * @link http://php.net/manual/en/iterator.next.php
+ 	 * @return void Any returned value is ignored.
+ 	 */
+-	public function next()
++    #[\ReturnTypeWillChange]
++    public function next()
+ 	{
+ 		$this->_currentRow = $this->_readLine();
+ 		$this->_rowCounter++;
+@@ -233,7 +235,8 @@
+ 	 * @return scalar scalar on success, integer
+ 	 * 0 on failure.
+ 	 */
+-	public function key()
++    #[\ReturnTypeWillChange]
++    public function key()
+ 	{
+ 		return $this->_rowCounter;
+ 	}
+@@ -245,7 +248,8 @@
+ 	 * @return boolean The return value will be casted to boolean and then evaluated.
+ 	 * Returns true on success or false on failure.
+ 	 */
+-	public function valid()
++    #[\ReturnTypeWillChange]
++    public function valid()
+ 	{
+ 		return $this->_currentRow !== false;
+ 	}
+@@ -256,6 +260,7 @@
+ 	 * @link http://php.net/manual/en/iterator.rewind.php
+ 	 * @return void Any returned value is ignored.
+ 	 */
++    #[\ReturnTypeWillChange]
+ 	public function rewind()
+ 	{
+ 		rewind($this->_getFilePointer());
