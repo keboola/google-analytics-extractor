@@ -1,5 +1,7 @@
+includes:
+	- phpstan-baseline.neon
+
 parameters:
-    checkMissingIterableValueType: false
     ignoreErrors:
         - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition\:\:ignoreExtraKeys\(\).#'
         - '#Cannot call method integerNode\(\) on Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface\|null\.#'

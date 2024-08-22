@@ -1,0 +1,1041 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to method setDestination\\(\\) on an unknown class Keboola\\\\Component\\\\Manifest\\\\ManifestManager\\\\Options\\\\OutTableManifestOptions\\.$#"
+			count: 2
+			path: src/Component.php
+
+		-
+			message: "#^Cannot access offset 'access_token' on mixed\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Cannot access offset 'refresh_token' on mixed\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Instantiated class Keboola\\\\Component\\\\Manifest\\\\ManifestManager\\\\Options\\\\OutTableManifestOptions not found\\.$#"
+			count: 2
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:getProfilesPropertiesAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:getPropertiesMetadata\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:getSyncActions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:runCustomMetricsAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:runQuery\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:runSampleAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:runSampleJsonAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Component\\:\\:runSegmentsAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Parameter \\#1 \\$json of function json_decode expects string, mixed given\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Parameter \\#2 \\$options of method Keboola\\\\Component\\\\Manifest\\\\ManifestManager\\:\\:writeTableManifest\\(\\) expects Keboola\\\\Component\\\\Manifest\\\\ManifestManager\\\\Options\\\\OutTable\\\\ManifestOptions, Keboola\\\\Component\\\\Manifest\\\\ManifestManager\\\\Options\\\\OutTableManifestOptions given\\.$#"
+			count: 2
+			path: src/Component.php
+
+		-
+			message: "#^Parameter \\#3 \\$accessToken of class Keboola\\\\Google\\\\ClientBundle\\\\Google\\\\RestApi constructor expects string, mixed given\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Parameter \\#4 \\$refreshToken of class Keboola\\\\Google\\\\ClientBundle\\\\Google\\\\RestApi constructor expects string, mixed given\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
+			message: "#^Cannot access offset 'enabled' on mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Cannot cast mixed to int\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getEndpoint\\(\\) should return string but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getLastRunState\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getNonConflictPrimaryKey\\(\\) should return bool but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getOutputBucket\\(\\) should return string but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getProfiles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getProfiles\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getProperties\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getQueries\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getQuery\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:getQuery\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\Config\\:\\:skipGenerateSystemTables\\(\\) should return bool but returns mixed\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Parameter \\#1 \\$array of function array_filter expects array, mixed given\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(callable\\(mixed\\)\\: bool\\)\\|null, Closure\\(mixed\\)\\: mixed given\\.$#"
+			count: 1
+			path: src/Configuration/Config.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Exception\\\\ApplicationException\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Exception\\\\ApplicationException\\:\\:getData\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Exception\\\\ApplicationException\\:\\:setData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Exception\\\\ApplicationException\\:\\:\\$data type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Exception/ApplicationException.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:adaptive\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:adaptive\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:dailyWalk\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getDateRange\\(\\) has parameter \\$dates with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getDateRange\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getDateRangeBuckets\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getDateRangeBuckets\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getDateRangeBuckets\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getRunningTotal\\(\\) has parameter \\$array with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:getRunningTotal\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:split\\(\\) has parameter \\$factor with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:split\\(\\) has parameter \\$vector with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:split\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:writeReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProfile\\:\\:writeReport\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProfile.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:__construct\\(\\) has parameter \\$property with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:adaptive\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:adaptive\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:dailyWalk\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:writeReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:writeReport\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\AntisamplingProperty\\:\\:\\$property type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/AntisamplingProperty.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\IAntisampling\\:\\:adaptive\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/IAntisampling.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\IAntisampling\\:\\:adaptive\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/IAntisampling.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Antisampling\\\\IAntisampling\\:\\:dailyWalk\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Antisampling/IAntisampling.php
+
+		-
+			message: "#^Expression on left side of \\?\\? is not nullable\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getCustomMetrics\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getProfilesPropertiesAction\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getPropertiesMetadata\\(\\) has parameter \\$properties with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getPropertiesMetadata\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getReport\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getSampleReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getSampleReport\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getSampleReportJson\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getSampleReportJson\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:getSegments\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:hasDimension\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProfiles\\(\\) has parameter \\$profiles with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProfiles\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProfiles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProperties\\(\\) has parameter \\$properties with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProperties\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Extractor\\:\\:runProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Extractor.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:__construct\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createHeaderRowFromQuery\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createHeaderRowFromQuery\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createManifest\\(\\) has parameter \\$primaryKey with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createReportRow\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createSampleReportJson\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createSampleReportJson\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:createSampleReportJson\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:formatResultKeys\\(\\) has parameter \\$metricsOrDimensions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:formatResultKeys\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:getPrimaryKey\\(\\) has parameter \\$dimensions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:writeProfiles\\(\\) has parameter \\$profiles with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:writeProperties\\(\\) has parameter \\$properties with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:writeReport\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Output\\:\\:\\$options type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Output.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\IPaginator\\:\\:paginate\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/IPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\IPaginator\\:\\:paginate\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/IPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\ProfilesPaginator\\:\\:getStartIndex\\(\\) should return string but returns array\\|string\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/ProfilesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\ProfilesPaginator\\:\\:paginate\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/ProfilesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\ProfilesPaginator\\:\\:paginate\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/ProfilesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\PropertiesPaginator\\:\\:paginate\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/PropertiesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\PropertiesPaginator\\:\\:paginate\\(\\) has parameter \\$report with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/PropertiesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\PropertiesPaginator\\:\\:setProperty\\(\\) has parameter \\$property with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/PropertiesPaginator.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\PropertiesPaginator\\:\\:\\$property type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/PropertiesPaginator.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Paginator\\\\PropertiesPaginator\\:\\:\\$rowCounter is never read, only written\\.$#"
+			count: 1
+			path: src/Extractor/Paginator/PropertiesPaginator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Validator\\:\\:validateProfiles\\(\\) has parameter \\$configProfiles with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Validator.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\Validator\\:\\:validateProperties\\(\\) has parameter \\$configProperties with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Extractor/Validator.php
+
+		-
+			message: "#^Cannot access offset 'accountSummaries' on mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Cannot access offset 'items' on mixed\\.$#"
+			count: 5
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Cannot access offset 'nextLink' on mixed\\.$#"
+			count: 2
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Cannot access offset 'nextPageToken' on mixed\\.$#"
+			count: 2
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:__construct\\(\\) has parameter \\$inputState with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getAccountProfiles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getAccountProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getAccounts\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getAccounts\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getBatch\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getBatch\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getCustomMetrics\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getCustomMetrics\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getMCFReports\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getMCFReports\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyMetadata\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyMetadata\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyReport\\(\\) has parameter \\$property with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyReport\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyReport\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyReportRequest\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getPropertyReportRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getReportRequest\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getReportRequest\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getReports\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getReports\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getSegments\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getSegments\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getWebProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:getWebProperties\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:parseMCFValue\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponse\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponse\\(\\) has parameter \\$response with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponse\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseMCF\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseMCF\\(\\) has parameter \\$response with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseMCF\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseProperty\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseProperty\\(\\) has parameter \\$response with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:processResponseProperty\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:request\\(\\) has parameter \\$body with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:request\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:request\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:request\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Parameter \\#1 \\$url of method Keboola\\\\Google\\\\ClientBundle\\\\Google\\\\RestApi\\:\\:request\\(\\) expects string, mixed given\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of function array_filter expects \\(callable\\(mixed\\)\\: bool\\)\\|null, Closure\\(array\\)\\: bool given\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Parameter \\#2 \\.\\.\\.\\$arrays of function array_merge expects array, mixed given\\.$#"
+			count: 2
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Parameter \\#3 \\.\\.\\.\\$values of function sprintf expects bool\\|float\\|int\\|string\\|null, mixed given\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Client\\:\\:\\$inputState type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Client.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:__call\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:__construct\\(\\) has parameter \\$dimensions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:__construct\\(\\) has parameter \\$metrics with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:arrayKeyExistsNc\\(\\) has parameter \\$search with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:getDateKey\\(\\) has parameter \\$dimensions with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:getDimensions\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:getMetrics\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:\\$dimensions type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\Result\\:\\:\\$metrics type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/GoogleAnalytics/Result.php
+
+		-
+			message: "#^Cannot access offset 'authorization' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'credentials' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'data' on mixed\\.$#"
+			count: 5
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'incremental' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'metric' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'oauth_api' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'primary_key' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'rowCount' on mixed\\.$#"
+			count: 2
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'status' on mixed\\.$#"
+			count: 7
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'value' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 'viewId' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset \\(int\\|string\\) on mixed\\.$#"
+			count: 2
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Cannot access offset 0 on mixed\\.$#"
+			count: 6
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:assertHeader\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:getConfig\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:getConfig\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, mixed given\\.$#"
+			count: 28
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:\\$config type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\ConfigDefinitionTest\\:\\:getConfig\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/ConfigDefinitionTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\ConfigDefinitionTest\\:\\:getConfig\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/ConfigDefinitionTest.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Configuration\\\\ConfigDefinitionTest\\:\\:\\$config type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/ConfigDefinitionTest.php
+
+		-
+			message: "#^Cannot access offset 'enabled' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'name' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'outputBucket' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'parameters' on mixed\\.$#"
+			count: 3
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'profiles' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 'queries' on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset 0 on mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Configuration/MigrateConfigurationTest.php
+
+		-
+			message: "#^Cannot access offset mixed on mixed\\.$#"
+			count: 2
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\ExtractorTest\\:\\:getConfig\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\ExtractorTest\\:\\:getConfig\\(\\) should return array but returns mixed\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of function array_search expects array, mixed given\\.$#"
+			count: 2
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertContains\\(\\) expects iterable, mixed given\\.$#"
+			count: 4
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$haystack of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertStringContainsString\\(\\) expects string, mixed given\\.$#"
+			count: 2
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Property Keboola\\\\GoogleAnalyticsExtractor\\\\Extractor\\\\ExtractorTest\\:\\:\\$config type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/Extractor/ExtractorTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingProfileTest\\:\\:buildQuery\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingProfileTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingProfileTest\\:\\:dailyWalk\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingProfileTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingPropertyTest\\:\\:buildQuery\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingPropertyTest\\:\\:dailyWalk\\(\\) has parameter \\$query with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingPropertyTest\\:\\:getProperty\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
+
+		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\Functional\\\\DatadirTest\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/functional/DatadirTest.php
