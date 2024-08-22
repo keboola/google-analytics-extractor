@@ -8,7 +8,8 @@ use DateTime;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Keboola\Component\BaseComponent;
-use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptions;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptionsSchema;
 use Keboola\Component\UserException;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
@@ -79,15 +80,32 @@ class Component extends BaseComponent
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
-                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions = new ManifestOptions();
                 $outTableManifestOptions
                     ->setDestination($this->getConfig()->getOutputBucket() . '.profiles')
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['id']);
+                    ->setIncremental(true);
 
-                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+                foreach (['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName'] as $column) {
+                    $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
+                        $column,
+                        ['base' => ['type' => 'STRING']],
+                        true,
+                        $column === 'id',
+                    ));
+                }
 
-                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $this->getManifestManager()->writeTableManifest(
+                    'profiles.csv',
+                    $outTableManifestOptions,
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
+                $output = new Output(
+                    $this->getDataDir(),
+                    $this->getConfig()->getOutputBucket(),
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
                 $output->writeProfiles(
                     $output->createCsvFile('profiles'),
                     $this->getConfig()->getProfiles(),
@@ -104,15 +122,31 @@ class Component extends BaseComponent
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
-                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions = new ManifestOptions();
                 $outTableManifestOptions
                     ->setDestination($this->getConfig()->getOutputBucket() . '.properties')
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['propertyKey']);
+                    ->setIncremental(true);
 
-                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+                foreach (['propertyKey', 'propertyName', 'accountKey', 'accountName'] as $column) {
+                    $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
+                        $column,
+                        ['base' => ['type' => 'STRING']],
+                        true,
+                        $column === 'propertyKey',
+                    ));
+                }
 
-                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $this->getManifestManager()->writeTableManifest(
+                    'properties.csv',
+                    $outTableManifestOptions,
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
+                $output = new Output(
+                    $this->getDataDir(),
+                    $this->getConfig()->getOutputBucket(),
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
                 $output->writeProperties(
                     $output->createCsvFile('properties'),
                     $this->getConfig()->getProperties(),
@@ -253,7 +287,11 @@ class Component extends BaseComponent
     {
         return new Extractor(
             new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
-            new Output($this->getDataDir(), $this->getConfig()->getOutputBucket()),
+            new Output(
+                $this->getDataDir(),
+                $this->getConfig()->getOutputBucket(),
+                $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+            ),
             $this->getLogger(),
         );
     }

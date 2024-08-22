@@ -60,7 +60,7 @@ class Extractor
 
         if (isset($query['query'])) {
             $outputCsv = $this->output->createReport($query);
-            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true);
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProfiles = false;
@@ -158,8 +158,8 @@ class Extractor
         if (isset($query['query'])) {
             $query['query']['endpoint'] = 'properties';
 
-            $outputCsv = $this->output->createReport($query, 'idProperty');
-            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $outputCsv = $this->output->createReport($query);
+            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true, 'idProperty');
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProperties = false;
