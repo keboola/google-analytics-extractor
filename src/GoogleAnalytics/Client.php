@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
+use Closure;
 use Keboola\Google\ClientBundle\Google\RestApi as GoogleApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
@@ -134,7 +135,7 @@ class Client
             $url,
             $method,
             ['Accept' => 'application/json'],
-            $options
+            $options,
         );
 
         return json_decode($response->getBody()->getContents(), true);
@@ -151,7 +152,7 @@ class Client
     {
         $url = sprintf(
             self::REPORTS_PROPERTIES_URL,
-            $property['propertyKey']
+            $property['propertyKey'],
         );
 
         $body = $this->getPropertyReportRequest($query['query']);
@@ -199,7 +200,7 @@ class Client
             'ids' => sprintf('ga:%s', $query['query']['viewId']),
             'start-date' => date(
                 'Y-m-d',
-                (int) strtotime($this->getStartDate($query['query']['dateRanges'][0]['startDate']))
+                (int) strtotime($this->getStartDate($query['query']['dateRanges'][0]['startDate'])),
             ),
             'end-date' => date('Y-m-d', (int) strtotime($query['query']['dateRanges'][0]['endDate'])),
             'metrics' => implode(',', $metrics),
@@ -237,7 +238,7 @@ class Client
 
         $dateRangesInfo = array_map(
             fn($v) => sprintf('%s - %s', $v['startDate'], $v['endDate']),
-            $query['dateRanges']
+            $query['dateRanges'],
         );
         $this->logger->info('Using Date Ranges: ' . implode(', ', $dateRangesInfo));
 
@@ -417,8 +418,8 @@ class Client
         throw new ApplicationException(
             sprintf(
                 'Error parsing MCF response rows: one of the keys "%s" is not supported',
-                implode(',', array_keys($data))
-            )
+                implode(',', array_keys($data)),
+            ),
         );
     }
 
@@ -427,7 +428,7 @@ class Client
         return $this->apiCallsCount;
     }
 
-    public static function getDelayFn(int $base = 5000): \Closure
+    public static function getDelayFn(int $base = 5000): Closure
     {
         return function ($retries) use ($base) {
             return (int) ($base * pow(2, $retries - 1) + rand(0, 500));

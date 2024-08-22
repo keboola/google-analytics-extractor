@@ -63,7 +63,7 @@ class AntisamplingPropertyTest extends ClientTest
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
             'At least one of these dimensions must be set in order to use anti-sampling:' .
-            ' date | dateHour'
+            ' date | dateHour',
         );
         $query = $this->buildQuery();
         $query['antisampling'] = 'dailyWalk';

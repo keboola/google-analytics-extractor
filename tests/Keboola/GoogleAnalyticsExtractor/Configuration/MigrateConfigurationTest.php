@@ -43,7 +43,7 @@ class MigrateConfigurationTest extends TestCase
 
         $migratedConfiguration = $components->getConfiguration(
             'keboola.ex-google-analytics-v4',
-            $savedConfig['id']
+            $savedConfig['id'],
         );
 
         $query = $configurationArray['parameters']['queries'][0];
@@ -52,16 +52,16 @@ class MigrateConfigurationTest extends TestCase
         Assert::assertEquals($query, $migratedConfiguration['rows'][0]['configuration']['parameters']);
         Assert::assertEquals(
             $configurationArray['parameters']['profiles'],
-            $migratedConfiguration['configuration']['parameters']['profiles']
+            $migratedConfiguration['configuration']['parameters']['profiles'],
         );
         Assert::assertEquals(
             $configurationArray['parameters']['outputBucket'],
-            $migratedConfiguration['configuration']['parameters']['outputBucket']
+            $migratedConfiguration['configuration']['parameters']['outputBucket'],
         );
 
         $components->deleteConfiguration(
             'keboola.ex-google-analytics-v4',
-            $savedConfig['id']
+            $savedConfig['id'],
         );
     }
 

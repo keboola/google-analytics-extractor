@@ -14,10 +14,8 @@ use Psr\Log\NullLogger;
 
 class ClientTest extends TestCase
 {
-    /** @var Client */
-    protected $client;
+    protected Client $client;
 
-    /** @var \Monolog\Logger */
     private Logger $logger;
 
     public function setUp(): void
@@ -35,7 +33,7 @@ class ClientTest extends TestCase
                 $this->logger,
             ),
             new NullLogger(),
-            []
+            [],
         );
     }
 
@@ -138,7 +136,7 @@ class ClientTest extends TestCase
             $record = $testHandler->getRecords()[$i];
             $this->assertEquals(
                 sprintf('Retrying request (%dx) - reason: Bad Request', $i),
-                $record['message']
+                $record['message'],
             );
         }
     }

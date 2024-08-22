@@ -19,9 +19,9 @@ class ValidatorTest extends TestCase
             new Client(
                 $this->getMockRestApi(),
                 $logger,
-                []
+                [],
             ),
-            $logger
+            $logger,
         );
 
         $profiles = [
@@ -48,9 +48,9 @@ class ValidatorTest extends TestCase
             new Client(
                 $this->getMockRestApi(),
                 $logger,
-                []
+                [],
             ),
-            $logger
+            $logger,
         );
 
         $profiles = [
@@ -79,7 +79,7 @@ class ValidatorTest extends TestCase
 
         $this->assertEquals($expectedProfiles, iterator_to_array($validProfiles));
         $this->assertTrue(
-            $logger->hasWarningThatContains('Cannot access to profile "Invalid profile".')
+            $logger->hasWarningThatContains('Cannot access to profile "Invalid profile".'),
         );
     }
 
@@ -90,9 +90,9 @@ class ValidatorTest extends TestCase
             new Client(
                 $this->getMockRestApi(),
                 $logger,
-                []
+                [],
             ),
-            $logger
+            $logger,
         );
 
         $properties = [
@@ -117,9 +117,9 @@ class ValidatorTest extends TestCase
             new Client(
                 $this->getMockRestApi(),
                 $logger,
-                []
+                [],
             ),
-            $logger
+            $logger,
         );
 
         $properties = [
@@ -144,7 +144,7 @@ class ValidatorTest extends TestCase
 
         $this->assertEquals($expectedProperties, iterator_to_array($validProperties));
         $this->assertTrue(
-            $logger->hasWarningThatContains('Cannot access to property "Invalid property".')
+            $logger->hasWarningThatContains('Cannot access to property "Invalid property".'),
         );
     }
 
@@ -176,7 +176,7 @@ class ValidatorTest extends TestCase
             ->method('request')
             ->with($this->logicalOr(
                 sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
-                sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE)
+                sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE),
             ))
             ->will($this->returnCallback([$this, 'returnMockServerRequest']));
 

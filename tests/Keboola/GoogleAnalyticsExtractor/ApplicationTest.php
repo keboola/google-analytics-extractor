@@ -36,7 +36,7 @@ class ApplicationTest extends TestCase
     {
         $config = json_decode(
             (string) file_get_contents($this->configDir . '/config' . $suffix . '.json'),
-            true
+            true,
         );
         $config['authorization']['oauth_api']['credentials'] = [
             'appKey' => getenv('CLIENT_ID'),
@@ -306,7 +306,7 @@ class ApplicationTest extends TestCase
         Assert::assertEquals(1, $process->getExitCode());
         Assert::assertStringContainsString(
             'Unknown metric(s): ga:nonexistingmetric',
-            $process->getErrorOutput()
+            $process->getErrorOutput(),
         );
     }
 

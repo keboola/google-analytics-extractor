@@ -29,7 +29,7 @@ class UsageTest extends TestCase
                     'value' => 123,
                 ],
             ]),
-            $usageContent
+            $usageContent,
         );
     }
 }

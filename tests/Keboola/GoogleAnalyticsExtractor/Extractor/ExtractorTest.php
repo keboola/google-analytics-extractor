@@ -41,10 +41,10 @@ class ExtractorTest extends TestCase
                 (string) getenv('CLIENT_ID'),
                 (string) getenv('CLIENT_SECRET'),
                 (string) getenv('ACCESS_TOKEN'),
-                (string) getenv('REFRESH_TOKEN')
+                (string) getenv('REFRESH_TOKEN'),
             ),
             $this->logger,
-            []
+            [],
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $this->extractor = new Extractor($client, $output, $this->logger);
@@ -57,10 +57,10 @@ class ExtractorTest extends TestCase
                 sprintf(
                     '%s/config%s.json',
                     $this->dataDir,
-                    $configPostfix
-                )
+                    $configPostfix,
+                ),
             ),
-            true
+            true,
         );
         return $config;
     }
@@ -91,13 +91,13 @@ class ExtractorTest extends TestCase
             foreach ($dimensions as $dimension) {
                 Assert::assertContains(
                     str_replace('ga:', '', $dimension['name']),
-                    $header
+                    $header,
                 );
             }
             foreach ($metrics as $metric) {
                 Assert::assertContains(
                     str_replace('ga:', '', $metric['expression']),
-                    $header
+                    $header,
                 );
             }
 
@@ -137,13 +137,13 @@ class ExtractorTest extends TestCase
             foreach ($dimensions as $dimension) {
                 Assert::assertContains(
                     $dimension['name'],
-                    $header
+                    $header,
                 );
             }
             foreach ($metrics as $metric) {
                 Assert::assertContains(
                     $metric['name'],
-                    $header
+                    $header,
                 );
             }
 
@@ -200,16 +200,16 @@ class ExtractorTest extends TestCase
                 sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
                 sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE),
-                Client::ACCOUNTS_URL
+                Client::ACCOUNTS_URL,
             ))
-            ->will($this->returnCallback(array($this, 'returnMockServerRequest')))
+            ->will($this->returnCallback([$this, 'returnMockServerRequest']))
         ;
 
         $logger = new NullLogger();
         $client = new Client(
             $restApi,
             $logger,
-            []
+            [],
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);
@@ -246,7 +246,7 @@ class ExtractorTest extends TestCase
                 ],
                 'messages' => [],
             ],
-            $extractor->getProfilesPropertiesAction()
+            $extractor->getProfilesPropertiesAction(),
         );
     }
 
@@ -259,16 +259,16 @@ class ExtractorTest extends TestCase
                 sprintf('%s?pageSize=%d', Client::ACCOUNT_PROPERTIES_URL, Client::PAGE_SIZE),
                 sprintf('%s?max-results=%d', Client::ACCOUNT_PROFILES_URL, Client::PAGE_SIZE),
                 Client::ACCOUNT_WEB_PROPERTIES_URL,
-                Client::ACCOUNTS_URL
+                Client::ACCOUNTS_URL,
             ))
-            ->will($this->returnCallback(array($this, 'returnMockServerRequestEmptyResponse')))
+            ->will($this->returnCallback([$this, 'returnMockServerRequestEmptyResponse']))
         ;
 
         $logger = new NullLogger();
         $client = new Client(
             $restApi,
             $logger,
-            []
+            [],
         );
         $output = new Output($this->dataDir, 'outputBucket');
         $extractor = new Extractor($client, $output, $logger);
@@ -279,7 +279,7 @@ class ExtractorTest extends TestCase
                 'properties' => [],
                 'messages' => [],
             ],
-            $extractor->getProfilesPropertiesAction()
+            $extractor->getProfilesPropertiesAction(),
         );
     }
 
@@ -301,7 +301,7 @@ class ExtractorTest extends TestCase
         $client = new Client(
             $restApi,
             $logger,
-            []
+            [],
         );
 
         $this->assertEquals(
@@ -346,7 +346,7 @@ class ExtractorTest extends TestCase
                     ],
                 ],
             ],
-            $client->getAccountProperties(1)
+            $client->getAccountProperties(1),
         );
     }
 

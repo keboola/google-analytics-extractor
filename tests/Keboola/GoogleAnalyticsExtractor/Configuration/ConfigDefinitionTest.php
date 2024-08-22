@@ -97,7 +97,7 @@ class ConfigDefinitionTest extends TestCase
 
         $dimensions = array_filter(
             $configData->getParameters()['query']['dimensions'],
-            fn($v) => $v['name'] === 'ga:segment'
+            fn($v) => $v['name'] === 'ga:segment',
         );
 
         $this->assertCount(1, $dimensions);

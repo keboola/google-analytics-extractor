@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\GoogleAnalytics;
 
+use Exception;
+
 class Result
 {
     private array $metrics = [];
@@ -33,7 +35,7 @@ class Result
     public function __call(string $name, array $parameters): string
     {
         if (!preg_match('/^get/', $name)) {
-            throw new \Exception('No such function "' . $name . '"');
+            throw new Exception('No such function "' . $name . '"');
         }
         $name = (string) preg_replace('/^get/', '', $name);
 
@@ -47,13 +49,13 @@ class Result
             return $this->dimensions[$dimensionKey];
         }
 
-        throw new \Exception('No valid metric or dimension called "' . $name . '"');
+        throw new Exception('No valid metric or dimension called "' . $name . '"');
     }
 
     /**
      * @return mixed Matching array key or false
      */
-    public static function arrayKeyExistsNc(string $key, array $search)
+    public static function arrayKeyExistsNc(string $key, array $search): mixed
     {
         if (array_key_exists($key, $search)) {
             return $key;
@@ -88,10 +90,7 @@ class Result
         return $result;
     }
 
-    /**
-     * @return mixed
-     */
-    private static function getDateKey(array $dimensions)
+    private static function getDateKey(array $dimensions): mixed
     {
         return self::arrayKeyExistsNc('ga:date', $dimensions)
             || self::arrayKeyExistsNc('mcf:conversionDate', $dimensions);

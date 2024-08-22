@@ -76,7 +76,7 @@ class Output
         return array_merge(
             ['id', $type],
             $dimensions,
-            $metrics
+            $metrics,
         );
     }
 
@@ -116,7 +116,7 @@ class Output
         return array_merge(
             [$pKey, $profileId],
             array_values($dimensions),
-            array_values($metrics)
+            array_values($metrics),
         );
     }
 
@@ -168,8 +168,9 @@ class Output
         string $name,
         string $destination,
         ?array $primaryKey = null,
-        bool $incremental = false
+        bool $incremental = false,
     ): void {
+
         $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
 
         $manifestData = [

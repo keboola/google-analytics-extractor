@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling;
 
+use DateTime;
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\IPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
@@ -44,7 +45,7 @@ class AntisamplingProfile implements IAntisampling
         $cumulative = $this->getRunningTotal(
             array_map(function (Result $result) {
                 return intval($result->getMetrics()['ga:sessions']);
-            }, $report['data'])
+            }, $report['data']),
         );
 
         $dates = array_map(function (Result $result) {
@@ -108,8 +109,8 @@ class AntisamplingProfile implements IAntisampling
     {
         unset($query['query']['pageToken']);
         $dateRanges = $query['query']['dateRanges'][0];
-        $startDate = new \DateTime($this->client->getStartDate($dateRanges['startDate']));
-        $endDate = new \DateTime($dateRanges['endDate']);
+        $startDate = new DateTime($this->client->getStartDate($dateRanges['startDate']));
+        $endDate = new DateTime($dateRanges['endDate']);
 
         while ($startDate->diff($endDate)->format('%r%a') >= 0) {
             $startDateString = $startDate->format('Y-m-d');

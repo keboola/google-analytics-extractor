@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Exception;
 
-use \Exception;
+use Exception;
 use Keboola\CommonExceptions\ApplicationExceptionInterface;
-use \Throwable;
+use Throwable;
 
 class ApplicationException extends Exception implements ApplicationExceptionInterface
 {

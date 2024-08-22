@@ -99,7 +99,7 @@ class Config extends BaseConfig
 
         $filteredDateRanges = array_filter(
             $query['dateRanges'],
-            fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE
+            fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE,
         );
 
         return !empty($filteredDateRanges) ? $filteredDateRanges[0] : [];

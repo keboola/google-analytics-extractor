@@ -66,7 +66,7 @@ class Component extends BaseComponent
     {
         $validator = new Validator(
             new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
-            $this->getLogger()
+            $this->getLogger(),
         );
 
         if ($this->getConfig()->processProfiles($this->getConfigDefinitionClass())) {
@@ -75,7 +75,7 @@ class Component extends BaseComponent
 
             $this->getExtractor()->runProfiles(
                 $query,
-                $this->getConfig()->getProfiles()
+                $this->getConfig()->getProfiles(),
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
@@ -90,7 +90,7 @@ class Component extends BaseComponent
                 $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
                 $output->writeProfiles(
                     $output->createCsvFile('profiles'),
-                    $this->getConfig()->getProfiles()
+                    $this->getConfig()->getProfiles(),
                 );
             }
         }
@@ -100,7 +100,7 @@ class Component extends BaseComponent
 
             $this->getExtractor()->runProperties(
                 $query,
-                iterator_to_array($validProperties)
+                iterator_to_array($validProperties),
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
@@ -115,7 +115,7 @@ class Component extends BaseComponent
                 $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
                 $output->writeProperties(
                     $output->createCsvFile('properties'),
-                    $this->getConfig()->getProperties()
+                    $this->getConfig()->getProperties(),
                 );
             }
         }
@@ -254,7 +254,7 @@ class Component extends BaseComponent
         return new Extractor(
             new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
             new Output($this->getDataDir(), $this->getConfig()->getOutputBucket()),
-            $this->getLogger()
+            $this->getLogger(),
         );
     }
 
@@ -270,7 +270,7 @@ class Component extends BaseComponent
             $this->getConfig()->getOAuthApiAppSecret(),
             $tokenData['access_token'],
             $tokenData['refresh_token'],
-            $this->getLogger()
+            $this->getLogger(),
         );
 
         $client->setBackoffsCount($this->getConfig()->getRetries());
@@ -306,7 +306,7 @@ class Component extends BaseComponent
             if (strtolower($e->getResponse()->getReasonPhrase()) === 'forbidden') {
                 $this->getLogger()->warning(
                     'You don\'t have access to Google Analytics resource. ' .
-                    'Probably you don\'t have access to profile, or profile doesn\'t exists anymore.'
+                    'Probably you don\'t have access to profile, or profile doesn\'t exists anymore.',
                 );
                 return;
             } else {
@@ -318,7 +318,7 @@ class Component extends BaseComponent
             throw new UserException(
                 'Google API is temporary unavailable. Please try again later.',
                 502,
-                $e
+                $e,
             );
         }
 
