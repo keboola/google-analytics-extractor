@@ -832,7 +832,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'data' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
@@ -856,13 +856,8 @@ parameters:
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
-			message: "#^Cannot access offset 'rowCount' on mixed\\.$#"
-			count: 1
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
 			message: "#^Cannot access offset 'status' on mixed\\.$#"
-			count: 4
+			count: 2
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
@@ -897,7 +892,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, mixed given\\.$#"
-			count: 16
+			count: 14
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-

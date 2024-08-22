@@ -183,7 +183,8 @@ class ApplicationTest extends TestCase
         $this->config['action'] = 'customMetrics';
         $result = (array) json_decode(
             $this->runProcess()->getOutput(),
-            true, 512,
+            true,
+            512,
             JSON_THROW_ON_ERROR,
         );
 
