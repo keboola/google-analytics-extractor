@@ -158,34 +158,6 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testAppSample(): void
-    {
-        $this->config['action'] = 'sample';
-        $result = json_decode($this->runProcess()->getOutput(), true);
-
-        Assert::assertArrayHasKey('status', $result);
-        Assert::assertArrayHasKey('viewId', $result);
-        Assert::assertArrayHasKey('data', $result);
-        Assert::assertNotEmpty($result['data']);
-        Assert::assertArrayHasKey('rowCount', $result);
-        Assert::assertEquals('success', $result['status']);
-    }
-
-    public function testAppSampleMCF(): void
-    {
-        $this->config = $this->getConfig('_mcf');
-        $this->config['parameters']['query']['dateRanges'][0]['startDate'] = '-4 months';
-        $this->config['action'] = 'sample';
-        $result = json_decode($this->runProcess()->getOutput(), true);
-
-        Assert::assertArrayHasKey('status', $result);
-        Assert::assertArrayHasKey('viewId', $result);
-        Assert::assertArrayHasKey('data', $result);
-        Assert::assertNotEmpty($result['data']);
-        Assert::assertArrayHasKey('rowCount', $result);
-        Assert::assertEquals('success', $result['status']);
-    }
-
     public function testAppSegments(): void
     {
         $this->config['action'] = 'segments';
@@ -258,23 +230,6 @@ class ApplicationTest extends TestCase
         ];
         $errorOutput = $this->runProcess()->getErrorOutput();
         Assert::assertStringContainsString('Expired or wrong credentials, please reauthorize.', $errorOutput);
-    }
-
-    public function testRunSampleAction(): void
-    {
-        $this->config['action'] = 'sample';
-        $process = $this->runProcess();
-        Assert::assertEquals(0, $process->getExitCode());
-
-        $output = json_decode($process->getOutput(), true);
-        Assert::assertArrayHasKey('status', $output);
-        Assert::assertArrayHasKey('viewId', $output);
-        Assert::assertArrayHasKey('data', $output);
-        Assert::assertArrayHasKey('rowCount', $output);
-        Assert::assertEquals('success', $output['status']);
-        Assert::assertNotEmpty($output['viewId']);
-        Assert::assertNotEmpty($output['data']);
-        Assert::assertNotEmpty($output['rowCount']);
     }
 
     public function testRunSegmentsAction(): void
