@@ -1,4 +1,4 @@
-FROM php:7.4-cli
+FROM php:8.3-cli
 
 ARG COMPOSER_FLAGS="--prefer-dist --no-interaction"
 ARG DEBIAN_FRONTEND=noninteractive
