@@ -315,10 +315,6 @@ class ApplicationTest extends TestCase
             'startDate' => '0 day',
             'endDate' => '0 day',
         ];
-        $this->config['parameters']['query']['dateRanges'][0] = [
-            'startDate' => '0 day',
-            'endDate' => '0 day',
-        ];
 
         $usersOutputFiles = $this->getOutputFiles('users');
         $usersManifestFiles = $this->getManifestFiles('users');
