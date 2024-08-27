@@ -181,7 +181,6 @@ class Output
         $manifestOptions = new ManifestOptions();
         $manifestOptions->setIncremental($incremental)
             ->setDestination(sprintf('%s.%s', $this->outputBucket, $query['outputTable']));
-        $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
         $columns = $this->createHeaderRowFromQuery($query, $type);
         foreach ($columns as $column) {
             $manifestOptions->addSchema(new ManifestOptionsSchema(
@@ -192,6 +191,6 @@ class Output
             ));
         }
 
-        $manifestManager->writeTableManifest($outFilename, $manifestOptions, $this->useLegacyManifest);
+        $manifestManager->writeTableManifest($name, $manifestOptions, $this->useLegacyManifest);
     }
 }
