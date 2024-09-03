@@ -37,23 +37,20 @@ class ClientTest extends TestCase
         );
     }
 
-    public function testRetryOnUnknownMetric(): void
+    public function testUnknownMetric(): void
     {
         $query = [
-            'name' => 'sessions',
-            'endpoint' => Client::REPORTS_URL,
             'query' => [
-                'viewId' => getenv('VIEW_ID'),
                 'metrics' => [
-                    ['expression' => 'ga:metric2'],
-                    ['expression' => 'ga:metric1'],
-                    ['expression' => 'ga:goal11Completions'],
+                    ['name' => 'metric2'],
+                    ['name' => 'metric1'],
+                    ['name' => 'goal11Completions'],
                 ],
                 'dimensions' => [
-                    ['name' => 'ga:date'],
-                    ['name' => 'ga:source'],
-                    ['name' => 'ga:country'],
-                    ['name' => 'ga:pagePath'],
+                    ['name' => 'date'],
+                    ['name' => 'source'],
+                    ['name' => 'country'],
+                    ['name' => 'pagePath'],
                 ],
                 'dateRanges' => [[
                     'startDate' => date('Y-m-d', strtotime('-12 months')),
@@ -63,21 +60,20 @@ class ClientTest extends TestCase
         ];
 
         $this->client->getApi()->setBackoffsCount(3);
-        try {
-            $this->client->getBatch($query);
-        } catch (ClientException $e) {
-            $this->assertStringContainsString('400 Bad Request', $e->getMessage());
-        }
 
-        /** @var TestHandler $testHandler */
-        $testHandler = $this->logger->getHandlers()[0];
-        for ($i = 1; $i < 3; $i++) {
-            /** @var \Monolog\LogRecord $record */
-            $record = $testHandler->getRecords()[$i];
-            $this->assertEquals(
-                sprintf('Retrying request (%dx) - reason: Bad Request', $i),
-                $record['message'],
+        $exceptionCaught = false;
+
+        try {
+            $this->client->getPropertyReport($query, ['propertyKey' => 'properties/255885884']);
+        } catch (ClientException $e) {
+            $exceptionCaught = true;
+            $this->assertStringContainsString('400 Bad Request', $e->getMessage());
+            $this->assertStringContainsString(
+                'Did you mean sessions? Field metric2 is not a valid metric.',
+                $e->getMessage(),
             );
         }
+
+        $this->assertTrue($exceptionCaught, 'Expected ClientException was not thrown.');
     }
 }
