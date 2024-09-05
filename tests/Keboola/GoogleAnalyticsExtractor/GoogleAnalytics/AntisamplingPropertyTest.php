@@ -99,9 +99,7 @@ class AntisamplingPropertyTest extends ClientTest
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query);
         (new AntisamplingProperty($paginator, $outputCsv, $property))->dailyWalk($query);
-        var_dump(file_get_contents($outputCsv->getPathname()));
         $dailyWalkOutputCsv = $outputCsv->getPathname();
-
 
         // Manual Daily Walk
         $dates = [
