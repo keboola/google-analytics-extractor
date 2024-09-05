@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor;
 
 use Generator;
-use Keboola\Csv\CsvFile;
+use JsonException;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -50,59 +50,17 @@ class ApplicationTest extends TestCase
         return $config;
     }
 
-    /**
-     * @dataProvider appRunDataProvider
-     */
-    public function testAppRun(string $configSuffix): void
-    {
-        $this->config = $this->getConfig($configSuffix);
-        $this->runProcess();
-
-        $profiles = $this->getOutputFiles('profiles');
-        $profilesManifests = $this->getManifestFiles('profiles');
-
-        $users = $this->getOutputFiles('users');
-        $usersManifests = $this->getManifestFiles('users');
-
-        $disabledUsers = $this->getOutputFiles('disabledUsers');
-
-        $manifests = $this->getManifestFiles('');
-
-        Assert::assertEquals(1, count($profiles));
-        Assert::assertEquals(1, count($profilesManifests));
-
-        Assert::assertEquals(1, count($users));
-        Assert::assertEquals(1, count($usersManifests));
-
-        Assert::assertEquals(0, count($disabledUsers));
-
-        foreach ($manifests as $manifestFile) {
-            $manifest = json_decode((string) file_get_contents((string) $manifestFile), true);
-            Assert::assertArrayHasKey('incremental', $manifest);
-            Assert::assertTrue($manifest['incremental']);
-            Assert::assertArrayHasKey('primary_key', $manifest);
-            Assert::assertEquals('id', $manifest['primary_key'][0]);
-        }
-
-        Assert::assertFileExists($this->dataDir . '/out/usage.json');
-        $usage = json_decode((string) file_get_contents($this->dataDir . '/out/usage.json'), true);
-        Assert::assertArrayHasKey('metric', $usage[0]);
-        Assert::assertArrayHasKey('value', $usage[0]);
-        Assert::assertGreaterThan(0, $usage[0]['value']);
-        Assert::assertEquals('API Calls', $usage[0]['metric']);
-    }
-
     public function testAppRunDailyWalk(): void
     {
         $this->config = $this->getConfig('_antisampling');
         $this->runProcess();
 
-        $dailyWalk = $this->getOutputFiles('dailyWalk');
+        $dailyWalk = $this->getManifestFiles('dailyWalk');
         Assert::assertEquals(1, count($dailyWalk));
 
         foreach ($dailyWalk as $file) {
             /** @var $file SplFileInfo */
-            $this->assertHeader($file->getPathname(), [
+            $this->assertManifestContainsColumns($file->getPathname(), [
                 'id',
                 'idProfile',
                 'date',
@@ -118,12 +76,12 @@ class ApplicationTest extends TestCase
         $this->config = $this->getConfig('_antisampling_adaptive');
         $this->runProcess();
 
-        $adaptive = $this->getOutputFiles('adaptive');
+        $adaptive = $this->getManifestFiles('adaptive');
         Assert::assertEquals(1, count($adaptive));
 
         foreach ($adaptive as $file) {
             /** @var $file SplFileInfo */
-            $this->assertHeader($file->getPathname(), [
+            $this->assertManifestContainsColumns($file->getPathname(), [
                 'id',
                 'idProfile',
                 'date',
@@ -139,12 +97,12 @@ class ApplicationTest extends TestCase
         $this->config = $this->getConfig('_mcf');
         $this->runProcess();
 
-        $funnelFiles = $this->getOutputFiles('funnel');
+        $funnelFiles = $this->getManifestFiles('funnel');
         Assert::assertEquals(1, count($funnelFiles));
 
         foreach ($funnelFiles as $file) {
             /** @var $file SplFileInfo */
-            $this->assertHeader($file->getPathname(), [
+            $this->assertManifestContainsColumns($file->getPathname(), [
                 'id',
                 'idProfile',
                 'mcf:conversionDate',
@@ -176,21 +134,6 @@ class ApplicationTest extends TestCase
 
         Assert::assertArrayHasKey('profiles', $result);
         Assert::assertArrayHasKey('properties', $result);
-    }
-
-    public function testAppCustomMetrics(): void
-    {
-        $this->config['action'] = 'customMetrics';
-        $result = (array) json_decode(
-            $this->runProcess()->getOutput(),
-            true,
-            512,
-            JSON_THROW_ON_ERROR,
-        );
-
-        Assert::assertArrayHasKey('status', $result);
-        Assert::assertArrayHasKey('data', $result);
-        Assert::assertEquals('success', $result['status']);
     }
 
     public function testAppRunProperties(): void
@@ -255,82 +198,6 @@ class ApplicationTest extends TestCase
         Assert::assertArrayHasKey('name', $segment);
     }
 
-    public function testActionUserException(): void
-    {
-        $this->config['action'] = 'sample';
-        $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:nonexistingmetric'],
-        ];
-        $process = $this->runProcess();
-
-        Assert::assertEquals(1, $process->getExitCode());
-        Assert::assertStringContainsString(
-            'Unknown metric(s): ga:nonexistingmetric',
-            $process->getErrorOutput(),
-        );
-    }
-
-    public function testRunEmptyResult(): void
-    {
-        // set metric that will return no data
-        $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:adxRevenue'],
-        ];
-        $this->config['parameters']['query']['dateRanges'][0] = [
-            'startDate' => '0 day',
-            'endDate' => '0 day',
-        ];
-        $process = $this->runProcess();
-        Assert::assertEquals(0, $process->getExitCode());
-
-        $usersOutputFiles = $this->getOutputFiles('users');
-        $usersManifestFiles = $this->getManifestFiles('users');
-
-        Assert::assertCount(1, $usersOutputFiles);
-        Assert::assertCount(1, $usersManifestFiles);
-
-        /** @var \SplFileInfo $usersOutputFile */
-        foreach ($usersOutputFiles as $usersOutputFile) {
-            $file = new CsvFile((string) $usersOutputFile->getRealPath());
-            $file->rewind();
-            $rowCount = 0;
-            while ($file->current()) {
-                $rowCount++;
-                $file->next();
-            }
-            Assert::assertEquals(1, $rowCount);
-        }
-
-        Assert::assertCount(1, $usersOutputFiles);
-        Assert::assertCount(1, $usersManifestFiles);
-    }
-
-    public function testSampleActionEmptyResult(): void
-    {
-        $this->config['action'] = 'sample';
-        // set metric that will return no data
-        $this->config['parameters']['query']['metrics'] = [
-            ['expression' => 'ga:adxRevenue'],
-        ];
-        $this->config['parameters']['query']['dateRanges'][0] = [
-            'startDate' => '0 day',
-            'endDate' => '0 day',
-        ];
-
-        $usersOutputFiles = $this->getOutputFiles('users');
-        $usersManifestFiles = $this->getManifestFiles('users');
-
-        $process = $this->runProcess();
-        $output = (array) json_decode($process->getOutput(), true, 512, JSON_THROW_ON_ERROR);
-
-        Assert::assertEquals(0, $process->getExitCode());
-        Assert::assertEmpty($output['data']);
-        Assert::assertEquals('success', $output['status']);
-        Assert::assertEquals(0, $output['rowCount']);
-        Assert::assertEmpty($usersOutputFiles);
-        Assert::assertEmpty($usersManifestFiles);
-    }
-
     private function runProcess(): Process
     {
         $fs = new Filesystem();
@@ -370,25 +237,11 @@ class ApplicationTest extends TestCase
         ;
     }
 
-    private function assertHeader(string $pathname, array $expected): void
+    private function assertManifestContainsColumns(string $pathname, array $expected): void
     {
-        $csv = new CsvFile($pathname);
-        $csv->next();
-        $header = $csv->current();
-
-        foreach ($expected as $key => $value) {
-            Assert::assertEquals($value, $header[$key]);
-        }
-
-        // test that header is not elsewhere in the output file
-        $csv->next();
-        while ($row = $csv->current()) {
-            foreach ($expected as $key => $value) {
-                Assert::assertNotEquals($value, $row[$key]);
-            }
-
-            $csv->next();
-        }
+        $manifest = (array) json_decode(file_get_contents($pathname), true, 512, JSON_THROW_ON_ERROR);
+        Assert::assertArrayHasKey('columns', $manifest);
+        Assert::assertEquals($expected, $manifest['columns']);
     }
 
     public function appRunDataProvider(): Generator

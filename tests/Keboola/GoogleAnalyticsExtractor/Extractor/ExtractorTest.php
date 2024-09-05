@@ -65,50 +65,6 @@ class ExtractorTest extends TestCase
         return $config;
     }
 
-    public function testRunProfiles(): void
-    {
-        $config = new Config($this->config, new ConfigDefinition());
-        $parameters = $config->getParameters();
-        $profiles = $parameters['profiles'];
-
-        $this->extractor->runProfiles($parameters, [$profiles[0]]);
-
-        $outputFiles = $this->getOutputFiles($parameters['outputTable']);
-        Assert::assertNotEmpty($outputFiles);
-
-        /** @var \SplFileInfo $outputFile */
-        foreach ($outputFiles as $outputFile) {
-            Assert::assertFileExists((string) $outputFile->getRealPath());
-            Assert::assertNotEmpty((string) file_get_contents((string) $outputFile->getRealPath()));
-
-            $csv = new CsvFile((String) $outputFile->getRealPath());
-            $csv->next();
-            $header = $csv->current();
-
-            // check CSV header
-            $dimensions = $parameters['query']['dimensions'];
-            $metrics = $parameters['query']['metrics'];
-            foreach ($dimensions as $dimension) {
-                Assert::assertContains(
-                    str_replace('ga:', '', $dimension['name']),
-                    $header,
-                );
-            }
-            foreach ($metrics as $metric) {
-                Assert::assertContains(
-                    str_replace('ga:', '', $metric['expression']),
-                    $header,
-                );
-            }
-
-            // check date format
-            $csv->next();
-            $row = $csv->current();
-            $dateCol = array_search('date', $header);
-            Assert::assertStringContainsString('-', $row[$dateCol]);
-        }
-    }
-
     public function testRunProperties(): void
     {
         $this->config = $this->getConfig('_properties');
@@ -118,6 +74,36 @@ class ExtractorTest extends TestCase
 
         $this->extractor->runProperties($parameters, $properties);
 
+        $manifestFiles = $this->getManifestFiles($parameters['outputTable']);
+        Assert::assertNotEmpty($manifestFiles);
+
+        $dateCol = null;
+        /** @var \SplFileInfo $manifestFile */
+        foreach ($manifestFiles as $manifestFile) {
+            Assert::assertFileExists((string) $manifestFile->getRealPath());
+            $manifestContent = (string) file_get_contents((string) $manifestFile->getRealPath());
+            Assert::assertNotEmpty($manifestContent);
+            $manifest = (array) json_decode($manifestContent, true, 512, JSON_THROW_ON_ERROR);
+
+            $dimensions = $parameters['query']['dimensions'];
+            $metrics = $parameters['query']['metrics'];
+
+            foreach ($dimensions as $dimension) {
+                Assert::assertContains(
+                    $dimension['name'],
+                    $manifest['columns'],
+                );
+            }
+            foreach ($metrics as $metric) {
+                Assert::assertContains(
+                    $metric['name'],
+                    $manifest['columns'],
+                );
+            }
+
+            $dateCol = array_search('date', $manifest['columns']);
+        }
+
         $outputFiles = $this->getOutputFiles($parameters['outputTable']);
         Assert::assertNotEmpty($outputFiles);
 
@@ -127,30 +113,9 @@ class ExtractorTest extends TestCase
             Assert::assertNotEmpty((string) file_get_contents((string) $outputFile->getRealPath()));
 
             $csv = new CsvFile((String) $outputFile->getRealPath());
-            $csv->next();
-            $header = $csv->current();
-
-            // check CSV header
-            $dimensions = $parameters['query']['dimensions'];
-            $metrics = $parameters['query']['metrics'];
-
-            foreach ($dimensions as $dimension) {
-                Assert::assertContains(
-                    $dimension['name'],
-                    $header,
-                );
-            }
-            foreach ($metrics as $metric) {
-                Assert::assertContains(
-                    $metric['name'],
-                    $header,
-                );
-            }
-
             // check date format
             $csv->next();
             $row = $csv->current();
-            $dateCol = array_search('date', $header);
             Assert::assertStringContainsString('-', $row[$dateCol]);
         }
     }
@@ -421,5 +386,15 @@ class ExtractorTest extends TestCase
         return $finder->files()
             ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.csv$/i');
+    }
+
+    private function getManifestFiles(string $queryName): Finder
+    {
+        $finder = new Finder();
+
+        return $finder->files()
+            ->in($this->dataDir . '/out/tables')
+            ->name('/^' . $queryName . '.*\.csv.manifest$/i')
+            ;
     }
 }

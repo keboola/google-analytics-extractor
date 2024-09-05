@@ -46,7 +46,7 @@
         }
     },
     "scripts": {
-        "tests-phpunit": "phpunit",
+        "tests-phpunit": "phpunit --testdox",
         "tests-datadir": "phpunit tests/functional",
         "tests": [
             "@tests-phpunit",
