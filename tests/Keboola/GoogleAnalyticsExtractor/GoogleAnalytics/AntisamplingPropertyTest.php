@@ -44,11 +44,13 @@ class AntisamplingPropertyTest extends ClientTest
 
     public function testDailyWalk(): void
     {
+        $this->markTestSkipped('We do not have any data in the GA account at the moment.');
         $this->dailyWalk($this->buildQuery());
     }
 
     public function testDailyWalkWithDateHour(): void
     {
+        $this->markTestSkipped('We do not have any data in the GA account at the moment.');
         $query = $this->buildQuery();
         $query['query']['dimensions'] = [
             ['name' => 'dateHour'],
