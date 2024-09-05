@@ -981,8 +981,18 @@ parameters:
 			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
 
 		-
+			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingPropertyTest\\:\\:dailyWalk\\(\\) is unused\\.$#"
+			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
+
+		-
 			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\GoogleAnalytics\\\\AntisamplingPropertyTest\\:\\:getProperty\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
+			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
 			path: tests/Keboola/GoogleAnalyticsExtractor/GoogleAnalytics/AntisamplingPropertyTest.php
 
 		-
