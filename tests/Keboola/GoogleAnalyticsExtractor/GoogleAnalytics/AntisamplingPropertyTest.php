@@ -131,7 +131,6 @@ class AntisamplingPropertyTest extends ClientTest
         Assert::assertCount(count($dates), $logger->records);
 
         $expectedOutputCsv = $outputCsv->getPathname();
-        var_dump(file_get_contents($dailyWalkOutputCsv));
 
         Assert::assertFileEquals($expectedOutputCsv, $dailyWalkOutputCsv);
     }
