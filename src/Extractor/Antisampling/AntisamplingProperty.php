@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor\Antisampling;
 
+use DateTime;
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\IPaginator;
@@ -32,8 +33,8 @@ class AntisamplingProperty implements IAntisampling
     {
         unset($query['query']['pageToken']);
         $dateRanges = $query['query']['dateRanges'][0];
-        $startDate = new \DateTime($this->client->getStartDate($dateRanges['startDate']));
-        $endDate = new \DateTime($dateRanges['endDate']);
+        $startDate = new DateTime($this->client->getStartDate($dateRanges['startDate']));
+        $endDate = new DateTime($dateRanges['endDate']);
 
         while ($startDate->diff($endDate)->format('%r%a') >= 0) {
             $startDateString = $startDate->format('Y-m-d');
@@ -44,6 +45,7 @@ class AntisamplingProperty implements IAntisampling
             ];
 
             $report = $this->client->getPropertyReport($query, $this->property);
+            var_dump($report);
 
             $this->writeReport($query, $report);
 

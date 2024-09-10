@@ -8,7 +8,8 @@ use DateTime;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use Keboola\Component\BaseComponent;
-use Keboola\Component\Manifest\ManifestManager\Options\OutTableManifestOptions;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptions;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptionsSchema;
 use Keboola\Component\UserException;
 use Keboola\Google\ClientBundle\Google\RestApi;
 use Keboola\GoogleAnalyticsExtractor\Configuration\Config;
@@ -25,12 +26,12 @@ use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 
 class Component extends BaseComponent
 {
-    private const ACTION_SAMPLE = 'sample';
-    private const ACTION_SAMPLE_JSON = 'sampleJson';
-    private const ACTION_SEGMENTS = 'segments';
-    private const ACTION_CUSTOM_METRICS = 'customMetrics';
-    private const ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
-    private const ACTION_GET_PROPERTIES_METADATA = 'getPropertiesMetadata';
+    private const string ACTION_SAMPLE = 'sample';
+    private const string ACTION_SAMPLE_JSON = 'sampleJson';
+    private const string ACTION_SEGMENTS = 'segments';
+    private const string ACTION_CUSTOM_METRICS = 'customMetrics';
+    private const string ACTION_GET_PROFILES_PROPERTIES = 'getProfilesProperties';
+    private const string ACTION_GET_PROPERTIES_METADATA = 'getPropertiesMetadata';
 
     public function getConfig(): Config
     {
@@ -66,7 +67,7 @@ class Component extends BaseComponent
     {
         $validator = new Validator(
             new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
-            $this->getLogger()
+            $this->getLogger(),
         );
 
         if ($this->getConfig()->processProfiles($this->getConfigDefinitionClass())) {
@@ -75,22 +76,39 @@ class Component extends BaseComponent
 
             $this->getExtractor()->runProfiles(
                 $query,
-                $this->getConfig()->getProfiles()
+                $this->getConfig()->getProfiles(),
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
-                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions = new ManifestOptions();
                 $outTableManifestOptions
                     ->setDestination($this->getConfig()->getOutputBucket() . '.profiles')
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['id']);
+                    ->setIncremental(true);
 
-                $this->getManifestManager()->writeTableManifest('profiles.csv', $outTableManifestOptions);
+                foreach (['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName'] as $column) {
+                    $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
+                        $column,
+                        ['base' => ['type' => 'STRING']],
+                        true,
+                        $column === 'id',
+                    ));
+                }
 
-                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $this->getManifestManager()->writeTableManifest(
+                    'profiles.csv',
+                    $outTableManifestOptions,
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
+                $output = new Output(
+                    $this->getDataDir(),
+                    $this->getConfig()->getOutputBucket(),
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
                 $output->writeProfiles(
                     $output->createCsvFile('profiles'),
-                    $this->getConfig()->getProfiles()
+                    $this->getConfig()->getProfiles(),
                 );
             }
         }
@@ -100,22 +118,38 @@ class Component extends BaseComponent
 
             $this->getExtractor()->runProperties(
                 $query,
-                iterator_to_array($validProperties)
+                iterator_to_array($validProperties),
             );
 
             if (!$this->getConfig()->skipGenerateSystemTables()) {
-                $outTableManifestOptions = new OutTableManifestOptions();
+                $outTableManifestOptions = new ManifestOptions();
                 $outTableManifestOptions
                     ->setDestination($this->getConfig()->getOutputBucket() . '.properties')
-                    ->setIncremental(true)
-                    ->setPrimaryKeyColumns(['propertyKey']);
+                    ->setIncremental(true);
 
-                $this->getManifestManager()->writeTableManifest('properties.csv', $outTableManifestOptions);
+                foreach (['propertyKey', 'propertyName', 'accountKey', 'accountName'] as $column) {
+                    $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
+                        $column,
+                        ['base' => ['type' => 'STRING']],
+                        true,
+                        $column === 'propertyKey',
+                    ));
+                }
 
-                $output = new Output($this->getDataDir(), $this->getConfig()->getOutputBucket());
+                $this->getManifestManager()->writeTableManifest(
+                    'properties.csv',
+                    $outTableManifestOptions,
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
+
+                $output = new Output(
+                    $this->getDataDir(),
+                    $this->getConfig()->getOutputBucket(),
+                    $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+                );
                 $output->writeProperties(
                     $output->createCsvFile('properties'),
-                    $this->getConfig()->getProperties()
+                    $this->getConfig()->getProperties(),
                 );
             }
         }
@@ -253,8 +287,12 @@ class Component extends BaseComponent
     {
         return new Extractor(
             new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState()),
-            new Output($this->getDataDir(), $this->getConfig()->getOutputBucket()),
-            $this->getLogger()
+            new Output(
+                $this->getDataDir(),
+                $this->getConfig()->getOutputBucket(),
+                $this->getConfig()->getDataTypeSupport()->usingLegacyManifest(),
+            ),
+            $this->getLogger(),
         );
     }
 
@@ -270,7 +308,7 @@ class Component extends BaseComponent
             $this->getConfig()->getOAuthApiAppSecret(),
             $tokenData['access_token'],
             $tokenData['refresh_token'],
-            $this->getLogger()
+            $this->getLogger(),
         );
 
         $client->setBackoffsCount($this->getConfig()->getRetries());
@@ -306,7 +344,7 @@ class Component extends BaseComponent
             if (strtolower($e->getResponse()->getReasonPhrase()) === 'forbidden') {
                 $this->getLogger()->warning(
                     'You don\'t have access to Google Analytics resource. ' .
-                    'Probably you don\'t have access to profile, or profile doesn\'t exists anymore.'
+                    'Probably you don\'t have access to profile, or profile doesn\'t exists anymore.',
                 );
                 return;
             } else {
@@ -318,7 +356,7 @@ class Component extends BaseComponent
             throw new UserException(
                 'Google API is temporary unavailable. Please try again later.',
                 502,
-                $e
+                $e,
             );
         }
 

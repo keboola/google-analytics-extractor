@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use Closure;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use Keboola\Component\UserException;
@@ -14,7 +15,6 @@ use Keboola\GoogleAnalyticsExtractor\Extractor\Paginator\PropertiesPaginator;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Client;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use \Closure;
 
 class Extractor
 {
@@ -24,7 +24,7 @@ class Extractor
 
     private LoggerInterface $logger;
 
-    private const FILTER_PROFILES_RETURN_KEYS = ['id', 'name', 'webPropertyId', 'accountId', 'eCommerceTracking'];
+    private const array FILTER_PROFILES_RETURN_KEYS = ['id', 'name', 'webPropertyId', 'accountId', 'eCommerceTracking'];
 
     public function __construct(Client $gaApi, Output $output, LoggerInterface $logger)
     {
@@ -60,7 +60,7 @@ class Extractor
 
         if (isset($query['query'])) {
             $outputCsv = $this->output->createReport($query);
-            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true);
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProfiles = false;
@@ -69,7 +69,7 @@ class Extractor
                 $apiQuery = $query;
                 if (empty($query['query']['viewId'])) {
                     $apiQuery['query']['viewId'] = (string) $profile['id'];
-                } else if ($query['query']['viewId'] !== $profile['id']) {
+                } elseif ($query['query']['viewId'] !== $profile['id']) {
                     continue;
                 }
 
@@ -84,7 +84,7 @@ class Extractor
                         $this->logger->warning(sprintf(
                             "You don't have access to Google Analytics resource. " .
                             "Probably you don't have access to profile (%s), or it doesn't exists anymore.",
-                            $profile['id']
+                            $profile['id'],
                         ));
                         continue;
                     }
@@ -103,7 +103,7 @@ class Extractor
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
-                            implode(' | ', ['ga:date', 'ga:dateHour', 'ga:dateHourMinute', 'mcf:conversionDate'])
+                            implode(' | ', ['ga:date', 'ga:dateHour', 'ga:dateHourMinute', 'mcf:conversionDate']),
                         ));
                     }
 
@@ -115,7 +115,7 @@ class Extractor
                             intval(100 * (
                                     intval($report['samplesReadCounts'][0])
                                     / intval($report['samplingSpaceSizes'][0])
-                                ))
+                                )),
                         ));
                     }
 
@@ -158,8 +158,8 @@ class Extractor
         if (isset($query['query'])) {
             $query['query']['endpoint'] = 'properties';
 
-            $outputCsv = $this->output->createReport($query, 'idProperty');
-            $this->output->createManifest($outputCsv->getFilename(), $query['outputTable'], ['id'], true);
+            $outputCsv = $this->output->createReport($query);
+            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true, 'idProperty');
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProperties = false;
@@ -187,7 +187,7 @@ class Extractor
                     ) {
                         throw new UserException(sprintf(
                             'At least one of these dimensions must be set in order to use anti-sampling: %s',
-                            implode(' | ', ['date', 'dateHour'])
+                            implode(' | ', ['date', 'dateHour']),
                         ));
                     }
 
@@ -227,7 +227,7 @@ class Extractor
         } catch (ClientException $e) {
             $messages[] = sprintf(
                 'Cannot download list of Google Analytics profiles. %s',
-                $this->getErrorMessage($e->getMessage())
+                $this->getErrorMessage($e->getMessage()),
             );
             $profiles = [];
         }
@@ -238,19 +238,19 @@ class Extractor
 
             $listAccounts = (array) array_combine(
                 array_map(fn($v) => $v['id'], $accounts),
-                array_map(fn($v) => $v['name'], $accounts)
+                array_map(fn($v) => $v['name'], $accounts),
             );
 
             $listWebProperties = (array) array_combine(
                 array_map(fn($v) => $v['id'], $webProperties),
-                array_map(fn($v) => $v['name'], $webProperties)
+                array_map(fn($v) => $v['name'], $webProperties),
             );
 
             $filteredProfiles = array_map(function ($item) use ($listAccounts, $listWebProperties) {
                 $result = (array) array_filter(
                     $item,
                     fn($k) => in_array($k, self::FILTER_PROFILES_RETURN_KEYS),
-                    ARRAY_FILTER_USE_KEY
+                    ARRAY_FILTER_USE_KEY,
                 );
 
                 if ($listWebProperties[$result['webPropertyId']]) {
@@ -270,7 +270,7 @@ class Extractor
             $properties = [];
             $messages[] = sprintf(
                 'Cannot download list of Data API properties. %s',
-                $this->getErrorMessage($e->getMessage())
+                $this->getErrorMessage($e->getMessage()),
             );
         }
         $prop = [];
@@ -285,7 +285,7 @@ class Extractor
                     [
                         'propertyKey' => $propertySummary['property'],
                         'propertyName' => $propertySummary['displayName'],
-                    ]
+                    ],
                 );
             }
         }
@@ -401,7 +401,7 @@ class Extractor
         }
         return sprintf(
             'Reason: "%s".',
-            $reason
+            $reason,
         );
     }
 

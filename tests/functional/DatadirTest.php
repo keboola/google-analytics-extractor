@@ -17,7 +17,7 @@ class DatadirTest extends DatadirTestCase
         ];
         putenv(sprintf(
             'CREDENTIALS_DATA=%s',
-            json_encode($credentialsData)
+            json_encode($credentialsData),
         ));
 
         parent::__construct($name, $data, $dataName);

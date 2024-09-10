@@ -44,11 +44,13 @@ class AntisamplingPropertyTest extends ClientTest
 
     public function testDailyWalk(): void
     {
+        $this->markTestSkipped('We do not have any data in the GA account at the moment.');
         $this->dailyWalk($this->buildQuery());
     }
 
     public function testDailyWalkWithDateHour(): void
     {
+        $this->markTestSkipped('We do not have any data in the GA account at the moment.');
         $query = $this->buildQuery();
         $query['query']['dimensions'] = [
             ['name' => 'dateHour'],
@@ -63,7 +65,7 @@ class AntisamplingPropertyTest extends ClientTest
         $this->expectException(UserException::class);
         $this->expectExceptionMessage(
             'At least one of these dimensions must be set in order to use anti-sampling:' .
-            ' date | dateHour'
+            ' date | dateHour',
         );
         $query = $this->buildQuery();
         $query['antisampling'] = 'dailyWalk';
@@ -99,7 +101,6 @@ class AntisamplingPropertyTest extends ClientTest
         $paginator->setProperty($property);
         $outputCsv = $output->createReport($query);
         (new AntisamplingProperty($paginator, $outputCsv, $property))->dailyWalk($query);
-
         $dailyWalkOutputCsv = $outputCsv->getPathname();
 
         // Manual Daily Walk

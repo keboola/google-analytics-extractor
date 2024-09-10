@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Keboola\Component\UserException;
 use Keboola\Component\Logger;
+use Keboola\Component\UserException;
 use Keboola\GoogleAnalyticsExtractor\Component;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -16,7 +16,7 @@ try {
 } catch (UserException $e) {
     $logger->error($e->getMessage());
     exit(1);
-} catch (\Throwable $e) {
+} catch (Throwable $e) {
     $logger->critical(
         get_class($e) . ':' . $e->getMessage(),
         [
@@ -25,7 +25,7 @@ try {
             'errCode' => $e->getCode(),
             'errTrace' => $e->getTraceAsString(),
             'errPrevious' => is_object($e->getPrevious()) ? get_class($e->getPrevious()) : '',
-        ]
+        ],
     );
     exit(2);
 }

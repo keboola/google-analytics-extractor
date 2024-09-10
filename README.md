@@ -159,8 +159,8 @@ Clone this repository and init the workspace with following command
 ```
 git clone git@github.com:keboola/google-analytics-extractor.git
 cd google-analytics-extractor
-docker-compose build
-docker-compose run --rm dev composer install --no-interaction
+docker compose build
+docker compose run --rm dev composer install --no-interaction
 ```
 
 You will need working OAuth credentials.
@@ -182,7 +182,7 @@ VIEW_ID=
 Run the test suite using this command:
 
 ```
-docker-compose run --rm dev composer tests
+docker compose run --rm dev composer tests
 ```
 
 

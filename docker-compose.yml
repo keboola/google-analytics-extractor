@@ -1,10 +1,10 @@
-version: "2"
 services:
   app: &main
     image: keboola/google-analytics-extractor
     build:
       context: .
     environment:
+      - KBC_DATA_TYPE_SUPPORT=none
       - CLIENT_ID
       - CLIENT_SECRET
       - ACCESS_TOKEN

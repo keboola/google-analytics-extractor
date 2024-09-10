@@ -37,7 +37,7 @@ class Validator
                 yield $configProperty;
             } else {
                 $this->logger->warning(
-                    sprintf('Cannot access to property "%s".', $configProperty['propertyName'])
+                    sprintf('Cannot access to property "%s".', $configProperty['propertyName']),
                 );
             }
         }
@@ -51,8 +51,8 @@ class Validator
             $this->logger->warning(
                 sprintf(
                     'Cannot download list of profiles. Skip validation profiles. Reason: "%s".',
-                    $e->getMessage()
-                )
+                    $e->getMessage(),
+                ),
             );
             array_walk($configProfiles, function ($profile) {
                 yield $profile;
@@ -62,7 +62,7 @@ class Validator
 
         $listAllowProfiles = (array) array_combine(
             array_map(fn($v) => $v['id'], $allowProfiles),
-            array_map(fn($v) => $v['name'], $allowProfiles)
+            array_map(fn($v) => $v['name'], $allowProfiles),
         );
 
         foreach ($configProfiles as $configProfile) {
@@ -70,7 +70,7 @@ class Validator
                 yield $configProfile;
             } else {
                 $this->logger->warning(
-                    sprintf('Cannot access to profile "%s".', $configProfile['name'])
+                    sprintf('Cannot access to profile "%s".', $configProfile['name']),
                 );
             }
         }

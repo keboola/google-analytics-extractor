@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
+use DateTime;
 use Keboola\Component\Config\BaseConfigDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -23,15 +24,15 @@ class ConfigDefinition extends BaseConfigDefinition
                     if (!empty($item['query']['dateRanges'])) {
                         $filteredDateRanges = array_filter(
                             $item['query']['dateRanges'],
-                            fn($v) => $v['startDate'] === Config::STATE_LAST_RUN_DATE
+                            fn($v) => $v['startDate'] === Config::STATE_LAST_RUN_DATE,
                         );
                         if (count($filteredDateRanges) > 1) {
                             throw new InvalidConfigurationException('Cannot set "lastrun" Date Range more than once.');
                         }
                         $item['query']['dateRanges'] = array_map(function ($v) {
                             if ($v['startDate'] !== Config::STATE_LAST_RUN_DATE) {
-                                $start = new \DateTime($v['startDate']);
-                                $end = new \DateTime($v['endDate']);
+                                $start = new DateTime($v['startDate']);
+                                $end = new DateTime($v['endDate']);
                                 $v['startDate'] = $start->format('Y-m-d');
                                 $v['endDate'] = $end->format('Y-m-d');
                             }

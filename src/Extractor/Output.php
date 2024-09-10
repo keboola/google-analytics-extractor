@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\GoogleAnalyticsExtractor\Extractor;
 
+use Keboola\Component\Manifest\ManifestManager;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptions;
+use Keboola\Component\Manifest\ManifestManager\Options\OutTable\ManifestOptionsSchema;
 use Keboola\Csv\CsvFile;
 use Keboola\GoogleAnalyticsExtractor\GoogleAnalytics\Result;
 
@@ -17,10 +20,17 @@ class Output
 
     private string $outputBucket;
 
-    public function __construct(string $dataDir, string $outputBucket, array $options = [])
-    {
+    private bool $useLegacyManifest;
+
+    public function __construct(
+        string $dataDir,
+        string $outputBucket,
+        bool $useLegacyManifest = true,
+        array $options = [],
+    ) {
         $this->dataDir = $dataDir;
         $this->outputBucket = $outputBucket;
+        $this->useLegacyManifest = $useLegacyManifest;
         $this->usage = new Usage($dataDir);
         $this->options = $options;
     }
@@ -32,7 +42,6 @@ class Output
 
     public function writeProfiles(CsvFile $csv, array $profiles): CsvFile
     {
-        $csv->writeRow(['id', 'name', 'webPropertyId', 'webPropertyName', 'accountId', 'accountName']);
         foreach ($profiles as $profile) {
             $csv->writeRow([
                 'id' => $profile['id'],
@@ -49,7 +58,6 @@ class Output
 
     public function writeProperties(CsvFile $csv, array $properties): CsvFile
     {
-        $csv->writeRow(['propertyKey', 'propertyName', 'accountKey', 'accountName']);
         foreach ($properties as $property) {
             $csv->writeRow([
                 'propertyKey' => $property['propertyKey'],
@@ -76,15 +84,13 @@ class Output
         return array_merge(
             ['id', $type],
             $dimensions,
-            $metrics
+            $metrics,
         );
     }
 
-    public function createReport(array $query, string $type = 'idProfile'): CsvFile
+    public function createReport(array $query): CsvFile
     {
-        $csv = $this->createCsvFile($query['outputTable']);
-        $csv->writeRow($this->createHeaderRowFromQuery($query, $type));
-        return $csv;
+        return $this->createCsvFile($query['outputTable']);
     }
 
     public function createSampleReportJson(array $query, array $report): array
@@ -116,7 +122,7 @@ class Output
         return array_merge(
             [$pKey, $profileId],
             array_values($dimensions),
-            array_values($metrics)
+            array_values($metrics),
         );
     }
 
@@ -166,21 +172,25 @@ class Output
 
     public function createManifest(
         string $name,
-        string $destination,
+        array $query,
         ?array $primaryKey = null,
-        bool $incremental = false
+        bool $incremental = false,
+        string $type = 'idProfile',
     ): void {
-        $outFilename = $this->dataDir . '/out/tables/' . $name . '.manifest';
-
-        $manifestData = [
-            'destination' => sprintf('%s.%s', $this->outputBucket, $destination),
-            'incremental' => $incremental,
-        ];
-
-        if ($primaryKey !== null) {
-            $manifestData['primary_key'] = $primaryKey;
+        $manifestManager = new ManifestManager($this->dataDir);
+        $manifestOptions = new ManifestOptions();
+        $manifestOptions->setIncremental($incremental)
+            ->setDestination(sprintf('%s.%s', $this->outputBucket, $query['outputTable']));
+        $columns = $this->createHeaderRowFromQuery($query, $type);
+        foreach ($columns as $column) {
+            $manifestOptions->addSchema(new ManifestOptionsSchema(
+                $column,
+                ['base' => ['type' => 'STRING']],
+                false,
+                isset($primaryKey) && in_array($column, $primaryKey, true),
+            ));
         }
 
-        file_put_contents($outFilename, json_encode($manifestData));
+        $manifestManager->writeTableManifest($name, $manifestOptions, $this->useLegacyManifest);
     }
 }

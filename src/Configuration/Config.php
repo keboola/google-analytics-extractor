@@ -8,13 +8,13 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
-    public const STATE_LAST_RUN_DATE = 'lastRunDate';
+    public const string STATE_LAST_RUN_DATE = 'lastRunDate';
 
-    public const ENDPOINT_MCF = 'mcf';
+    public const string ENDPOINT_MCF = 'mcf';
 
-    public const ENDPOINT_REPORTS = 'reports';
+    public const string ENDPOINT_REPORTS = 'reports';
 
-    public const ENDPOINT_DATA_API = 'data-api';
+    public const string ENDPOINT_DATA_API = 'data-api';
 
     public function hasProfiles(): bool
     {
@@ -99,7 +99,7 @@ class Config extends BaseConfig
 
         $filteredDateRanges = array_filter(
             $query['dateRanges'],
-            fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE
+            fn($v) => $v['startDate'] === self::STATE_LAST_RUN_DATE,
         );
 
         return !empty($filteredDateRanges) ? $filteredDateRanges[0] : [];
