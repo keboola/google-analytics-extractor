@@ -45,7 +45,6 @@ class AntisamplingProperty implements IAntisampling
             ];
 
             $report = $this->client->getPropertyReport($query, $this->property);
-            var_dump($report);
 
             $this->writeReport($query, $report);
 
