@@ -186,7 +186,7 @@ class Output
             $manifestOptions->addSchema(new ManifestOptionsSchema(
                 $column,
                 ['base' => ['type' => 'STRING']],
-                false,
+                true,
                 isset($primaryKey) && in_array($column, $primaryKey, true),
             ));
         }
