@@ -232,7 +232,7 @@ class Extractor
                 $this->getErrorMessage($e->getMessage()),
             );
         }
-        
+
         $prop = [];
         foreach ($properties as $property) {
             $account = [
