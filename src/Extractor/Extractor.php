@@ -222,48 +222,7 @@ class Extractor
     {
         $messages = [];
 
-        try {
-            $profiles = $this->gaApi->getAccountProfiles();
-        } catch (ClientException $e) {
-            $messages[] = sprintf(
-                'Cannot download list of Google Analytics profiles. %s',
-                $this->getErrorMessage($e->getMessage()),
-            );
-            $profiles = [];
-        }
-        $filteredProfiles = [];
-        if ($profiles) {
-            $accounts = $this->gaApi->getAccounts();
-            $webProperties = $this->gaApi->getWebProperties();
-
-            $listAccounts = (array) array_combine(
-                array_map(fn($v) => $v['id'], $accounts),
-                array_map(fn($v) => $v['name'], $accounts),
-            );
-
-            $listWebProperties = (array) array_combine(
-                array_map(fn($v) => $v['id'], $webProperties),
-                array_map(fn($v) => $v['name'], $webProperties),
-            );
-
-            $filteredProfiles = array_map(function ($item) use ($listAccounts, $listWebProperties) {
-                $result = (array) array_filter(
-                    $item,
-                    fn($k) => in_array($k, self::FILTER_PROFILES_RETURN_KEYS),
-                    ARRAY_FILTER_USE_KEY,
-                );
-
-                if ($listWebProperties[$result['webPropertyId']]) {
-                    $result['webPropertyName'] = $listWebProperties[$result['webPropertyId']];
-                }
-
-                if ($listAccounts[$result['accountId']]) {
-                    $result['accountName'] = $listAccounts[$result['accountId']];
-                }
-                return $result;
-            }, $profiles);
-        }
-
+        // Only get GA4 properties - Universal Analytics is deprecated
         try {
             $properties = $this->gaApi->getAccountProperties();
         } catch (ClientException $e) {
@@ -273,6 +232,7 @@ class Extractor
                 $this->getErrorMessage($e->getMessage()),
             );
         }
+        
         $prop = [];
         foreach ($properties as $property) {
             $account = [
@@ -292,7 +252,7 @@ class Extractor
 
         return [
             'messages' => $messages,
-            'profiles' => $filteredProfiles,
+            'profiles' => [], // Empty since Universal Analytics is deprecated
             'properties' => $prop,
         ];
     }
