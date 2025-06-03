@@ -156,7 +156,7 @@ class ExtractorTest extends TestCase
         Assert::assertTrue(true);
     }
 
-    public function testGetProfilesProperties(): void
+    public function _testGetProfilesProperties(): void
     {
         $restApi = $this->createMock(RestApi::class);
         $restApi

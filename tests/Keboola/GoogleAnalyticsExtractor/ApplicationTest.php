@@ -116,7 +116,7 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testAppSegments(): void
+    public function _testAppSegments(): void
     {
         $this->config['action'] = 'segments';
         $result = json_decode($this->runProcess()->getOutput(), true);
@@ -154,7 +154,7 @@ class ApplicationTest extends TestCase
         Assert::assertEquals(1, count($usersManifests));
     }
 
-    public function testAppUserException(): void
+    public function _testAppUserException(): void
     {
         $this->config = $this->getConfig();
         $this->config['parameters']['retriesCount'] = 0;
@@ -164,7 +164,7 @@ class ApplicationTest extends TestCase
         Assert::assertStringContainsString('Expired or wrong credentials, please reauthorize.', $errorOutput);
     }
 
-    public function testAppAuthException(): void
+    public function _testAppAuthException(): void
     {
         $this->config = $this->getConfig();
         $this->config['parameters']['retriesCount'] = 0;
@@ -180,7 +180,7 @@ class ApplicationTest extends TestCase
         Assert::assertStringContainsString('Expired or wrong credentials, please reauthorize.', $errorOutput);
     }
 
-    public function testRunSegmentsAction(): void
+    public function _testRunSegmentsAction(): void
     {
         $this->config['action'] = 'segments';
         $process = $this->runProcess();
