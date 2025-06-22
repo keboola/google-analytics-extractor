@@ -125,7 +125,7 @@ class Config extends BaseConfig
 
     public function getServiceAccount(): ?array
     {
-        $serviceAccount = $this->getArrayValue(['parameters', 'service_account'], '');
+        $serviceAccount = $this->getArrayValue(['parameters', 'service_account'], []);
         if (empty($serviceAccount)) {
             return null;
         }
