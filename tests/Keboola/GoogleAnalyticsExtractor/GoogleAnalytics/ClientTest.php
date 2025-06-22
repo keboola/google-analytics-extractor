@@ -25,7 +25,7 @@ class ClientTest extends TestCase
         $this->logger->pushHandler($testHandler);
 
         $this->client = new Client(
-            new RestApi(
+            RestApi::createWithOAuth(
                 (string) getenv('CLIENT_ID'),
                 (string) getenv('CLIENT_SECRET'),
                 (string) getenv('ACCESS_TOKEN'),
