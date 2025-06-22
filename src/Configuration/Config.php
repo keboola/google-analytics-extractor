@@ -122,4 +122,17 @@ class Config extends BaseConfig
 
         return in_array($this->getEndpoint(), [Config::ENDPOINT_DATA_API]);
     }
+
+    public function getServiceAccount(): ?array
+    {
+        $serviceAccount = $this->getArrayValue(['parameters', 'service_account'], '');
+        if (empty($serviceAccount)) {
+            return null;
+        }
+
+        $serviceAccount['private_key'] = $serviceAccount['#private_key'];
+        unset($serviceAccount['#private_key']);
+
+        return $serviceAccount;
+    }
 }
