@@ -298,18 +298,30 @@ class Component extends BaseComponent
 
     private function getGoogleRestApi(): RestApi
     {
-        $tokenData = json_decode($this->getConfig()->getOAuthApiData(), true);
-        if (!isset($tokenData['access_token'], $tokenData['refresh_token'])) {
-            throw new UserException('The token data are broken. Please try to reauthorize.');
-        }
+        $serviceAccount = $this->getConfig()->getServiceAccount();
+        if ($serviceAccount) {
+            $client = RestApi::createWithServiceAccount(
+                $serviceAccount,
+                [
+                    'https://www.googleapis.com/auth/analytics.readonly',
+                ],
+                $this->getLogger(),
+            );
+        } else {
+            /** @var array{access_token?: string, refresh_token?: string}|null $tokenData */
+            $tokenData = json_decode($this->getConfig()->getOAuthApiData(), true);
+            if (!isset($tokenData['access_token'], $tokenData['refresh_token'])) {
+                throw new UserException('The token data are broken. Please try to reauthorize.');
+            }
 
-        $client = new RestApi(
-            $this->getConfig()->getOAuthApiAppKey(),
-            $this->getConfig()->getOAuthApiAppSecret(),
-            $tokenData['access_token'],
-            $tokenData['refresh_token'],
-            $this->getLogger(),
-        );
+            $client = RestApi::createWithOAuth(
+                $this->getConfig()->getOAuthApiAppKey(),
+                $this->getConfig()->getOAuthApiAppSecret(),
+                $tokenData['access_token'],
+                $tokenData['refresh_token'],
+                $this->getLogger(),
+            );
+        }
 
         $client->setBackoffsCount($this->getConfig()->getRetries());
         return $client;
