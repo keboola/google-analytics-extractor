@@ -286,7 +286,12 @@ class Component extends BaseComponent
     private function getExtractor(): Extractor
     {
         return new Extractor(
-            new Client($this->getGoogleRestApi(), $this->getLogger(), $this->getInputState(), $this->getConfig()->getDebug()),
+            new Client(
+                $this->getGoogleRestApi(),
+                $this->getLogger(),
+                $this->getInputState(),
+                $this->getConfig()->getDebug()
+            ),
             new Output(
                 $this->getDataDir(),
                 $this->getConfig()->getOutputBucket(),
