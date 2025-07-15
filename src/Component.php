@@ -290,7 +290,7 @@ class Component extends BaseComponent
                 $this->getGoogleRestApi(),
                 $this->getLogger(),
                 $this->getInputState(),
-                $this->getConfig()->getDebug()
+                $this->getConfig()->getDebug(),
             ),
             new Output(
                 $this->getDataDir(),
