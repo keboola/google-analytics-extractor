@@ -34,11 +34,14 @@ class Client
 
     private array $inputState;
 
-    public function __construct(GoogleApi $api, LoggerInterface $logger, array $inputState)
+    private bool $debugLogging;
+
+    public function __construct(GoogleApi $api, LoggerInterface $logger, array $inputState, bool $debugLogging = false)
     {
         $this->api = $api;
         $this->logger = $logger;
         $this->inputState = $inputState;
+        $this->debugLogging = $debugLogging;
         // don't retry on 403 error
         $this->api->setBackoffCallback403(function () {
             return false;
@@ -53,12 +56,14 @@ class Client
 
     public function getSegments(): array
     {
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => 'GET',
-                'url' => self::SEGMENTS_URL,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => 'GET',
+                    'url' => self::SEGMENTS_URL,
+                ],
+            ]);
+        }
         $response = $this->api->request(self::SEGMENTS_URL);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'] ?? [];
@@ -73,12 +78,14 @@ class Client
             if (isset($body['nextPageToken'])) {
                 $url = sprintf('%s&pageToken=%s', $url, $body['nextPageToken']);
             }
-            $this->logger->debug(sprintf('Making API request'), [
-                'request' => [
-                    'method' => 'GET',
-                    'url' => $url,
-                ],
-            ]);
+            if ($this->debugLogging) {
+                $this->logger->debug(sprintf('Making API request'), [
+                    'request' => [
+                        'method' => 'GET',
+                        'url' => $url,
+                    ],
+                ]);
+            }
             $response = $this->api->request($url);
             $body = json_decode($response->getBody()->getContents(), true);
 
@@ -93,12 +100,14 @@ class Client
     public function getPropertyMetadata(string $propertyId): array
     {
         $url = sprintf(self::PROPERTY_METADATA_URL, $propertyId);
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => 'GET',
-                'url' => $url,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => 'GET',
+                    'url' => $url,
+                ],
+            ]);
+        }
         $response = $this->api->request($url);
 
         return json_decode($response->getBody()->getContents(), true);
@@ -106,12 +115,14 @@ class Client
 
     public function getAccounts(): array
     {
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => 'GET',
-                'url' => self::ACCOUNTS_URL,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => 'GET',
+                    'url' => self::ACCOUNTS_URL,
+                ],
+            ]);
+        }
         $response = $this->api->request(self::ACCOUNTS_URL);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'] ?? [];
@@ -119,12 +130,14 @@ class Client
 
     public function getWebProperties(): array
     {
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => 'GET',
-                'url' => self::ACCOUNT_WEB_PROPERTIES_URL,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => 'GET',
+                    'url' => self::ACCOUNT_WEB_PROPERTIES_URL,
+                ],
+            ]);
+        }
         $response = $this->api->request(self::ACCOUNT_WEB_PROPERTIES_URL);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'] ?? [];
@@ -138,12 +151,14 @@ class Client
             if (isset($body['nextLink'])) {
                 $url = $body['nextLink'];
             }
-            $this->logger->debug(sprintf('Making API request'), [
-                'request' => [
-                    'method' => 'GET',
-                    'url' => $url,
-                ],
-            ]);
+            if ($this->debugLogging) {
+                $this->logger->debug(sprintf('Making API request'), [
+                    'request' => [
+                        'method' => 'GET',
+                        'url' => $url,
+                    ],
+                ]);
+            }
             $response = $this->api->request($url);
             $body = json_decode($response->getBody()->getContents(), true);
             if (isset($body['items'])) {
@@ -157,12 +172,14 @@ class Client
     public function getCustomMetrics(int $accountId, string $webPropertyId): array
     {
         $url = sprintf(self::CUSTOM_METRICS_URL, $accountId, $webPropertyId);
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => 'GET',
-                'url' => $url,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => 'GET',
+                    'url' => $url,
+                ],
+            ]);
+        }
         $response = $this->api->request($url);
         $body = json_decode($response->getBody()->getContents(), true);
         return $body['items'] ?? [];
@@ -175,14 +192,16 @@ class Client
         $options = !is_null($body) ? ['json' => $body] : ['query' => $query];
 
         // Log the request details
-        $this->logger->debug(sprintf('Making API request'), [
-            'request' => [
-                'method' => $method,
-                'url' => $url,
-                'body' => $body,
-                'query' => $query,
-            ],
-        ]);
+        if ($this->debugLogging) {
+            $this->logger->debug(sprintf('Making API request'), [
+                'request' => [
+                    'method' => $method,
+                    'url' => $url,
+                    'body' => $body,
+                    'query' => $query,
+                ],
+            ]);
+        }
 
         $response = $this->api->request(
             $url,

@@ -51,6 +51,11 @@ class Config extends BaseConfig
         return (int) $this->getValue(['parameters', 'retriesCount'], 1);
     }
 
+    public function getDebug(): bool
+    {
+        return (bool) $this->getValue(['parameters', 'debug'], false);
+    }
+
     public function getNonConflictPrimaryKey(): bool
     {
         return $this->getValue(['parameters', 'nonConflictPrimaryKey']);
