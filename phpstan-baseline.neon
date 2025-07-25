@@ -66,6 +66,11 @@ parameters:
 			path: src/Component.php
 
 		-
+			message: "#^Parameter \\#5 \\$logger of class Keboola\\\\Google\\\\ClientBundle\\\\Google\\\\RestApi constructor expects Monolog\\\\Logger\\|null, Psr\\\\Log\\\\LoggerInterface given\\.$#"
+			count: 1
+			path: src/Component.php
+
+		-
 			message: "#^Cannot access offset 'enabled' on mixed\\.$#"
 			count: 1
 			path: src/Configuration/Config.php
@@ -831,22 +836,7 @@ parameters:
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
-			message: "#^Cannot access offset 'data' on mixed\\.$#"
-			count: 1
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
 			message: "#^Cannot access offset 'oauth_api' on mixed\\.$#"
-			count: 1
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
-			message: "#^Cannot access offset 'status' on mixed\\.$#"
-			count: 2
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
-			message: "#^Cannot access offset 0 on mixed\\.$#"
 			count: 1
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
@@ -872,7 +862,7 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, mixed given\\.$#"
-			count: 10
+			count: 2
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
