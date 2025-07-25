@@ -103,6 +103,21 @@ class ConfigDefinitionTest extends TestCase
         $this->assertCount(1, $dimensions);
     }
 
+    public function testKeepEmptyRowsDefaultAndCustom(): void
+    {
+        // Default value (not set in config)
+        $config = $this->config;
+        unset($config['parameters']['query']['keepEmptyRows']);
+        $configData = new Config($config, new ConfigDefinition());
+        $this->assertArrayHasKey('keepEmptyRows', $configData->getQuery());
+        $this->assertTrue($configData->getQuery()['keepEmptyRows']);
+
+        // Set to false
+        $config['parameters']['query']['keepEmptyRows'] = false;
+        $configData = new Config($config, new ConfigDefinition());
+        $this->assertFalse($configData->getQuery()['keepEmptyRows']);
+    }
+
     private function getConfig(string $suffix = ''): array
     {
         $config = json_decode((string) file_get_contents($this->dataDir . '/config' . $suffix . '.json'), true);

@@ -260,7 +260,7 @@ class Client
                     'endDate' => date('Y-m-d', (int) strtotime($item['endDate'])),
                 ];
             }, $query['dateRanges']),
-            'keepEmptyRows' => true,
+            'keepEmptyRows' => $query['keepEmptyRows'] ?? true,
             'dimensions' => $query['dimensions'],
             'metrics' => $query['metrics'],
             'offset' => $query['offset'] ?? 0,
