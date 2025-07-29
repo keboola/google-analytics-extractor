@@ -300,6 +300,7 @@ class Component extends BaseComponent
     {
         $serviceAccount = $this->getConfig()->getServiceAccount();
         if ($serviceAccount) {
+            $this->getLogger()->info('Login with service account', $serviceAccount['client_email']);
             $client = RestApi::createWithServiceAccount(
                 $serviceAccount,
                 [
@@ -308,6 +309,7 @@ class Component extends BaseComponent
                 $this->getLogger(),
             );
         } else {
+            $this->getLogger()->info('Login with OAuth');
             /** @var array{access_token?: string, refresh_token?: string}|null $tokenData */
             $tokenData = json_decode($this->getConfig()->getOAuthApiData(), true);
             if (!isset($tokenData['access_token'], $tokenData['refresh_token'])) {
