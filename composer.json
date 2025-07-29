@@ -14,7 +14,7 @@
         "ext-json": "*",
         "keboola/common-exceptions": "^1.1",
         "keboola/csv": "^1.1",
-        "keboola/google-client-bundle": "dev-ondra-support-service-account",
+        "keboola/google-client-bundle": "^6.0",
         "keboola/php-component": "^10.1",
         "keboola/storage-api-client": "^12.9",
         "symfony/config": "^5.2",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ca5981cdb111d30c28fafca309aab33",
+    "content-hash": "123125c873c2dcab15230f5d7221a585",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -683,16 +683,16 @@
         },
         {
             "name": "keboola/google-client-bundle",
-            "version": "dev-ondra-support-service-account",
+            "version": "6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/google-client-bundle.git",
-                "reference": "aba6c4c52a767c527e9d5f9b071f46c3912d3231"
+                "reference": "e077a3e55eaa2ea4211d8cdbda4de22ac51307c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/aba6c4c52a767c527e9d5f9b071f46c3912d3231",
-                "reference": "aba6c4c52a767c527e9d5f9b071f46c3912d3231",
+                "url": "https://api.github.com/repos/keboola/google-client-bundle/zipball/e077a3e55eaa2ea4211d8cdbda4de22ac51307c9",
+                "reference": "e077a3e55eaa2ea4211d8cdbda4de22ac51307c9",
                 "shasum": ""
             },
             "require": {
@@ -733,9 +733,9 @@
             ],
             "support": {
                 "issues": "https://github.com/keboola/google-client-bundle/issues",
-                "source": "https://github.com/keboola/google-client-bundle/tree/ondra-support-service-account"
+                "source": "https://github.com/keboola/google-client-bundle/tree/6.0.1"
             },
-            "time": "2025-06-19T20:26:30+00:00"
+            "time": "2025-07-29T19:55:25+00:00"
         },
         {
             "name": "keboola/php-component",
@@ -5070,9 +5070,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keboola/google-client-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
