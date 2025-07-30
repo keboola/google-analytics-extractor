@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
 use Keboola\Component\Config\BaseConfigDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Node\ServiceAccountNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class OldConfigDefinition extends BaseConfigDefinition
@@ -16,6 +17,7 @@ class OldConfigDefinition extends BaseConfigDefinition
         $parametersNode
             ->ignoreExtraKeys()
             ->children()
+                ->append(new ServiceAccountNode())
                 ->scalarNode('outputBucket')
                     ->isRequired()
                     ->cannotBeEmpty()

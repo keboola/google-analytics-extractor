@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
 use Keboola\Component\Config\BaseConfigDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Node\ServiceAccountNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class ConfigGetPropertiesMetadataDefinition extends BaseConfigDefinition
@@ -15,6 +16,7 @@ class ConfigGetPropertiesMetadataDefinition extends BaseConfigDefinition
 
         $parametersNode
             ->children()
+                ->append(new ServiceAccountNode())
                 ->arrayNode('properties')
                     ->arrayPrototype()
                     ->children()

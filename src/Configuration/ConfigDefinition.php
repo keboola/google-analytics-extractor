@@ -6,6 +6,7 @@ namespace Keboola\GoogleAnalyticsExtractor\Configuration;
 
 use DateTime;
 use Keboola\Component\Config\BaseConfigDefinition;
+use Keboola\GoogleAnalyticsExtractor\Configuration\Node\ServiceAccountNode;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
@@ -50,6 +51,7 @@ class ConfigDefinition extends BaseConfigDefinition
             ->end()
             ->ignoreExtraKeys(true)
             ->children()
+                ->append(new ServiceAccountNode())
                 ->booleanNode('skipGenerateSystemTables')->defaultFalse()->end()
                 ->scalarNode('outputBucket')->isRequired()->cannotBeEmpty()->end()
                 ->integerNode('nonConflictPrimaryKey')
