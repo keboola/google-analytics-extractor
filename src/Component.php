@@ -300,7 +300,10 @@ class Component extends BaseComponent
     {
         $serviceAccount = $this->getConfig()->getServiceAccount();
         if ($serviceAccount) {
-            $this->getLogger()->info('Login with service account', $serviceAccount['client_email']);
+            $this->getLogger()->info(sprintf(
+                'Login with service account: "%s"',
+                $serviceAccount['client_email'],
+            ));
             $client = RestApi::createWithServiceAccount(
                 $serviceAccount,
                 [
