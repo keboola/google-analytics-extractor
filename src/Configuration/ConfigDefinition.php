@@ -166,6 +166,7 @@ class ConfigDefinition extends BaseConfigDefinition
                         ->end()
                         ->scalarNode('samplingLevel')
                         ->end()
+                        ->booleanNode('keepEmptyRows')->defaultTrue()->end()
                     ->end()
                 ->end()
                 ->scalarNode('outputTable')

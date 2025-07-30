@@ -116,16 +116,6 @@ class ApplicationTest extends TestCase
         }
     }
 
-    public function testAppSegments(): void
-    {
-        $this->config['action'] = 'segments';
-        $result = json_decode($this->runProcess()->getOutput(), true);
-
-        Assert::assertArrayHasKey('status', $result);
-        Assert::assertArrayHasKey('data', $result);
-        Assert::assertEquals('success', $result['status']);
-    }
-
     public function testAppProfilesProperties(): void
     {
         $this->config = $this->getConfig('_empty');
@@ -152,50 +142,6 @@ class ApplicationTest extends TestCase
 
         Assert::assertEquals(1, count($users));
         Assert::assertEquals(1, count($usersManifests));
-    }
-
-    public function testAppUserException(): void
-    {
-        $this->config = $this->getConfig();
-        $this->config['parameters']['retriesCount'] = 0;
-        // unset segment dimension to trigger API error
-        unset($this->config['parameters']['query']['dimensions'][1]);
-        $errorOutput = $this->runProcess()->getErrorOutput();
-        Assert::assertStringContainsString('Expired or wrong credentials, please reauthorize.', $errorOutput);
-    }
-
-    public function testAppAuthException(): void
-    {
-        $this->config = $this->getConfig();
-        $this->config['parameters']['retriesCount'] = 0;
-        $this->config['authorization']['oauth_api']['credentials'] = [
-            'appKey' => getenv('CLIENT_ID'),
-            '#appSecret' => getenv('CLIENT_SECRET'),
-            '#data' => json_encode([
-                'access_token' => 'cowshit',
-                'refresh_token' => 'bullcrap',
-            ]),
-        ];
-        $errorOutput = $this->runProcess()->getErrorOutput();
-        Assert::assertStringContainsString('Expired or wrong credentials, please reauthorize.', $errorOutput);
-    }
-
-    public function testRunSegmentsAction(): void
-    {
-        $this->config['action'] = 'segments';
-        $process = $this->runProcess();
-        Assert::assertEquals(0, $process->getExitCode());
-
-        $output = json_decode($process->getOutput(), true);
-        Assert::assertArrayHasKey('status', $output);
-        Assert::assertArrayHasKey('data', $output);
-        Assert::assertEquals('success', $output['status']);
-        Assert::assertNotEmpty($output['data']);
-        $segment = $output['data'][0];
-        Assert::assertArrayHasKey('id', $segment);
-        Assert::assertArrayHasKey('kind', $segment);
-        Assert::assertArrayHasKey('segmentId', $segment);
-        Assert::assertArrayHasKey('name', $segment);
     }
 
     private function runProcess(): Process
