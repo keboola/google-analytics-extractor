@@ -117,13 +117,6 @@ class ApplicationTest extends TestCase
         ;
     }
 
-    private function assertManifestContainsColumns(string $pathname, array $expected): void
-    {
-        $manifest = (array) json_decode(file_get_contents($pathname), true, 512, JSON_THROW_ON_ERROR);
-        Assert::assertArrayHasKey('columns', $manifest);
-        Assert::assertEquals($expected, $manifest['columns']);
-    }
-
     public function appRunDataProvider(): Generator
     {
         yield 'configRow' => [

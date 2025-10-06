@@ -841,22 +841,12 @@ parameters:
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
-			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:assertManifestContainsColumns\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
 			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:getConfig\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
 		-
 			message: "#^Method Keboola\\\\GoogleAnalyticsExtractor\\\\ApplicationTest\\:\\:getConfig\\(\\) should return array but returns mixed\\.$#"
-			count: 1
-			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
-
-		-
-			message: "#^Parameter \\#1 \\$json of function json_decode expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/Keboola/GoogleAnalyticsExtractor/ApplicationTest.php
 
