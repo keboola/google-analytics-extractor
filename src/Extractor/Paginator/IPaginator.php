@@ -12,5 +12,5 @@ interface IPaginator
 {
     public function getOutput(): Output;
     public function getClient(): Client;
-    public function paginate(array $query, array $report, CsvFile $csvFile): void;
+    public function paginate(array $query, array $report, CsvFile $csvFile): int;
 }

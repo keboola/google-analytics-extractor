@@ -1,0 +1,54 @@
+{
+  "authorization": {
+    "oauth_api": {
+      "credentials": {
+        "appKey": "%env(string:CLIENT_ID)%",
+        "#appSecret": "%env(string:CLIENT_SECRET)%",
+        "#data": "%env(string:CREDENTIALS_DATA)%"
+      }
+    }
+  },
+  "parameters": {
+    "outputTable": "empty-data",
+    "query": {
+      "metrics": [
+        {
+          "name": "active1DayUsers"
+        },
+        {
+          "name": "active28DayUsers"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "campaignId"
+        },
+        {
+          "name": "campaignName"
+        },
+        {
+          "name": "city"
+        },
+        {
+          "name": "cityId"
+        }
+      ],
+      "dateRanges": [
+        {
+          "startDate": "2015-08-14",
+          "endDate": "2015-08-15"
+        }
+      ]
+    },
+    "endpoint": "data-api",
+    "outputBucket": "in.c-keboola-ex-google-analytics-v4-01k6mq8atddf0xbr48p2b9st4h",
+    "properties": [
+      {
+        "accountKey": "accounts/128209249",
+        "accountName": "Keboola Website",
+        "propertyKey": "properties/403517979",
+        "propertyName": "Website - GA4"
+      }
+    ]
+  }
+}

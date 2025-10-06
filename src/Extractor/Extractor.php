@@ -60,10 +60,10 @@ class Extractor
 
         if (isset($query['query'])) {
             $outputCsv = $this->output->createReport($query);
-            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true);
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProfiles = false;
+            $manifestCreated = false;
             foreach ($profiles as $profile) {
                 $this->logger->info(sprintf('Profile "%s" export started.', $profile['id']));
                 $apiQuery = $query;
@@ -130,7 +130,16 @@ class Extractor
                     }
                 }
 
-                $paginator->paginate($apiQuery, $report, $outputCsv);
+                $rowCount = $paginator->paginate($apiQuery, $report, $outputCsv);
+                if ($rowCount > 0 && !$manifestCreated) {
+                    $this->output->createManifest(
+                        $outputCsv->getFilename(),
+                        $query,
+                        ['id'],
+                        true,
+                    );
+                    $manifestCreated = true;
+                }
 
                 $status[$query['outputTable']][$profile['id']] = 'ok';
             }
@@ -159,10 +168,10 @@ class Extractor
             $query['query']['endpoint'] = 'properties';
 
             $outputCsv = $this->output->createReport($query);
-            $this->output->createManifest($outputCsv->getFilename(), $query, ['id'], true, 'idProperty');
             $this->logger->info(sprintf("Running query '%s'", $query['outputTable']));
 
             $downloadedProperties = false;
+            $manifestCreated = false;
             foreach ($properties as $property) {
                 $this->logger->info(sprintf('Property "%s" export started.', $property['propertyName']));
                 if (!empty($query['query']['viewId'])
@@ -199,7 +208,17 @@ class Extractor
                     continue;
                 }
 
-                $paginator->paginate($apiQuery, $report, $outputCsv);
+                $rowCount = $paginator->paginate($apiQuery, $report, $outputCsv);
+                if ($rowCount > 0 && !$manifestCreated) {
+                    $this->output->createManifest(
+                        $outputCsv->getFilename(),
+                        $query,
+                        ['id'],
+                        true,
+                        'idProperty',
+                    );
+                    $manifestCreated = true;
+                }
 
                 $status[$query['outputTable']][$property['propertyKey']] = 'ok';
             }

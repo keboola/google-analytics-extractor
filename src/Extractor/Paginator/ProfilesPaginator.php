@@ -34,7 +34,7 @@ class ProfilesPaginator implements IPaginator
         return $this->client;
     }
 
-    public function paginate(array $query, array $report, CsvFile $csvFile): void
+    public function paginate(array $query, array $report, CsvFile $csvFile): int
     {
         $counter = 0;
         do {
@@ -60,6 +60,8 @@ class ProfilesPaginator implements IPaginator
             }
             $query = $nextQuery;
         } while ($query);
+
+        return $counter;
     }
 
     private function getStartIndex(string $link): string
