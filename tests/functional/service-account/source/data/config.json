@@ -1,0 +1,42 @@
+{
+  "parameters": {
+    "service_account": "%env(string:SERVICE_ACCOUNT_JSON)%",
+    "outputBucket": "in.c-ex-google-analytics-cfg",
+    "retriesCount": 1,
+    "properties": [
+      {
+        "accountKey": "accounts/185283969",
+        "accountName": "Keboola",
+        "propertyKey": "properties/255885884",
+        "propertyName": "users"
+      }
+    ],
+    "outputTable": "users",
+    "endpoint": "data-api",
+    "query": {
+      "metrics": [
+        {
+          "name": "totalUsers"
+        },
+        {
+          "name": "itemViews"
+        }
+      ],
+      "dimensions": [
+        {
+          "name": "date"
+        },
+        {
+          "name": "dayOfWeek"
+        }
+      ],
+      "filtersExpression": "",
+      "dateRanges": [
+        {
+          "startDate": "2023-03-07",
+          "endDate": "2023-06-06"
+        }
+      ]
+    }
+  }
+}

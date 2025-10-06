@@ -9,6 +9,7 @@ services:
       - CLIENT_SECRET
       - ACCESS_TOKEN
       - REFRESH_TOKEN
+      - SERVICE_ACCOUNT_JSON
       - VIEW_ID
       - KBC_URL
       - KBC_TOKEN
