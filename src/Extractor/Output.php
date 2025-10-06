@@ -167,7 +167,11 @@ class Output
         if (!is_dir($outTablesDir)) {
             mkdir($outTablesDir, 0777, true);
         }
-        return new CsvFile($this->dataDir . '/out/tables/' . $name . '.csv');
+        $filename = $this->dataDir . '/out/tables/' . $name . '.csv';
+        if (!file_exists($filename)) {
+            touch($filename);
+        }
+        return new CsvFile($filename);
     }
 
     public function createManifest(
