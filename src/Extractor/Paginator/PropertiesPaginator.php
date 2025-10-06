@@ -44,7 +44,7 @@ class PropertiesPaginator implements IPaginator
         return $this;
     }
 
-    public function paginate(array $query, array $report, CsvFile $csvFile): int
+    public function paginate(array $query, array $report, CsvFile $csvFile): void
     {
         $localCounter = 0;
         do {
@@ -66,7 +66,5 @@ class PropertiesPaginator implements IPaginator
 
             $query = $nextQuery;
         } while ($report['totals'] > $localCounter);
-
-        return $localCounter;
     }
 }
