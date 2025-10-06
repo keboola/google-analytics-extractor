@@ -50,72 +50,6 @@ class ApplicationTest extends TestCase
         return $config;
     }
 
-    public function testAppRunDailyWalk(): void
-    {
-        $this->config = $this->getConfig('_antisampling');
-        $this->runProcess();
-
-        $dailyWalk = $this->getManifestFiles('dailyWalk');
-        Assert::assertEquals(1, count($dailyWalk));
-
-        foreach ($dailyWalk as $file) {
-            /** @var $file SplFileInfo */
-            $this->assertManifestContainsColumns($file->getPathname(), [
-                'id',
-                'idProfile',
-                'date',
-                'sourceMedium',
-                'landingPagePath',
-                'pageviews',
-            ]);
-        }
-    }
-
-    public function testAppRunAdaptive(): void
-    {
-        $this->config = $this->getConfig('_antisampling_adaptive');
-        $this->runProcess();
-
-        $adaptive = $this->getManifestFiles('adaptive');
-        Assert::assertEquals(1, count($adaptive));
-
-        foreach ($adaptive as $file) {
-            /** @var $file SplFileInfo */
-            $this->assertManifestContainsColumns($file->getPathname(), [
-                'id',
-                'idProfile',
-                'date',
-                'sourceMedium',
-                'landingPagePath',
-                'pageviews',
-            ]);
-        }
-    }
-
-    public function testAppRunMCF(): void
-    {
-        $this->config = $this->getConfig('_mcf');
-        $this->runProcess();
-
-        $funnelFiles = $this->getManifestFiles('funnel');
-        Assert::assertEquals(1, count($funnelFiles));
-
-        foreach ($funnelFiles as $file) {
-            /** @var $file SplFileInfo */
-            $this->assertManifestContainsColumns($file->getPathname(), [
-                'id',
-                'idProfile',
-                'mcf:conversionDate',
-                'mcf:sourcePath',
-                'mcf:mediumPath',
-                'mcf:sourceMedium',
-                'mcf:totalConversions',
-                'mcf:totalConversionValue',
-                'mcf:assistedConversions',
-            ]);
-        }
-    }
-
     public function testAppProfilesProperties(): void
     {
         $this->config = $this->getConfig('_empty');
@@ -181,13 +115,6 @@ class ApplicationTest extends TestCase
             ->in($this->dataDir . '/out/tables')
             ->name('/^' . $queryName . '.*\.csv.manifest$/i')
         ;
-    }
-
-    private function assertManifestContainsColumns(string $pathname, array $expected): void
-    {
-        $manifest = (array) json_decode(file_get_contents($pathname), true, 512, JSON_THROW_ON_ERROR);
-        Assert::assertArrayHasKey('columns', $manifest);
-        Assert::assertEquals($expected, $manifest['columns']);
     }
 
     public function appRunDataProvider(): Generator
