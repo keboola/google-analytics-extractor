@@ -352,6 +352,18 @@ class Component extends BaseComponent
             }
         }
 
+        if ($e->getCode() === 404) {
+            throw new UserException(
+                'Google Analytics API returned "404 Not Found". This usually means the Universal '
+                . 'Analytics (view/profile) Reporting API is no longer available - Google has shut it '
+                . 'down. Configurations that still extract from views/profiles have to be migrated to '
+                . 'GA4 properties. Original API response: '
+                . ($response !== '' ? $response : $e->getMessage()),
+                404,
+                $e,
+            );
+        }
+
         if ($e->getCode() === 502) {
             throw new UserException(
                 'Google API is temporary unavailable. Please try again later.',
