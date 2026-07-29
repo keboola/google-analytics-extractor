@@ -10,14 +10,12 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\GoogleAnalyticsExtractor\Exception\ApplicationException;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use ReflectionClass;
 use ReflectionMethod;
-use ReflectionProperty;
 
 class ComponentTest extends TestCase
 {
@@ -97,16 +95,25 @@ class ComponentTest extends TestCase
     }
 
     /**
-     * Component::handleException() is private and the surrounding BaseComponent constructor needs a
-     * data directory, a config and a manifest manager. The method only ever touches the exception and
-     * the logger, so the instance is created without the constructor and only the logger is injected.
+     * Component::handleException() only ever touches the passed exception and the logger, but the
+     * BaseComponent constructor it inherits needs a data directory, a config and a manifest manager.
+     * The subclass below therefore skips that constructor and supplies a no-op logger, so the method
+     * can be exercised without any of that scaffolding. Reflection is needed only because
+     * handleException() is private.
      */
     private function handleException(RequestException $exception): void
     {
-        $component = (new ReflectionClass(Component::class))->newInstanceWithoutConstructor();
+        $component = new class extends Component {
+            public function __construct()
+            {
+                // Intentionally does not call parent::__construct() - see the note above.
+            }
 
-        $logger = new ReflectionProperty(BaseComponent::class, 'logger');
-        $logger->setValue($component, new NullLogger());
+            public function getLogger(): LoggerInterface
+            {
+                return new NullLogger();
+            }
+        };
 
         (new ReflectionMethod(Component::class, 'handleException'))->invoke($component, $exception);
     }
