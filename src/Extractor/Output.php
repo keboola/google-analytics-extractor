@@ -187,11 +187,12 @@ class Output
             ->setDestination(sprintf('%s.%s', $this->outputBucket, $query['outputTable']));
         $columns = $this->createHeaderRowFromQuery($query, $type);
         foreach ($columns as $column) {
+            $isPrimaryKey = isset($primaryKey) && in_array($column, $primaryKey, true);
             $manifestOptions->addSchema(new ManifestOptionsSchema(
                 $column,
                 ['base' => ['type' => 'STRING']],
-                true,
-                isset($primaryKey) && in_array($column, $primaryKey, true),
+                !$isPrimaryKey,
+                $isPrimaryKey,
             ));
         }
 

@@ -89,7 +89,7 @@ class Component extends BaseComponent
                     $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
                         $column,
                         ['base' => ['type' => 'STRING']],
-                        true,
+                        $column !== 'id',
                         $column === 'id',
                     ));
                 }
@@ -131,7 +131,7 @@ class Component extends BaseComponent
                     $outTableManifestOptions->addSchema(new ManifestOptionsSchema(
                         $column,
                         ['base' => ['type' => 'STRING']],
-                        true,
+                        $column !== 'propertyKey',
                         $column === 'propertyKey',
                     ));
                 }
